@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+            import { useEffect, useMemo, useState } from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, Box, Typography, Grid, Stack,
     Avatar, Chip, TextField, Button, Snackbar, Alert, IconButton, MenuItem, Autocomplete,
@@ -12,6 +12,8 @@ import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlin
 import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import AssignmentTurnedInOutlinedIcon from '@mui/icons-material/AssignmentTurnedInOutlined';
 import { useNavigate } from 'react-router-dom';
 import CountryCodeSelector from './CountryCodeSelector';
 import CIFSummaryCard from './CIF/CIFSummaryCard';
@@ -22,7 +24,8 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 
 import { SkeletonBox } from '../components/SkeletonLoaders';
-const roles = ['Admin', 'HR', 'Employee', 'Intern'];
+// Role enum values must match backend/models/User.js exactly (case-sensitive).
+const roles = ['Admin', 'HRManager', 'HRPayrollUser', 'HRPayrollManager', 'Employee', 'Intern'];
 const statusOptions = ['Active', 'Inactive'];
 const employmentStatusOptions = ['Intern', 'Probation', 'Permanent'];
 
@@ -102,10 +105,8 @@ const AdminEmployeeProfileDialog = ({
     const navigate = useNavigate();
 
     // ── Smart-button counts ─────────────────────────────────────────────────
-    // Fetches attendanceCount + timeOffCount from the lightweight counts endpoint.
-    // Contracts and Allocations don't exist in this codebase yet — they show
-    // "Coming soon" until those models are introduced in a separate phase.
-    const [counts, setCounts] = useState({ attendanceCount: null, timeOffCount: null });
+    // Fetches live counts for all four smart buttons from the lightweight counts endpoint.
+    const [counts, setCounts] = useState({ attendanceCount: null, timeOffCount: null, contractCount: null, allocationCount: null });
     const [countsLoading, setCountsLoading] = useState(false);
 
     useEffect(() => {
@@ -117,11 +118,16 @@ const AdminEmployeeProfileDialog = ({
         setCountsLoading(true);
         api.get(`/admin/employees/${employee._id}/counts`)
             .then(({ data }) => {
-                if (!cancelled) setCounts({ attendanceCount: data.attendanceCount, timeOffCount: data.timeOffCount });
+                if (!cancelled) setCounts({
+                    attendanceCount: data.attendanceCount,
+                    timeOffCount: data.timeOffCount,
+                    contractCount: data.contractCount,
+                    allocationCount: data.allocationCount,
+                });
             })
             .catch((err) => {
                 console.error('[AdminEmployeeProfileDialog] Failed to load counts:', err);
-                if (!cancelled) setCounts({ attendanceCount: 0, timeOffCount: 0 });
+                if (!cancelled) setCounts({ attendanceCount: 0, timeOffCount: 0, contractCount: 0, allocationCount: 0 });
             })
             .finally(() => { if (!cancelled) setCountsLoading(false); });
         return () => { cancelled = true; };
@@ -571,40 +577,56 @@ const AdminEmployeeProfileDialog = ({
                             />
                         </Tooltip>
 
-                        {/* Contracts — Coming soon (no Contract model yet) */}
-                        {/* TODO: Replace "Coming soon" with real count once Contract model is added */}
-                        <Tooltip title="Contracts feature coming soon" arrow>
-                            <span>
-                                <Chip
-                                    label="Contracts —"
-                                    size="small"
-                                    disabled
-                                    sx={{
-                                        fontWeight: 600,
-                                        fontSize: '0.75rem',
-                                        opacity: 0.5,
-                                        cursor: 'not-allowed',
-                                    }}
-                                />
-                            </span>
+                        {/* Contracts — navigates to ContractsPage pre-filtered by employee */}
+                        <Tooltip title="View contracts for this employee">
+                            <Chip
+                                icon={<DescriptionOutlinedIcon sx={{ fontSize: '0.9rem !important' }} />}
+                                label={
+                                    countsLoading
+                                        ? 'Contracts …'
+                                        : `Contracts ${counts.contractCount ?? 0}`
+                                }
+                                onClick={() => {
+                                    navigate(`/contracts?employee=${employee._id}`);
+                                }}
+                                size="small"
+                                sx={{
+                                    fontWeight: 600,
+                                    fontSize: '0.75rem',
+                                    cursor: 'pointer',
+                                    bgcolor: '#FFF7ED',
+                                    color: '#C2410C',
+                                    border: '1px solid #FED7AA',
+                                    '&:hover': { bgcolor: '#FFEDD5' },
+                                    '& .MuiChip-icon': { color: '#C2410C' },
+                                }}
+                            />
                         </Tooltip>
 
-                        {/* Allocations — Coming soon (no Allocation model yet) */}
-                        {/* TODO: Replace "Coming soon" with real count once Allocation model is added */}
-                        <Tooltip title="Allocations feature coming soon" arrow>
-                            <span>
-                                <Chip
-                                    label="Allocations —"
-                                    size="small"
-                                    disabled
-                                    sx={{
-                                        fontWeight: 600,
-                                        fontSize: '0.75rem',
-                                        opacity: 0.5,
-                                        cursor: 'not-allowed',
-                                    }}
-                                />
-                            </span>
+                        {/* Allocations — navigates to AllocationsListPage pre-filtered by employee */}
+                        <Tooltip title="View leave allocations for this employee">
+                            <Chip
+                                icon={<AssignmentTurnedInOutlinedIcon sx={{ fontSize: '0.9rem !important' }} />}
+                                label={
+                                    countsLoading
+                                        ? 'Allocations …'
+                                        : `Allocations ${counts.allocationCount ?? 0}`
+                                }
+                                onClick={() => {
+                                    navigate(`/time-off/allocations?employee=${employee._id}`);
+                                }}
+                                size="small"
+                                sx={{
+                                    fontWeight: 600,
+                                    fontSize: '0.75rem',
+                                    cursor: 'pointer',
+                                    bgcolor: '#F5F3FF',
+                                    color: '#6D28D9',
+                                    border: '1px solid #DDD6FE',
+                                    '&:hover': { bgcolor: '#EDE9FE' },
+                                    '& .MuiChip-icon': { color: '#6D28D9' },
+                                }}
+                            />
                         </Tooltip>
                     </Box>
                 )}
@@ -612,7 +634,7 @@ const AdminEmployeeProfileDialog = ({
                 <DialogContent sx={{ backgroundColor: SURFACE, px: 3, py: 2.5 }}>
                     {activeTab === 0 && (
                     <Stack spacing={2}>
-                        {(user?.role === 'Admin' || user?.role === 'HR') && employee?._id && (
+                        {(user?.role === 'Admin' || user?.role === 'HRManager' || user?.role === 'HRPayrollUser' || user?.role === 'HRPayrollManager') && employee?._id && (
                             <CIFSummaryCard employeeId={employee._id} />
                         )}
 

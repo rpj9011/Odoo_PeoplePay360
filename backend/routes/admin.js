@@ -1296,6 +1296,84 @@ router.patch('/leaves/:id/status', [authenticateToken, isAdminOrHr], async (req,
         }
 
         if (newStatus === 'Approved') {
+            // ── Allocation gate ─────────────────────────────────────────────────────
+            // If the TimeOffType for this request requires an Allocation
+            // (requiresAllocation === true), a Confirmed Allocation record covering
+            // the leave date must exist before we allow the approval to proceed.
+            //
+            // This check is skipped when:
+            //   a) overrideReason is provided (admin explicitly overrides)
+            //   b) No matching active TimeOffType is found (legacy types without a
+            //      TimeOffType record fall back to the existing leaveBalances flow)
+            //   c) The TimeOffType has requiresAllocation === false (e.g. LOP, Comp-Off)
+            //
+            // The check runs OUTSIDE the existing balance-validation path so it can
+            // return a distinct, user-friendly error message.
+            if (!overrideReason) {
+                try {
+                    const TimeOffType = require('../models/TimeOffType');
+                    const Allocation  = require('../models/Allocation');
+
+                    const timeOffType = await TimeOffType.findOne({
+                        legacyRequestTypeMapping: request.requestType,
+                        isActive: true,
+                    }).lean();
+
+                    if (timeOffType && timeOffType.requiresAllocation) {
+                        // Use the first leave date as the coverage anchor point
+                        const leaveDate = request.leaveDates?.[0] || new Date();
+
+                        const confirmedAllocation = await Allocation.findOne({
+                            employee:    request.employee,
+                            timeOffType: timeOffType._id,
+                            status:      'Confirmed',
+                            $or: [
+                                { validFrom: null,                  validTo: null },
+                                { validFrom: { $lte: leaveDate },   validTo: null },
+                                { validFrom: null,                  validTo: { $gte: leaveDate } },
+                                { validFrom: { $lte: leaveDate },   validTo: { $gte: leaveDate } },
+                            ],
+                        }).lean();
+
+                        if (!confirmedAllocation) {
+                            await session.abortTransaction();
+                            return res.status(400).json({
+                                error: `Cannot approve: no confirmed "${timeOffType.name}" allocation found for this employee. ` +
+                                       `Create and confirm an Allocation record first, or provide an override reason to bypass.`,
+                                code:  'NO_CONFIRMED_ALLOCATION',
+                            });
+                        }
+
+                        // Also check that the allocation has sufficient remaining balance
+                        const workingDayCount = countWorkingDaysInLeaveDates(request.leaveDates);
+                        const consumed = workingDayCount * (request.leaveType === 'Full Day' ? 1 : 0.5);
+                        const remaining = Math.max(0, confirmedAllocation.allocatedAmount - (confirmedAllocation.takenAmount || 0));
+
+                        if (remaining < consumed) {
+                            await session.abortTransaction();
+                            return res.status(400).json({
+                                error: `Cannot approve: the confirmed "${timeOffType.name}" allocation only has ` +
+                                       `${remaining} day(s) remaining but this request requires ${consumed} day(s). ` +
+                                       `Increase the allocation or provide an override reason to bypass.`,
+                                code:  'ALLOCATION_INSUFFICIENT',
+                            });
+                        }
+                    }
+                    // If timeOffType not found or requiresAllocation === false: fall through
+                    // to the existing leaveBalances enforcement below (no change to current behaviour).
+                } catch (allocationCheckErr) {
+                    // Non-fatal check failure: log a warning and continue with the existing flow.
+                    // This prevents a DB error in the allocation lookup from blocking a legitimate
+                    // approval.  The admin is notified via the log; the bridge hook below will
+                    // also emit a warning if takenAmount cannot be updated.
+                    console.error(
+                        '[Allocation Gate] Error during pre-approval allocation check for request',
+                        id, ':', allocationCheckErr.message
+                    );
+                }
+            }
+            // ── End allocation gate ─────────────────────────────────────────────────
+
             // CRITICAL FIX: If admin provides overrideReason, skip policy validations
             // Admin can approve at any time regardless of advance notice, weekday restrictions, etc.
             if (overrideReason) {
@@ -1392,13 +1470,14 @@ router.patch('/leaves/:id/status', [authenticateToken, isAdminOrHr], async (req,
 
         await session.commitTransaction();
 
-        // ── Allocation bridge (additive, non-blocking) ─────────────────────────
+        // ── Allocation bridge (now enforcing, not just advisory) ──────────────
         // After a successful approval, increment takenAmount on the matching
-        // Confirmed Allocation so the new Allocation UI stays in sync.
-        // This runs OUTSIDE the transaction intentionally: a failure here must
-        // never roll back an already-committed approval — we just log a warning.
-        // Existing balance logic (User.leaveBalances) is already committed above
-        // and is the source of truth for balance enforcement. This is bookkeeping only.
+        // Confirmed Allocation to keep it in sync with the approval.
+        // The allocation gate above (pre-transaction) already confirmed a Confirmed
+        // Allocation exists (when requiresAllocation === true and no overrideReason).
+        // This bridge persists the consumption against that record.
+        // Runs OUTSIDE the transaction: a failure here must never roll back an
+        // already-committed approval — we log a warning instead.
         if (newStatus === 'Approved' && oldStatus !== 'Approved') {
             try {
                 const TimeOffType = require('../models/TimeOffType');

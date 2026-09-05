@@ -12,13 +12,8 @@ import '../styles/ShiftsPage.css'; // The updated stylesheet
 import PageHeroHeader from '../components/PageHeroHeader';
 
 import { SkeletonBox } from '../components/SkeletonLoaders';
-// --- Helper Functions ---
-const formatTime = (timeString) => {
-    if (!timeString) return 'N/A';
-    const [hours, minutes] = timeString.split(':');
-    const date = new Date(0, 0, 0, hours, minutes);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-};
+// formatTime kept for potential future use but no longer rendered in the table
+// const formatTime = ...
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -50,13 +45,12 @@ function stableSort(array, comparator) {
 }
 
 const headCells = [
-  { id: 'shiftName', numeric: false, label: 'Name' },
-  { id: 'shiftType', numeric: false, label: 'Type' },
-  { id: 'startTime', numeric: false, label: 'Start Time' },
-  { id: 'endTime', numeric: false, label: 'End Time' },
-  { id: 'durationHours', numeric: true, label: 'Duration (Hrs)' },
-  { id: 'paidBreakMinutes', numeric: true, label: 'Paid Break (Mins)' },
-  { id: 'actions', numeric: true, disableSorting: true, label: 'Actions' },
+  { id: 'shiftName',        numeric: false, label: 'Name' },
+  { id: 'shiftType',        numeric: false, label: 'Type' },
+  { id: 'timezone',         numeric: false, label: 'Timezone' },
+  { id: 'totalWeeklyHours', numeric: true,  label: 'Weekly Hours' },
+  { id: 'paidBreakMinutes', numeric: true,  label: 'Paid Break (Mins)' },
+  { id: 'actions',          numeric: true,  disableSorting: true, label: 'Actions' },
 ];
 
 // --- Table Components ---
@@ -101,9 +95,16 @@ const SortableTableHead = (props) => {
 
 
 const ShiftRow = memo(({ shift, onEdit, onDelete }) => {
+    // Count working days from weeklyPattern for a quick summary
+    const workingDays = Array.isArray(shift.weeklyPattern)
+        ? shift.weeklyPattern.filter(e => e.isWorkingDay).length
+        : null;
+
     return (
         <TableRow hover className="shift-table-row">
-            <TableCell component="th" scope="row" className="shift-name-cell">{shift.shiftName}</TableCell>
+            <TableCell component="th" scope="row" className="shift-name-cell">
+                {shift.shiftName}
+            </TableCell>
             <TableCell>
                 <Chip
                     label={shift.shiftType}
@@ -112,10 +113,23 @@ const ShiftRow = memo(({ shift, onEdit, onDelete }) => {
                     variant="outlined"
                 />
             </TableCell>
-            <TableCell>{formatTime(shift.startTime)}</TableCell>
-            <TableCell>{formatTime(shift.endTime)}</TableCell>
-            <TableCell align="center">{shift.durationHours}</TableCell>
-            <TableCell align="center">{shift.paidBreakMinutes}</TableCell>
+            <TableCell sx={{ fontSize: '0.82rem', color: '#374151' }}>
+                {shift.timezone || 'Asia/Kolkata'}
+            </TableCell>
+            <TableCell align="center">
+                {shift.totalWeeklyHours != null
+                    ? `${shift.totalWeeklyHours}h`
+                    : shift.durationHours != null
+                        ? `${shift.durationHours}h`   // legacy fallback
+                        : '—'
+                }
+                {workingDays != null && (
+                    <Typography variant="caption" display="block" color="text.secondary">
+                        {workingDays}d / week
+                    </Typography>
+                )}
+            </TableCell>
+            <TableCell align="center">{shift.paidBreakMinutes ?? '—'}</TableCell>
             <TableCell align="center">
                 <div className="actions-cell">
                     <Tooltip title="Edit">

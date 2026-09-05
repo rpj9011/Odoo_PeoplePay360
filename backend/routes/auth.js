@@ -1,29 +1,4 @@
-// backend/routes/auth.js
-/**
- * ATTENDANCE PORTAL AUTHENTICATION ROUTES
- * 
- * This file contains TWO independent login routes:
- * 
- * 1. STANDALONE LOGIN ROUTE: POST /api/auth/login
- *    - Handles direct email/password authentication
- *    - Completely independent of SSO
- *    - Used when users log in directly to the attendance portal
- *    - Protected by geofencing middleware
- *    - Returns JWT token and user data
- * 
- * 2. SSO LOGIN ROUTE: POST /api/auth/sso-consume
- *    - Handles SSO token authentication from SSO portal
- *    - Completely independent of standalone login
- *    - Used when users are redirected from SSO portal with sso_token
- *    - Validates SSO token via JWKS/RS256
- *    - Returns AMS JWT token and user data
- * 
- * Both routes are protected and work independently.
- * The SSO middleware (ssoTokenAuth) is configured to NOT interfere with:
- * - POST requests (all API routes)
- * - /login page route (frontend handles SSO tokens)
- * - /api/* routes (all API endpoints)
- */
+
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -37,10 +12,6 @@ const ssoService = require('../services/ssoService');
 const SSOVerification = require('../utils/ssoVerification');
 const jwtUtils = require('../utils/jwtUtils');
 const { HR_FAMILY } = require('../config/roles');
-// isNightShiftEmployee was used for the old 7d/10h expiry split; no longer needed
-// with the uniform 15-minute access token model. Import kept as a no-op comment
-// until the module reference is confirmed safe to remove.
-// const { isNightShiftEmployee } = require('../utils/istTime');
 const rateLimit = require('express-rate-limit');
 const {
     RefreshTokenReuseError,
@@ -161,7 +132,7 @@ const normalizeEmail = (email) => {
 // This route handles direct email/password authentication
 // It is completely independent of SSO and should never be interfered with
 // SSO authentication uses /api/auth/sso-consume instead
-// =================================================================
+// ==============================================================
 router.post('/login', validateLogin, loginGeofencingMiddleware, async (req, res) => {
     // Validate required fields before any async work (production-safe)
     const email = req.body && typeof req.body.email === 'string' ? req.body.email.trim() : '';

@@ -1,0 +1,108 @@
+{
+  service: 'attendance-system',
+  message: 'Application Error Validation failed',
+  stack: 'Error: Validation failed\n' +
+    '    at handleValidationErrors (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\middleware\\validation.js:15:14)\n' +
+    '    at Layer.handleRequest (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n' +
+    '    at next (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\router\\lib\\route.js:157:13)\n' +
+    '    at middleware (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)',
+  errors: [
+    {
+      field: 'password',
+      message: 'Password must be at least 6 characters long',
+      value: 'test'
+    }
+  ],
+  body: {
+    email: 'rushikesh',
+    password: 'test',
+    latitude: 23.189921083333335,
+    longitude: 72.61313700000001
+  },
+  params: [Object: null prototype] {},
+  query: [Object: null prototype] {},
+  level: 'error',
+  timestamp: '2026-09-05 16:57:42'
+}
+{
+  service: 'attendance-system',
+  message: 'Application Error Validation failed',
+  stack: 'Error: Validation failed\n' +
+    '    at handleValidationErrors (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\middleware\\validation.js:15:14)\n' +
+    '    at Layer.handleRequest (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n' +
+    '    at next (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\router\\lib\\route.js:157:13)\n' +
+    '    at middleware (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)',
+  errors: [
+    {
+      field: 'password',
+      message: 'Password must be at least 6 characters long',
+      value: 'test'
+    }
+  ],
+  body: {
+    email: 'rus',
+    password: 'test',
+    latitude: 23.189921083333335,
+    longitude: 72.61313700000001
+  },
+  params: [Object: null prototype] {},
+  query: [Object: null prototype] {},
+  level: 'error',
+  timestamp: '2026-09-05 16:59:13'
+}
+{
+  service: 'attendance-system',
+  message: 'Application Error Validation failed',
+  stack: 'Error: Validation failed\n' +
+    '    at handleValidationErrors (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\middleware\\validation.js:15:14)\n' +
+    '    at Layer.handleRequest (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n' +
+    '    at next (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\router\\lib\\route.js:157:13)\n' +
+    '    at middleware (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)',
+  errors: [
+    {
+      field: 'password',
+      message: 'Password must be at least 6 characters long',
+      value: 'test'
+    }
+  ],
+  body: {
+    email: 'rus',
+    password: 'test',
+    latitude: 23.189921083333335,
+    longitude: 72.61313700000001
+  },
+  params: [Object: null prototype] {},
+  query: [Object: null prototype] {},
+  level: 'error',
+  timestamp: '2026-09-05 16:59:14'
+}
+{
+  service: 'attendance-system',
+  message: 'Application Error Validation failed',
+  stack: 'Error: Validation failed\n' +
+    '    at handleValidationErrors (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\middleware\\validation.js:15:14)\n' +
+    '    at Layer.handleRequest (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\router\\lib\\layer.js:152:17)\n' +
+    '    at next (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\router\\lib\\route.js:157:13)\n' +
+    '    at middleware (C:\\Users\\Rushikesh\\OneDrive\\Desktop\\Project\\Odoo_Final\\backend\\node_modules\\express-validator\\lib\\middlewares\\check.js:16:13)\n' +
+    '    at process.processTicksAndRejections (node:internal/process/task_queues:103:5)',
+  errors: [
+    {
+      field: 'password',
+      message: 'Password must be at least 6 characters long',
+      value: 'test'
+    }
+  ],
+  body: {
+    email: 'rus',
+    password: 'test',
+    latitude: 23.189921083333335,
+    longitude: 72.61313700000001
+  },
+  params: [Object: null prototype] {},
+  query: [Object: null prototype] {},
+  level: 'error',
+  timestamp: '2026-09-05 16:59:15'
+}

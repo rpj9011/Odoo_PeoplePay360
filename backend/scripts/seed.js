@@ -22,6 +22,8 @@
  *  • 90 AttendanceLogs  — last 30 working days per employee (3 employees)
  *  • 12 LeaveRequests  — mix of Planned / Sick / Casual, approved & pending
  *  • LeaveLedger entries for each approved leave deduction
+ *  • 3 Payruns        — 2 fully Paid (prior months) + 1 Computed (current month)
+ *  • Payslips         — 4 payslips per Payrun (one per on-role employee)
  *
  * SAFE TO RE-RUN
  * ──────────────
@@ -59,6 +61,8 @@ const LeaveRequest     = require('../models/LeaveRequest');
 const LeaveLedger      = require('../models/LeaveLedger');
 const OfficeLocation   = require('../models/OfficeLocation');
 const Setting          = require('../models/Setting');
+const Payrun           = require('../models/Payrun');
+const Payslip          = require('../models/Payslip');
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -1058,6 +1062,191 @@ async function seedLeaveRequests(users) {
 }
 
 // ═════════════════════════════════════════════════════════════════════════════
+// SECTION 12 — PAYRUN & PAYSLIPS
+// ═════════════════════════════════════════════════════════════════════════════
+async function seedPayrollData(users, salaryStructure) {
+  INFO('Seeding Payrun & Payslips…');
+
+  const Payrun  = require('../models/Payrun');
+  const Payslip = require('../models/Payslip');
+  const Contract = require('../models/Contract');
+
+  const admin    = users['EMP-0001'];
+  const payrollMgr = users['EMP-0004'];
+  const now      = new Date();
+
+  // ── Build a 2-month history of Paid payruns + one current Draft ──────────
+
+  const specs = [
+    // Two months ago — Paid
+    { monthsAgo: 2, status: 'Paid'  },
+    // Last month — Paid
+    { monthsAgo: 1, status: 'Paid'  },
+    // Current month — Computed (in-progress demo)
+    { monthsAgo: 0, status: 'Computed' },
+  ];
+
+  // Employee codes to include in payroll (those with Running contracts)
+  const empCodes = ['EMP-0005', 'EMP-0006', 'EMP-0007', 'EMP-0008'];
+  const empUsers = empCodes.map(c => users[c]).filter(Boolean);
+
+  for (const spec of specs) {
+    const d         = new Date(now.getFullYear(), now.getMonth() - spec.monthsAgo, 1);
+    const yr        = d.getFullYear();
+    const mo        = d.getMonth(); // 0-indexed
+    const start     = new Date(yr, mo, 1);
+    const end       = new Date(yr, mo + 1, 0, 23, 59, 59, 999);
+    const monthName = d.toLocaleString('en-IN', { month: 'long', year: 'numeric' });
+    const runName   = `Standard Monthly — ${monthName}`;
+
+    const existingRun = await Payrun.findOne({ name: runName });
+    if (existingRun) {
+      SKIP(`Payrun: ${runName}`);
+      continue;
+    }
+
+    // Build employee list from Running contracts
+    const employeeIds = empUsers.map(u => u._id);
+
+    const payrun = await Payrun.create({
+      name:            runName,
+      periodStart:     start,
+      periodEnd:       end,
+      salaryStructure: salaryStructure._id,
+      employees:       employeeIds,
+      employeeType:    'All',
+      status:          'Draft',
+      createdBy:       admin._id,
+    });
+
+    OK(`Payrun created: ${runName} (${spec.status})`);
+
+    // ── Create payslips for each employee ──────────────────────────────────
+    const payslipIds = [];
+
+    // Load salary rules from structure for computation
+    const struct = await SalaryStructure.findById(salaryStructure._id)
+      .populate('salaryRules.rule').lean();
+    const sortedRules = [...(struct.salaryRules || [])].sort((a, b) => a.sequence - b.sequence);
+
+    for (const emp of empUsers) {
+      const contract = await Contract.findOne({ employee: emp._id, status: 'Running' });
+      if (!contract) {
+        WARN(`No Running contract for ${emp.fullName} — skipping payslip`);
+        continue;
+      }
+
+      const wage = contract.wagePerMonth || 0;
+
+      // Manual inline computation to avoid circular dependency on the service
+      const totals = { Basic: 0, Allowance: 0, Gross: 0, Deduction: 0, Net: 0 };
+      const lines  = [];
+
+      for (const sr of sortedRules) {
+        const rule = sr.rule;
+        if (!rule || rule.isActive === false) continue;
+        let amount = 0;
+
+        if (rule.computationMethod === 'FixedAmount') {
+          amount = rule.fixedAmount || 0;
+        } else if (rule.computationMethod === 'PercentageOfWage') {
+          amount = ((rule.percentage || 0) / 100) * wage;
+        } else if (rule.computationMethod === 'PercentageOfCategory') {
+          const baseVal = totals[rule.percentageBaseCategory] || 0;
+          amount = ((rule.percentage || 0) / 100) * baseVal;
+        } else if (rule.computationMethod === 'Formula') {
+          // Simple inline eval for seed — safe because this is seeding known formulas
+          try {
+            const scope = {
+              BASIC: totals.Basic, ALLOWANCE: totals.Allowance,
+              GROSS: totals.Gross, DEDUCTION: totals.Deduction,
+              NET: totals.Net, WAGE: wage,
+            };
+            // Replace variable names with values and evaluate simple arithmetic
+            // (safe for seeding — we control the formulas in seed data)
+            let expr = rule.formula || '0';
+            Object.entries(scope).forEach(([k, v]) => {
+              expr = expr.replace(new RegExp(`\\b${k}\\b`, 'g'), String(v));
+            });
+            const result = Function('"use strict"; return (' + expr + ')')();
+            amount = typeof result === 'number' && isFinite(result) ? result : 0;
+          } catch { amount = 0; }
+        }
+
+        const signed = rule.appliesTo === 'Deduction' ? Math.abs(amount) : amount;
+        if (totals[rule.category] !== undefined) totals[rule.category] += signed;
+
+        lines.push({
+          rule:     rule._id,
+          code:     rule.code,
+          name:     rule.name,
+          category: rule.category,
+          amount:   Math.round(signed * 100) / 100,
+          sequence: rule.sequence,
+        });
+      }
+
+      const basicTotal      = Math.round(totals.Basic * 100) / 100;
+      const grossTotal      = Math.round((totals.Basic + totals.Allowance + totals.Gross) * 100) / 100;
+      const deductionsTotal = Math.round(totals.Deduction * 100) / 100;
+      const netTotal        = Math.round((grossTotal - deductionsTotal + totals.Net) * 100) / 100;
+
+      // Payslip status matches payrun status (Draft→Computed / Validated / Paid)
+      const psStatus = spec.status === 'Paid'     ? 'Paid'
+                     : spec.status === 'Validated' ? 'Validated'
+                     : 'Computed';
+
+      const psData = {
+        employee:        emp._id,
+        payrun:          payrun._id,
+        contract:        contract._id,
+        salaryStructure: salaryStructure._id,
+        periodStart:     start,
+        periodEnd:       end,
+        workedDays:      spec.monthsAgo === 0 ? 18 : 26, // partial / full month
+        lines,
+        basicTotal,
+        grossTotal,
+        deductionsTotal,
+        netTotal,
+        status:          psStatus,
+        warnings:        [],
+      };
+
+      const ps = await Payslip.create(psData);
+      payslipIds.push(ps._id);
+      OK(`  └─ Payslip: ${emp.fullName} — Net ₹${netTotal.toLocaleString('en-IN')} [${psStatus}]`);
+    }
+
+    // ── Update payrun with payslips + final status ─────────────────────────
+    const updateFields = {
+      payslips: payslipIds,
+      status:   spec.status,
+    };
+
+    if (spec.status === 'Computed' || spec.status === 'Validated' || spec.status === 'Paid') {
+      updateFields.computedAt = new Date(yr, mo + 1, 1); // beginning of next month
+    }
+    if (spec.status === 'Validated' || spec.status === 'Paid') {
+      updateFields.validatedAt = new Date(yr, mo + 1, 2);
+      updateFields.validatedBy = payrollMgr._id;
+    }
+    if (spec.status === 'Paid') {
+      updateFields.paidAt = new Date(yr, mo + 1, 5);
+      updateFields.paidBy = payrollMgr._id;
+    }
+
+    // Use direct update to bypass the immutability pre-save guard (seed data is
+    // setting Paid for the FIRST time, but the guard checks DB state, and during
+    // seed the document was just created as Draft; updating via findByIdAndUpdate
+    // skips the pre-save hook — intentional for seed only).
+    await Payrun.findByIdAndUpdate(payrun._id, { $set: updateFields });
+
+    OK(`Payrun finalised: ${runName} → ${spec.status}`);
+  }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
 // MAIN ENTRY POINT
 // ═════════════════════════════════════════════════════════════════════════════
 async function main() {
@@ -1108,6 +1297,9 @@ async function main() {
 
     // 11. Leave Requests + Ledger — depends on users
     await seedLeaveRequests(users);
+
+    // 12. Payroll data — Payruns + Payslips — depends on users, salaryStructure, contracts
+    await seedPayrollData(users, salaryStructure);
 
     // ── Summary ──────────────────────────────────────────────────────────
     console.log('\n══════════════════════════════════════════════════════');

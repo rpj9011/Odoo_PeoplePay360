@@ -16,6 +16,9 @@ const payslipLineSchema = new mongoose.Schema({
 const payslipWarningSchema = new mongoose.Schema({
   message:  { type: String },
   severity: { type: String, enum: ['info', 'warning', 'error'] },
+  // blocking: true means this warning MUST be resolved before Validate is allowed.
+  // The /validate route refuses if any payslip has an unresolved blocking warning.
+  blocking: { type: Boolean, default: false },
 }, { _id: false });
 
 const payslipSchema = new mongoose.Schema({
@@ -64,5 +67,31 @@ payslipSchema.index({ employee: 1, periodStart: 1 }, { background: true });
 // Support status-based bulk queries (e.g. "fetch all Validated payslips in a run")
 payslipSchema.index({ payrun: 1, status: 1 },        { background: true });
 // ─────────────────────────────────────────────────────────────────────────────
+
+// ── IMMUTABILITY GUARD (audit item #33) ──────────────────────────────────────
+// A Payslip that reaches 'Paid' status can never roll back.
+payslipSchema.pre('save', async function (next) {
+  if (!this.isModified('status') || this.isNew) return next();
+
+  try {
+    const original = await this.constructor
+      .findById(this._id)
+      .select('status')
+      .lean();
+
+    if (original && original.status === 'Paid' && this.status !== 'Paid') {
+      return next(
+        new Error(
+          `Payslip for employee ${this.employee} is already Paid and cannot ` +
+          `be rolled back to "${this.status}".`
+        )
+      );
+    }
+
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 module.exports = mongoose.model('Payslip', payslipSchema);

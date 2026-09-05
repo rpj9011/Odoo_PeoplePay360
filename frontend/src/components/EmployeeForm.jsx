@@ -1,9 +1,14 @@
 // frontend/src/components/EmployeeForm.jsx
-import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField, Grid, Select, MenuItem, InputLabel, FormControl, Box, Stack, Typography, Chip, OutlinedInput, IconButton } from '@mui/material';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+    Dialog, DialogTitle, DialogContent, DialogActions, Button, TextField,
+    Grid, Select, MenuItem, InputLabel, FormControl, Box, Stack, Typography,
+    Chip, OutlinedInput, IconButton, Autocomplete, FormControlLabel, Switch,
+} from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-
+import api from '../api/axios';
 import { SkeletonBox } from '../components/SkeletonLoaders';
+
 const initialFormState = {
     employeeCode: '',
     fullName: '',
@@ -15,6 +20,8 @@ const initialFormState = {
     department: '',
     joiningDate: new Date().toISOString().slice(0, 10),
     shiftGroup: '',
+    // reportingPerson stores the manager's ObjectId string (mirrors AdminEmployeeProfileDialog.reportingPersonId)
+    reportingPerson: '',
     isActive: true,
     alternateSaturdayPolicy: 'All Saturdays Working',
     employmentStatus: 'Probation',
@@ -24,13 +31,20 @@ const initialFormState = {
     leaveBalances: {
         paid: 0,
         sick: 0,
-        // --- START OF FIX ---
         casual: 0,
-        // --- END OF FIX ---
-    }
+    },
 };
 
-const roles = ['Admin', 'HR', 'Employee', 'Intern'];
+// Role enum values must match backend/models/User.js exactly (case-sensitive).
+// Display labels are human-readable; submitted `value` is the raw enum string.
+const roles = [
+    { value: 'Admin',            label: 'Admin' },
+    { value: 'HRManager',        label: 'HR Manager' },
+    { value: 'HRPayrollUser',    label: 'HR Payroll User' },
+    { value: 'HRPayrollManager', label: 'HR Payroll Manager' },
+    { value: 'Employee',         label: 'Employee' },
+    { value: 'Intern',           label: 'Intern' },
+];
 const domains = ['Development', 'Design', 'Marketing', 'Sales', 'HR', 'Finance', 'Operations', 'Support', 'Management', 'Other'];
 const satPolicies = ['Week 1 & 3 Off', 'Week 2 & 4 Off', 'All Saturdays Working', 'All Saturdays Off'];
 const employmentStatuses = ['Intern', 'Probation', 'Permanent'];
@@ -41,38 +55,57 @@ const cardSx = {
     background: '#fff',
     borderRadius: '16px',
     padding: '24px',
-    boxShadow: '0 4px 14px rgba(0,0,0,0.08)'
+    boxShadow: '0 4px 14px rgba(0,0,0,0.08)',
 };
 
 const textFieldSx = {
-    '& .MuiOutlinedInput-root': {
-        borderRadius: '12px',
-        backgroundColor: '#fff'
-    },
-    '& .MuiInputLabel-root': {
-        color: '#666'
-    }
+    '& .MuiOutlinedInput-root': { borderRadius: '12px', backgroundColor: '#fff' },
+    '& .MuiInputLabel-root': { color: '#666' },
 };
 
 const formControlStyles = {
-    '& .MuiOutlinedInput-root': { 
-        borderRadius: '12px',
-        backgroundColor: '#fff'
-    },
-    '& .MuiInputBase-root': { 
-        borderRadius: '12px',
-        backgroundColor: '#fff'
-    },
-    '& .MuiInputLabel-root': {
-        color: '#666'
-    }
+    '& .MuiOutlinedInput-root': { borderRadius: '12px', backgroundColor: '#fff' },
+    '& .MuiInputBase-root': { borderRadius: '12px', backgroundColor: '#fff' },
+    '& .MuiInputLabel-root': { color: '#666' },
 };
 
 const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => {
     const [formData, setFormData] = useState(initialFormState);
     const [errors, setErrors] = useState({});
 
+    // ── Manager (reporting person) autocomplete state ────────────────────────
+    const [managerOptions, setManagerOptions] = useState([]);
+    const [managerLoading, setManagerLoading] = useState(false);
+    // The full object for the currently-selected manager (needed for Autocomplete value prop)
+    const [selectedManager, setSelectedManager] = useState(null);
+
     const isEditing = !!employee;
+
+    // Fetch all active employees for the manager dropdown whenever the dialog opens.
+    // Mirrors the same /admin/employees?all=true call used by AdminEmployeeProfileDialog.
+    useEffect(() => {
+        if (!open) return;
+        let active = true;
+        setManagerLoading(true);
+        api.get('/admin/employees?all=true')
+            .then(({ data }) => {
+                if (!active) return;
+                const list = Array.isArray(data) ? data : (data.employees || []);
+                setManagerOptions(list);
+            })
+            .catch(() => { /* non-fatal: dropdown stays empty */ })
+            .finally(() => { if (active) setManagerLoading(false); });
+        return () => { active = false; };
+    }, [open]);
+
+    // Resolve selected manager object from the stored ObjectId whenever employee or options change.
+    useEffect(() => {
+        if (!managerOptions.length) { setSelectedManager(null); return; }
+        const rpId = employee?.reportingPerson?._id || employee?.reportingPerson || '';
+        if (!rpId) { setSelectedManager(null); return; }
+        const match = managerOptions.find(opt => opt._id === rpId);
+        setSelectedManager(match || null);
+    }, [employee, managerOptions]);
 
     useEffect(() => {
         if (open) {
@@ -87,23 +120,23 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
                     designation: employee.designation || '',
                     department: employee.department || '',
                     joiningDate: employee.joiningDate ? new Date(employee.joiningDate).toISOString().slice(0, 10) : '',
-                    shiftGroup: employee.shiftGroup?._id || '',
-                    isActive: employee.isActive,
+                    shiftGroup: employee.shiftGroup?._id || employee.shiftGroup || '',
+                    reportingPerson: employee.reportingPerson?._id || employee.reportingPerson || '',
+                    isActive: employee.isActive !== false,
                     alternateSaturdayPolicy: employee.alternateSaturdayPolicy || 'All Saturdays Working',
                     employmentStatus: employee.employmentStatus || 'Probation',
                     probationDurationMonths: employee.probationDurationMonths || 3,
                     internshipDurationMonths: employee.internshipDurationMonths || 6,
                     workingDays: employee.workingDays || ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
                     leaveBalances: {
-                        paid: employee.leaveBalances?.paid || 0,
-                        sick: employee.leaveBalances?.sick || 0,
-                        // --- START OF FIX ---
-                        casual: employee.leaveBalances?.casual || 0,
-                        // --- END OF FIX ---
-                    }
+                        paid: employee.leaveBalances?.paid ?? 0,
+                        sick: employee.leaveBalances?.sick ?? 0,
+                        casual: employee.leaveBalances?.casual ?? 0,
+                    },
                 });
             } else {
                 setFormData(initialFormState);
+                setSelectedManager(null);
             }
             setErrors({});
         }
@@ -113,26 +146,36 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
-    
+
+    const handleSwitchChange = (e) => {
+        const { name, checked } = e.target;
+        setFormData(prev => ({ ...prev, [name]: checked }));
+    };
+
     const handleBalanceChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             leaveBalances: {
                 ...prev.leaveBalances,
-                [name]: value === '' ? '' : Number(value)
-            }
+                [name]: value === '' ? '' : Number(value),
+            },
         }));
     };
 
+    const handleManagerChange = (_, newValue) => {
+        setSelectedManager(newValue || null);
+        setFormData(prev => ({ ...prev, reportingPerson: newValue?._id || '' }));
+    };
+
     const validate = () => {
-        let tempErrors = {};
-        if (!formData.employeeCode) tempErrors.employeeCode = "Employee Code is required.";
-        if (!formData.fullName) tempErrors.fullName = "Full Name is required.";
-        if (!formData.email) tempErrors.email = "Email is required.";
-        if (!isEditing && !formData.password) tempErrors.password = "Password is required for new employees.";
+        const tempErrors = {};
+        if (!formData.employeeCode) tempErrors.employeeCode = 'Employee Code is required.';
+        if (!formData.fullName) tempErrors.fullName = 'Full Name is required.';
+        if (!formData.email) tempErrors.email = 'Email is required.';
+        if (!isEditing && !formData.password) tempErrors.password = 'Password is required for new employees.';
         if (formData.employmentStatus === 'Probation' && !formData.probationDurationMonths) {
-            tempErrors.probationDurationMonths = "Select a probation duration.";
+            tempErrors.probationDurationMonths = 'Select a probation duration.';
         }
         setErrors(tempErrors);
         return Object.keys(tempErrors).length === 0;
@@ -140,17 +183,12 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (validate()) {
-            const dataToSave = { ...formData };
-            
-            // Save email exactly as typed by admin (no normalization)
-            // Normalization is only applied in SSO authentication flow
-            
-            if (!dataToSave.password) {
-                delete dataToSave.password;
-            }
-            onSave(dataToSave);
-        }
+        if (!validate()) return;
+        const dataToSave = { ...formData };
+        if (!dataToSave.password) delete dataToSave.password;
+        // Send null when manager is cleared so the backend clears the field correctly.
+        if (!dataToSave.reportingPerson) dataToSave.reportingPerson = null;
+        onSave(dataToSave);
     };
 
     return (
@@ -170,112 +208,107 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
                     </IconButton>
                 </Stack>
             </DialogTitle>
+
             <DialogContent dividers sx={{ backgroundColor: '#f9fafb', px: 4, py: 4 }}>
                 <Stack spacing={3}>
+                    {/* ── Section 1 — Job Details ─────────────────────────────────────── */}
                     <Box sx={cardSx}>
                         <Typography variant="h6" fontWeight={700} gutterBottom>
                             Section 1 — Job Details
                         </Typography>
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    name="fullName" 
-                                    label="Full Name" 
-                                    value={formData.fullName} 
-                                    onChange={handleChange} 
-                                    fullWidth 
-                                    required 
-                                    error={!!errors.fullName} 
-                                    helperText={errors.fullName} 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="fullName" label="Full Name" value={formData.fullName}
+                                    onChange={handleChange} fullWidth required
+                                    error={!!errors.fullName} helperText={errors.fullName} sx={textFieldSx}
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    name="employeeCode" 
-                                    label="Employee Code" 
-                                    value={formData.employeeCode} 
-                                    onChange={handleChange} 
-                                    fullWidth 
-                                    required 
-                                    error={!!errors.employeeCode} 
-                                    helperText={errors.employeeCode} 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="employeeCode" label="Employee Code" value={formData.employeeCode}
+                                    onChange={handleChange} fullWidth required
+                                    error={!!errors.employeeCode} helperText={errors.employeeCode} sx={textFieldSx}
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    name="designation" 
-                                    label="Designation" 
-                                    value={formData.designation} 
-                                    onChange={handleChange} 
-                                    fullWidth 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="designation" label="Designation" value={formData.designation}
+                                    onChange={handleChange} fullWidth sx={textFieldSx}
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    name="department" 
-                                    label="Department" 
-                                    value={formData.department} 
-                                    onChange={handleChange} 
-                                    fullWidth 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="department" label="Department" value={formData.department}
+                                    onChange={handleChange} fullWidth sx={textFieldSx}
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    name="joiningDate" 
-                                    label="Joining Date" 
-                                    type="date" 
-                                    value={formData.joiningDate} 
-                                    onChange={handleChange} 
-                                    fullWidth 
-                                    InputLabelProps={{ shrink: true }} 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="joiningDate" label="Joining Date" type="date" value={formData.joiningDate}
+                                    onChange={handleChange} fullWidth InputLabelProps={{ shrink: true }} sx={textFieldSx}
+                                />
+                            </Grid>
+
+                            {/* Manager — mirrors reportingPerson in AdminEmployeeProfileDialog */}
+                            <Grid item xs={12} md={6}>
+                                <Autocomplete
+                                    options={managerOptions}
+                                    loading={managerLoading}
+                                    value={selectedManager}
+                                    onChange={handleManagerChange}
+                                    getOptionLabel={(opt) =>
+                                        opt.fullName
+                                            ? `${opt.fullName}${opt.employeeCode ? ` (${opt.employeeCode})` : ''}`
+                                            : ''
+                                    }
+                                    isOptionEqualToValue={(opt, val) => opt._id === val?._id}
+                                    // Exclude the employee being edited from their own manager list
+                                    filterOptions={(opts) =>
+                                        opts.filter(o => !isEditing || o._id !== employee?._id)
+                                    }
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            label="Manager (Reporting Person)"
+                                            placeholder="Search by name…"
+                                            sx={textFieldSx}
+                                        />
+                                    )}
+                                    sx={{ '& .MuiOutlinedInput-root': { borderRadius: '12px' } }}
                                 />
                             </Grid>
                         </Grid>
                     </Box>
 
+                    {/* ── Section 2 — System & Access ─────────────────────────────────── */}
                     <Box sx={cardSx}>
                         <Typography variant="h6" fontWeight={700} gutterBottom>
                             Section 2 — System & Access
                         </Typography>
                         <Grid container spacing={3}>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    name="email" 
-                                    label="Email Address" 
-                                    type="email" 
-                                    value={formData.email} 
-                                    onChange={handleChange}
-                                    fullWidth 
-                                    required 
-                                    error={!!errors.email} 
-                                    helperText={errors.email} 
-                                    sx={textFieldSx}
+                                <TextField
+                                    name="email" label="Email Address" type="email" value={formData.email}
+                                    onChange={handleChange} fullWidth required
+                                    error={!!errors.email} helperText={errors.email} sx={textFieldSx}
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
-                                <TextField 
-                                    name="password" 
-                                    label="Password" 
-                                    type="password" 
-                                    value={formData.password} 
-                                    onChange={handleChange} 
-                                    fullWidth 
-                                    required={!isEditing} 
-                                    helperText={isEditing ? "Leave blank to keep current password" : "Required for new employee"} 
-                                    error={!!errors.password} 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="password" label="Password" type="password" value={formData.password}
+                                    onChange={handleChange} fullWidth required={!isEditing}
+                                    helperText={isEditing ? 'Leave blank to keep current password' : 'Required for new employee'}
+                                    error={!!errors.password} sx={textFieldSx}
                                 />
                             </Grid>
                             <Grid item xs={12} md={6}>
                                 <FormControl fullWidth sx={formControlStyles}>
                                     <InputLabel>Role</InputLabel>
                                     <Select name="role" label="Role" value={formData.role} onChange={handleChange}>
-                                        {roles.map(r => <MenuItem key={r} value={r}>{r}</MenuItem>)}
+                                        {roles.map(r => (
+                                            <MenuItem key={r.value} value={r.value}>{r.label}</MenuItem>
+                                        ))}
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -288,21 +321,61 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
                                     </Select>
                                 </FormControl>
                             </Grid>
+
+                            {/* Active / Inactive status toggle — previously only on the list row */}
+                            <Grid item xs={12} md={6}>
+                                <Box
+                                    sx={{
+                                        border: '1px solid #e0e0e0',
+                                        borderRadius: '12px',
+                                        px: 2,
+                                        py: 1.5,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        backgroundColor: '#fff',
+                                    }}
+                                >
+                                    <Box>
+                                        <Typography variant="body2" fontWeight={600} color="text.primary">
+                                            Account Status
+                                        </Typography>
+                                        <Typography variant="caption" color="text.secondary">
+                                            {formData.isActive ? 'Active — can log in and clock in' : 'Inactive — login blocked'}
+                                        </Typography>
+                                    </Box>
+                                    <FormControlLabel
+                                        control={
+                                            <Switch
+                                                name="isActive"
+                                                checked={formData.isActive}
+                                                onChange={handleSwitchChange}
+                                                color="success"
+                                            />
+                                        }
+                                        label={formData.isActive ? 'Active' : 'Inactive'}
+                                        labelPlacement="start"
+                                        sx={{ m: 0, gap: 1 }}
+                                    />
+                                </Box>
+                            </Grid>
                         </Grid>
                     </Box>
-                    
+
+                    {/* ── Section 3 — Work & Leave Policy ─────────────────────────────── */}
                     <Box sx={cardSx}>
                         <Typography variant="h6" fontWeight={700} gutterBottom>
-                            Section 3 — Work & Leave Policy
+                            Section 3 — Work &amp; Leave Policy
                         </Typography>
                         <Grid container spacing={3}>
-                            {/* Row 1: Policy Settings - 4 equal columns */}
                             <Grid item xs={12} sm={6} md={3}>
                                 <FormControl fullWidth sx={formControlStyles}>
                                     <InputLabel>Shift Group</InputLabel>
                                     <Select name="shiftGroup" label="Shift Group" value={formData.shiftGroup} onChange={handleChange}>
                                         <MenuItem value=""><em>None</em></MenuItem>
-                                        {shifts?.map(s => <MenuItem key={s._id} value={s._id}>{s.shiftName}</MenuItem>)}
+                                        {shifts?.map(s => (
+                                            <MenuItem key={s._id} value={s._id}>{s.shiftName}</MenuItem>
+                                        ))}
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -343,7 +416,9 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
                                     <FormControl fullWidth sx={formControlStyles}>
                                         <InputLabel>Internship Duration</InputLabel>
                                         <Select name="internshipDurationMonths" label="Internship Duration" value={formData.internshipDurationMonths} onChange={handleChange}>
-                                            {monthOptions.map(m => <MenuItem key={m} value={m}>{m} Month{m > 1 ? 's' : ''}</MenuItem>)}
+                                            {monthOptions.map(m => (
+                                                <MenuItem key={m} value={m}>{m} Month{m > 1 ? 's' : ''}</MenuItem>
+                                            ))}
                                         </Select>
                                     </FormControl>
                                 </Grid>
@@ -352,9 +427,7 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
                                 <Grid item xs={12} sm={6} md={3}>
                                     <FormControl fullWidth sx={formControlStyles}>
                                         <InputLabel>Duration</InputLabel>
-                                        <Select disabled>
-                                            <MenuItem value="">Permanent</MenuItem>
-                                        </Select>
+                                        <Select disabled><MenuItem value="">Permanent</MenuItem></Select>
                                     </FormControl>
                                 </Grid>
                             )}
@@ -366,43 +439,31 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
                                     </Select>
                                 </FormControl>
                             </Grid>
-                            
-                            {/* Row 2: Leave Balances - 3 equal columns */}
+
+                            {/* Leave Balances */}
                             <Grid item xs={12} sm={4} md={4}>
-                                <TextField 
-                                    name="sick" 
-                                    label="Sick Leaves Balance" 
-                                    type="number" 
-                                    value={formData.leaveBalances.sick} 
-                                    onChange={handleBalanceChange} 
-                                    fullWidth 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="sick" label="Sick Leaves Balance" type="number"
+                                    value={formData.leaveBalances.sick} onChange={handleBalanceChange}
+                                    fullWidth sx={textFieldSx}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4} md={4}>
-                                <TextField 
-                                    name="casual" 
-                                    label="Casual Leaves Balance" 
-                                    type="number" 
-                                    value={formData.leaveBalances.casual} 
-                                    onChange={handleBalanceChange} 
-                                    fullWidth 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="casual" label="Casual Leaves Balance" type="number"
+                                    value={formData.leaveBalances.casual} onChange={handleBalanceChange}
+                                    fullWidth sx={textFieldSx}
                                 />
                             </Grid>
                             <Grid item xs={12} sm={4} md={4}>
-                                <TextField 
-                                    name="paid" 
-                                    label="Planned Leaves Balance" 
-                                    type="number" 
-                                    value={formData.leaveBalances.paid} 
-                                    onChange={handleBalanceChange} 
-                                    fullWidth 
-                                    sx={textFieldSx} 
+                                <TextField
+                                    name="paid" label="Planned Leaves Balance" type="number"
+                                    value={formData.leaveBalances.paid} onChange={handleBalanceChange}
+                                    fullWidth sx={textFieldSx}
                                 />
                             </Grid>
-                            
-                            {/* Row 3: Working Days - Full width */}
+
+                            {/* Working Days */}
                             <Grid item xs={12}>
                                 <FormControl fullWidth sx={formControlStyles}>
                                     <InputLabel>Working Days</InputLabel>
@@ -414,11 +475,13 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
                                         input={<OutlinedInput label="Working Days" sx={{ borderRadius: '12px' }} />}
                                         renderValue={(selected) => (
                                             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                                {selected.map((value) => <Chip key={value} label={value} />)}
+                                                {selected.map(v => <Chip key={v} label={v} />)}
                                             </Box>
                                         )}
                                     >
-                                        {allWeekDays.map((day) => (<MenuItem key={day} value={day}>{day}</MenuItem>))}
+                                        {allWeekDays.map(day => (
+                                            <MenuItem key={day} value={day}>{day}</MenuItem>
+                                        ))}
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -426,24 +489,16 @@ const EmployeeForm = ({ open, onClose, onSave, employee, shifts, isSaving }) => 
                     </Box>
                 </Stack>
             </DialogContent>
+
             <DialogActions sx={{ px: 4, py: 3, gap: 1.5 }}>
-                <Button 
-                    onClick={onClose} 
-                    variant="outlined"
-                    sx={{ borderRadius: '12px' }}
-                >
+                <Button onClick={onClose} variant="outlined" sx={{ borderRadius: '12px' }}>
                     Cancel
                 </Button>
-                <Button 
-                    onClick={handleSubmit} 
-                    variant="contained" 
-                    disabled={isSaving} 
-                    sx={{
-                        backgroundColor: '#E53935',
-                        borderRadius: '12px',
-                        minWidth: 140,
-                        '&:hover': { backgroundColor: '#d32f2f' }
-                    }}
+                <Button
+                    onClick={handleSubmit}
+                    variant="contained"
+                    disabled={isSaving}
+                    sx={{ backgroundColor: '#E53935', borderRadius: '12px', minWidth: 140, '&:hover': { backgroundColor: '#d32f2f' } }}
                 >
                     {isSaving ? <SkeletonBox width="22px" height="22px" borderRadius="50%" /> : 'Save'}
                 </Button>

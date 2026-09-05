@@ -47,6 +47,9 @@ const PayrollManagementPage = lazy(() => import('./pages/PayrollManagementPage')
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 const LiveAttendancePage = lazy(() => import('./pages/LiveAttendancePage'));
 const EmployeeDetailedAnalyticsPage = lazy(() => import('./pages/EmployeeDetailedAnalyticsPage'));
+const PayrunProcessingPage = lazy(() => import('./pages/PayrunProcessingPage'));
+const SalaryStructuresPage = lazy(() => import('./pages/SalaryStructuresPage'));
+const SalaryRulesPage = lazy(() => import('./pages/SalaryRulesPage'));
 // FIX: Static import to prevent skeleton flash during auth resolution
 import ProfilePage from './pages/ProfilePage';
 const AdminPoliciesPage = lazy(() => import('./pages/AdminPoliciesPage'));
@@ -59,6 +62,7 @@ const AdminRequestsPage = lazy(() => import('./pages/AdminRequestsPage'));
 const HolidayManagementPage = lazy(() => import('./pages/admin/HolidayManagementPage'));
 const TimeOffTypesListPage = lazy(() => import('./pages/TimeOffTypesListPage'));
 const AllocationsListPage = lazy(() => import('./pages/AllocationsListPage'));
+const ContractsPage = lazy(() => import('./pages/ContractsPage'));
 // Static import - must render before auth resolves, no login required
 import PublicProfileForm from './pages/PublicProfileForm';
 
@@ -370,6 +374,12 @@ function App() {
                                                 <AllocationsListPage />
                                             </Suspense>
                                         } />
+                                        {/* ── Contracts ── */}
+                                        <Route path="/contracts" element={
+                                            <Suspense fallback={<DelayedFallback><PageLoader type="table" /></DelayedFallback>}>
+                                                <ContractsPage />
+                                            </Suspense>
+                                        } />
                                         <Route path="/admin/policies" element={
                                             <Suspense fallback={<DelayedFallback><PageLoader /></DelayedFallback>}>
                                                 <AdminPoliciesPage />
@@ -413,6 +423,28 @@ function App() {
                                             </Suspense>
                                         } />
                                     </Route>
+
+                                        {/* ── Payroll ── */}
+                                        <Route path="/payroll" element={
+                                            <Suspense fallback={<DelayedFallback><PageLoader /></DelayedFallback>}>
+                                                <PayrollManagementPage />
+                                            </Suspense>
+                                        } />
+                                        <Route path="/payroll/payruns/:id" element={
+                                            <Suspense fallback={<DelayedFallback><PageLoader type="table" /></DelayedFallback>}>
+                                                <PayrunProcessingPage />
+                                            </Suspense>
+                                        } />
+                                        <Route path="/payroll/salary-structures" element={
+                                            <Suspense fallback={<DelayedFallback><PageLoader type="table" /></DelayedFallback>}>
+                                                <SalaryStructuresPage />
+                                            </Suspense>
+                                        } />
+                                        <Route path="/payroll/salary-rules" element={
+                                            <Suspense fallback={<DelayedFallback><PageLoader type="table" /></DelayedFallback>}>
+                                                <SalaryRulesPage />
+                                            </Suspense>
+                                        } />
 
                                     {/* Catch-all route - redirect to login for unknown routes */}
                                     <Route path="*" element={<Navigate to="/login" replace />} />

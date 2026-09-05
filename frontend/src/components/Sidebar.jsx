@@ -18,10 +18,12 @@ import PolicyIcon from '@mui/icons-material/Policy';
 import BarChartIcon from '@mui/icons-material/BarChart';
 import GroupsIcon from '@mui/icons-material/Groups';
 import Inventory2Icon from '@mui/icons-material/Inventory2';
+import CategoryIcon from '@mui/icons-material/Category';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import BeachAccessIcon from '@mui/icons-material/BeachAccess';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import CategoryIcon from '@mui/icons-material/Category';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import PaymentsIcon from '@mui/icons-material/Payments';
 
 import useNewNotifications from '../hooks/useNewNotifications';
 import { useAuth } from '../context/AuthContext';
@@ -53,6 +55,41 @@ const Sidebar = ({ onNotificationClick, isMobileOpen = false, onClose = () => {}
             tourId: 'sidebar-attendance',
         },
         { text: 'Employees', icon: <PeopleIcon />, path: '/employees', roles: ['HR', 'Admin', 'HRManager', 'HRPayrollUser', 'HRPayrollManager'] },
+        { text: 'Contracts', icon: <DescriptionOutlinedIcon />, path: '/contracts', roles: ['Admin', 'HRManager', 'HRPayrollUser', 'HRPayrollManager'] },
+
+        // ── Payroll parent ─────────────────────────────────────────────────────
+        {
+            text: 'Payroll',
+            icon: <PaymentsIcon />,
+            roles: ['Admin', 'HRPayrollUser', 'HRPayrollManager'],
+            children: [
+                {
+                    text: 'Dashboard',
+                    icon: <BarChartIcon />,
+                    path: '/payroll',
+                    roles: ['Admin', 'HRPayrollUser', 'HRPayrollManager'],
+                },
+                {
+                    text: 'Payruns',
+                    icon: <AssessmentIcon />,
+                    path: '/payroll',
+                    roles: ['Admin', 'HRPayrollUser', 'HRPayrollManager'],
+                },
+                {
+                    text: 'Salary Structures',
+                    icon: <DescriptionOutlinedIcon />,
+                    path: '/payroll/salary-structures',
+                    roles: ['Admin', 'HRPayrollManager'],
+                },
+                {
+                    text: 'Salary Rules',
+                    icon: <CategoryIcon />,
+                    path: '/payroll/salary-rules',
+                    roles: ['Admin', 'HRPayrollManager'],
+                },
+            ],
+        },
+
         { text: 'Scheduling', icon: <TimelapseIcon />, path: '/scheduling-management', roles: ['Admin'] },
         { text: 'Policies & CIF', icon: <PolicyIcon />, path: '/admin/policies', roles: ['Admin'], hidden: true },
         { text: 'Manage Section', icon: <AdminPanelSettingsIcon />, path: '/manage-section', roles: ['Admin'], hidden: true },

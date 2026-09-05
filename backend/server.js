@@ -54,6 +54,11 @@ require('./models/EmployeeDocument');
 require('./models/DocumentTemplate');
 require('./models/EmployeeKycDocument');
 require('./models/HRQuery');
+require('./models/SalaryRule');
+require('./models/SalaryStructure');
+require('./models/Contract');
+require('./models/Payrun');
+require('./models/Payslip');
 
 // Route Imports
 const authRoutes = require('./routes/auth');
@@ -285,6 +290,12 @@ app.use('/api/time-off-types', timeOffTypeRoutes);
 
 const allocationRoutes = require('./routes/allocations');
 app.use('/api/allocations', allocationRoutes);
+
+const contractRoutes = require('./routes/contractRoutes');
+app.use('/api/admin/contracts', contractRoutes);
+
+const salaryConfigRoutes = require('./routes/salaryConfigRoutes');
+app.use('/api', salaryConfigRoutes);   // mounts /api/salary-structures and /api/salary-rules
 
 const announcementRoutes = require('./routes/announcementRoutes');
 app.use('/api/announcements', announcementRoutes);

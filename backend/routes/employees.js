@@ -644,12 +644,11 @@ router.get('/:id/probation-status', [authenticateToken, isAdminOrHr], async (req
 });
 
 // GET /api/admin/employees/:id/counts
-// Returns live counts for smart buttons in the employee profile dialog.
-// Only attendanceCount and timeOffCount are returned — Contracts and Allocations
-// do not exist in this codebase yet and will be added in a separate phase.
-// TODO: When Contract and Allocation models are introduced, add contractCount and
-//       allocationCount here so the dialog's "Contracts" and "Allocations" buttons
-//       can show real data instead of the current "Coming soon" state.
+// Returns live counts for all four smart buttons in the employee profile dialog:
+//   attendanceCount  — AttendanceLog records for this employee
+//   timeOffCount     — LeaveRequest records for this employee
+//   contractCount    — Contract records for this employee
+//   allocationCount  — Allocation records for this employee
 router.get('/:id/counts', [authenticateToken, isAdminOrHr], async (req, res) => {
     const { id } = req.params;
     try {
@@ -657,13 +656,19 @@ router.get('/:id/counts', [authenticateToken, isAdminOrHr], async (req, res) => 
             return res.status(400).json({ error: 'Invalid employee ID.' });
         }
 
-        // Run both counts in parallel — no need for sequential awaits
-        const [attendanceCount, timeOffCount] = await Promise.all([
-            AttendanceLog.countDocuments({ user: new mongoose.Types.ObjectId(id) }),
-            LeaveRequest.countDocuments({ employee: new mongoose.Types.ObjectId(id) }),
+        const Contract   = require('../models/Contract');
+        const Allocation = require('../models/Allocation');
+        const oid = new mongoose.Types.ObjectId(id);
+
+        // Run all four counts in parallel
+        const [attendanceCount, timeOffCount, contractCount, allocationCount] = await Promise.all([
+            AttendanceLog.countDocuments({ user: oid }),
+            LeaveRequest.countDocuments({ employee: oid }),
+            Contract.countDocuments({ employee: oid }),
+            Allocation.countDocuments({ employee: oid }),
         ]);
 
-        res.json({ attendanceCount, timeOffCount });
+        res.json({ attendanceCount, timeOffCount, contractCount, allocationCount });
     } catch (error) {
         console.error('[Employee Counts] Failed to fetch counts for employee', id, error);
         res.status(500).json({ error: 'Failed to fetch employee counts.' });
