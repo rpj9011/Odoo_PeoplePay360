@@ -232,3 +232,87 @@
     min-height: 48px;
   }
 }
+
+/* --- Submenu (Time Off children) --- */
+.sidebar-submenu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 4px 0 2px;
+}
+
+.sidebar-submenu-child {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  width: 52px;
+  height: 52px;
+  border-radius: 10px;
+  position: relative;
+  transition: background-color 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.sidebar-submenu-child:hover {
+  background-color: var(--sidebar-link-hover-bg);
+}
+
+.sidebar-submenu-child .icon-container {
+  width: 28px;
+  height: 28px;
+  margin-bottom: 4px;
+}
+
+.sidebar-submenu-child .sidebar-label {
+  font-size: 7.5px;
+}
+
+.sidebar-submenu-child.active .icon-container {
+  background-color: var(--sidebar-active-bg);
+}
+
+.sidebar-submenu-child.active .icon-container .MuiSvgIcon-root {
+  color: var(--sidebar-icon-active);
+}
+
+.sidebar-submenu-child.active .sidebar-label {
+  color: var(--sidebar-text-active);
+}
+
+/* Tooltip for submenu children */
+.sidebar-submenu-child::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: calc(100% + 8px);
+  top: 50%;
+  transform: translateY(-50%) scale(0.95);
+  background-color: var(--sidebar-tooltip-bg);
+  color: var(--sidebar-icon-active);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+  z-index: 1020;
+}
+
+.sidebar-submenu-child:hover::after {
+  opacity: 1;
+  transform: translateY(-50%) scale(1);
+}
+
+/* Parent item open/active state when submenu is expanded */
+.sidebar-link.submenu-parent-active .icon-container {
+  background-color: rgba(211, 47, 47, 0.25);
+}
+
+.sidebar-link.submenu-parent-active .sidebar-label {
+  color: #fff;
+}

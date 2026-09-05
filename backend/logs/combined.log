@@ -1,0 +1,891 @@
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/active?_t=1788593827897',
+  statusCode: 404,
+  duration: '21ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 13:07:07'
+}
+{
+  service: 'attendance-system',
+  method: 'POST',
+  url: '/refresh',
+  statusCode: 401,
+  duration: '26ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 13:22:55'
+}
+{
+  service: 'attendance-system',
+  method: 'POST',
+  url: '/refresh',
+  statusCode: 401,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 13:22:55'
+}
+{
+  service: 'attendance-system',
+  method: 'POST',
+  url: '/login',
+  statusCode: 401,
+  duration: '13ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 13:22:57'
+}
+{
+  service: 'attendance-system',
+  method: 'POST',
+  url: '/refresh',
+  statusCode: 401,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 13:26:41'
+}
+{
+  service: 'attendance-system',
+  method: 'POST',
+  url: '/refresh',
+  statusCode: 401,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 13:26:42'
+}
+{
+  service: 'attendance-system',
+  method: 'POST',
+  url: '/refresh',
+  statusCode: 401,
+  duration: '4ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 13:55:06'
+}
+{
+  service: 'attendance-system',
+  method: 'POST',
+  url: '/refresh',
+  statusCode: 401,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 13:55:06'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:00:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:00:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:00:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:00:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:00:36'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:00:36'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:00:36'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:00:36'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:01:52'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:01:52'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:01:52'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:01:52'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:02:29'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:02:29'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:02:29'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:02:29'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:01'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:01'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:01'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:01'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:24'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:24'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:24'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:24'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:43'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:43'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:43'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:03:43'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:04:44'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:04:44'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:05:00'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:05:00'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:05:03'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:05:03'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:06:34'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:06:34'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:18:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '2ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:18:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '2ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:18:55'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '2ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:18:56'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:18:56'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:18:56'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:24:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:24:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:28:38'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:28:38'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:28:38'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:28:38'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '3ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:29:46'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:29:46'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:29:49'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:29:49'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:29:49'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:29:49'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/leaves/year-end-requests?employeeId=6a9bd03b2ad475ed1403b102&year=2025',
+  statusCode: 400,
+  duration: '3ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:29:50'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/leaves/year-end-requests?employeeId=6a9bd03b2ad475ed1403b102&year=2025',
+  statusCode: 400,
+  duration: '3ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:09'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/leaves/year-end-requests?employeeId=6a9bd03b2ad475ed1403b102&year=2025',
+  statusCode: 400,
+  duration: '2ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:17'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:24'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:24'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:24'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:24'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/leaves/year-end-requests?employeeId=6a9bd03b2ad475ed1403b102&year=2025',
+  statusCode: 400,
+  duration: '2ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:25'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:27'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/leaves/year-end-requests?employeeId=6a9bd03b2ad475ed1403b125&year=2025',
+  statusCode: 400,
+  duration: '2ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:30:29'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/leaves/year-end-requests?employeeId=6a9bd03b2ad475ed1403b125&year=2025',
+  statusCode: 400,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:32:26'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/leaves/year-end-requests?employeeId=6a9bd03b2ad475ed1403b125&year=2025',
+  statusCode: 400,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:32:36'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:34:23'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:34:23'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '1ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:34:23'
+}
+{
+  service: 'attendance-system',
+  method: 'GET',
+  url: '/analytics/monthly-context-settings',
+  statusCode: 404,
+  duration: '0ms',
+  ip: '127.0.0.1',
+  level: 'info',
+  message: 'Request',
+  timestamp: '2026-09-05 14:34:23'
+}

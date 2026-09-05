@@ -6,7 +6,12 @@ const userSchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
-  role: { type: String, enum: ['Admin', 'HR', 'Employee', 'Intern'], default: 'Employee' },
+  // MIGRATION NOTE (2026): 'HR' was the original single HR role. It has been split into:
+  //   HRManager       – full CRUD on Employees/Attendance/Contracts/Leave/TimeOff; no payroll writes
+  //   HRPayrollUser   – read-only on SalaryStructures/Rules; Create/Read/Update on Payruns & Payslips
+  //   HRPayrollManager – full CRUD on all payroll entities
+  // Existing documents with role:'HR' should be migrated to 'HRManager' via backend/scripts/migrate-hr-role.js
+  role: { type: String, enum: ['Admin', 'HRManager', 'HRPayrollUser', 'HRPayrollManager', 'Employee', 'Intern'], default: 'Employee' },
   authMethod: { type: String, enum: ['local', 'SSO'], default: 'local' },
   domain: { type: String },
   designation: { type: String },

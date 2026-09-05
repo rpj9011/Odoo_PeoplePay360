@@ -280,6 +280,12 @@ app.use('/api/admin/holiday-dataset', datasetRoutes);
 const leaveAccrualRoutes = require('./routes/leaveAccrual');
 app.use('/api/admin/leave-accrual', leaveAccrualRoutes);
 
+const timeOffTypeRoutes = require('./routes/timeOffTypes');
+app.use('/api/time-off-types', timeOffTypeRoutes);
+
+const allocationRoutes = require('./routes/allocations');
+app.use('/api/allocations', allocationRoutes);
+
 const announcementRoutes = require('./routes/announcementRoutes');
 app.use('/api/announcements', announcementRoutes);
 

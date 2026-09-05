@@ -1,8 +1,10 @@
 const User = require('../models/User');
+const { HR_FAMILY } = require('../config/roles');
 
 /**
  * View-only live attendance access for delegated employees.
- * Admin/HR already have the full dashboard and are excluded here.
+ * HR-family roles get the full admin dashboard and are EXCLUDED from this
+ * live-board view (same behaviour as the old Admin/HR exclusion).
  */
 async function requireLiveAttendanceAccess(req, res, next) {
     try {
@@ -10,7 +12,9 @@ async function requireLiveAttendanceAccess(req, res, next) {
             return res.status(401).json({ error: 'Authentication required.' });
         }
 
-        if (['Admin', 'HR'].includes(req.user.role)) {
+        // HR family (Admin, HRManager, HRPayrollUser, HRPayrollManager) use the
+        // admin dashboard — they do not need the employee live-board view.
+        if (HR_FAMILY.includes(req.user.role)) {
             return res.status(403).json({ error: 'This view is not available for admin users.' });
         }
 

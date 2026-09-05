@@ -42,6 +42,7 @@ const ManageSectionPage = lazy(() => import('./pages/ManageSectionPage'));
 const SSOCallbackPage = lazy(() => import('./pages/SSOCallbackPage'));
 const EmployeeMusterRollPage = lazy(() => import('./pages/EmployeeMusterRollPage'));
 const LeavesTrackerPage = lazy(() => import('./pages/LeavesTrackerPage'));
+const LeaveRequestDetailPage = lazy(() => import('./pages/LeaveRequestDetailPage'));
 const PayrollManagementPage = lazy(() => import('./pages/PayrollManagementPage'));
 const AnalyticsPage = lazy(() => import('./pages/AnalyticsPage'));
 const LiveAttendancePage = lazy(() => import('./pages/LiveAttendancePage'));
@@ -56,6 +57,8 @@ const ProbationPage = lazy(() => import('./pages/ProbationPage'));
 const RequestsPage = lazy(() => import('./pages/RequestsPage'));
 const AdminRequestsPage = lazy(() => import('./pages/AdminRequestsPage'));
 const HolidayManagementPage = lazy(() => import('./pages/admin/HolidayManagementPage'));
+const TimeOffTypesListPage = lazy(() => import('./pages/TimeOffTypesListPage'));
+const AllocationsListPage = lazy(() => import('./pages/AllocationsListPage'));
 // Static import - must render before auth resolves, no login required
 import PublicProfileForm from './pages/PublicProfileForm';
 
@@ -348,6 +351,23 @@ function App() {
                                         <Route path="/admin/leaves/more-options/leaves-tracker" element={
                                             <Suspense fallback={<DelayedFallback><PageLoader /></DelayedFallback>}>
                                                 <LeavesTrackerPage />
+                                            </Suspense>
+                                        } />
+                                        <Route path="/admin/leaves/requests/:requestId" element={
+                                            <Suspense fallback={<DelayedFallback><PageLoader /></DelayedFallback>}>
+                                                <LeaveRequestDetailPage />
+                                            </Suspense>
+                                        } />
+
+                                        {/* ── Time Off sub-routes (reachable via Sidebar "Time Off ▼") ── */}
+                                        <Route path="/time-off/types" element={
+                                            <Suspense fallback={<DelayedFallback><PageLoader type="table" /></DelayedFallback>}>
+                                                <TimeOffTypesListPage />
+                                            </Suspense>
+                                        } />
+                                        <Route path="/time-off/allocations" element={
+                                            <Suspense fallback={<DelayedFallback><PageLoader type="table" /></DelayedFallback>}>
+                                                <AllocationsListPage />
                                             </Suspense>
                                         } />
                                         <Route path="/admin/policies" element={

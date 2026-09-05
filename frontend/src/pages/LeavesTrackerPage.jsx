@@ -26,6 +26,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from '../api/axios';
+import useEmployeeLeaveBalance from '../hooks/useEmployeeLeaveBalance';
 import { formatLeaveRequestType } from '../utils/saturdayUtils';
 import AdminLeaveForm from '../components/AdminLeaveForm';
 import PageHeroHeader from '../components/PageHeroHeader';
@@ -546,6 +547,37 @@ const LeavesTrackerPage = () => {
   const [dialogSelectedYear, setDialogSelectedYear] = useState(new Date().getFullYear());
   const [leaveUsageData, setLeaveUsageData] = useState(null);
   const [loadingLeaveUsage, setLoadingLeaveUsage] = useState(false);
+
+  // Resolve full employee object for the dialog (partial objects from Requests tab lack entitlements/balances)
+  const dialogEmployeeFull = useMemo(() => {
+    if (!dialogEmployee?._id) return null;
+    return employees.find(e => e._id === dialogEmployee._id) || dialogEmployee;
+  }, [dialogEmployee, employees]);
+
+  // Shared hook — replaces the inline fetchLeaveUsageForYear logic
+  const {
+    loading: hookLoadingLeaveUsage,
+    data: hookLeaveUsageData,
+    refetch: refetchLeaveUsage,
+  } = useEmployeeLeaveBalance(
+    showEmployeeDialog ? dialogEmployeeFull?._id : null,
+    dialogSelectedYear,
+    dialogEmployeeFull
+  );
+
+  // Sync hook results into the existing leaveUsageData/loadingLeaveUsage state vars
+  // so the rest of the JSX (300+ lines) continues to work without changes.
+  useEffect(() => {
+    setLoadingLeaveUsage(hookLoadingLeaveUsage);
+  }, [hookLoadingLeaveUsage]);
+
+  useEffect(() => {
+    if (!showEmployeeDialog) {
+      setLeaveUsageData(null);
+    } else {
+      setLeaveUsageData(hookLeaveUsageData);
+    }
+  }, [hookLeaveUsageData, showEmployeeDialog]);
   const [allocateForm, setAllocateForm] = useState({
     employeeId: '', sickLeaveEntitlement: 12, casualLeaveEntitlement: 12, paidLeaveEntitlement: 0, year: new Date().getFullYear() });
   const [bulkAllocateForm, setBulkAllocateForm] = useState({
@@ -870,10 +902,9 @@ const LeavesTrackerPage = () => {
         setSnackbar({ open: true, message: 'Leave entitlements updated successfully!', severity: 'success' });
         setShowUpdateLeavesDialog(false);
         fetchAllData();
-        // Refresh the employee dialog data
+        // Refresh the employee dialog data via shared hook
         if (dialogEmployee?._id) {
-            const fullEmp = employees.find(e => e._id === dialogEmployee._id) || dialogEmployee;
-            fetchLeaveUsageForYear(dialogEmployee._id, updateLeavesForm.year, fullEmp);
+            refetchLeaveUsage();
         }
     } catch (error) {
         console.error('Error updating leaves:', error);
@@ -884,106 +915,6 @@ const LeavesTrackerPage = () => {
 
   const handleBack = () => navigate(-1);
   
-  // FIXED: Fetch leave usage data - optimized to only fetch employee-specific data
-  const fetchLeaveUsageForYear = useCallback(async (employeeId, year, employeeData) => {
-    if (!employeeId || !year) return;
-    
-    setLoadingLeaveUsage(true);
-    try {
-      // Get previous year (year - 1) - this is what we're analyzing for year-end summary
-      const previousYear = year - 1;
-      
-      // FIXED: Fetch employee-specific data only - no global fetching
-      const [leaveRequestsResPrevious, leaveRequestsResCurrent, yearEndRes] = await Promise.all([
-        axios.get(`/admin/leaves/employee/${employeeId}?year=${previousYear}`),
-        axios.get(`/admin/leaves/employee/${employeeId}?year=${year}`),
-        // FIXED: Fetch employee-specific year-end requests only
-        axios.get(`/admin/leaves/year-end-requests?employeeId=${employeeId}&year=${previousYear}`)
-      ]);
-
-      const allLeaveRequestsPrevious = leaveRequestsResPrevious.data || [];
-      const allLeaveRequestsCurrent = leaveRequestsResCurrent.data || [];
-      
-      // Filter out YEAR_END requests from normal leave requests
-      const normalLeaveRequestsPrevious = allLeaveRequestsPrevious.filter(r => r.requestType !== 'YEAR_END');
-      const normalLeaveRequestsCurrent = allLeaveRequestsCurrent.filter(r => r.requestType !== 'YEAR_END');
-      
-      // FIXED: Backend already filtered by employeeId - no client-side filtering needed
-      const employeeYearEndRequests = yearEndRes.data.requests || yearEndRes.data || [];
-
-      // Calculate utilized leaves by type for the PREVIOUS year
-      const utilized = { sick: 0, casual: 0, paid: 0, lop: 0 };
-      normalLeaveRequestsPrevious.forEach(leave => {
-        if (leave.status === 'Approved') {
-          const days = leave.leaveDates.length * (leave.leaveType?.startsWith('Half Day') ? 0.5 : 1);
-          if (leave.requestType === 'Sick') utilized.sick += days;
-          else if (leave.requestType === 'Casual') utilized.casual += days;
-          else if (leave.requestType === 'Planned') utilized.paid += days;
-          else if (leave.requestType === 'Loss of Pay') utilized.lop += days;
-        }
-      });
-      
-      // For previous year opening balance, we need to check what was allocated at the start of that year
-      // This would typically be in leaveEntitlements, but we need historical data
-      // For now, we'll use current entitlements as a proxy, but ideally this should come from historical records
-      const previousYearOpening = {
-        sick: employeeData?.leaveEntitlements?.sick ?? 6,
-        casual: employeeData?.leaveEntitlements?.casual ?? 6,
-        paid: employeeData?.leaveEntitlements?.paid ?? 10
-      };
-
-      // Group year-end requests by leave type
-      const yearEndByType = {};
-      employeeYearEndRequests.forEach(req => {
-        const leaveType = req.yearEndLeaveType?.toLowerCase() || 'unknown';
-        if (!yearEndByType[leaveType]) {
-          yearEndByType[leaveType] = [];
-        }
-        yearEndByType[leaveType].push(req);
-      });
-
-      // Calculate remaining before year-end (opening - utilized)
-      const remainingBeforeYearEnd = {
-        sick: Math.max(0, previousYearOpening.sick - utilized.sick),
-        casual: Math.max(0, previousYearOpening.casual - utilized.casual),
-        paid: Math.max(0, previousYearOpening.paid - utilized.paid)
-      };
-
-      setLeaveUsageData({
-        year, // Selected year (current year being viewed)
-        previousYear, // The year we're analyzing (year - 1)
-        previousYearOpening,
-        utilized,
-        remainingBeforeYearEnd,
-        yearEndRequests: employeeYearEndRequests,
-        yearEndByType,
-        currentBalances: employeeData?.leaveBalances || {}, // Live running balance (after this year's deductions)
-        currentYearEntitlements: { // Entitlements allocated for the selected year
-          sick: employeeData?.leaveEntitlements?.sick ?? 6,
-          casual: employeeData?.leaveEntitlements?.casual ?? 6,
-          paid: employeeData?.leaveEntitlements?.paid ?? 10
-        },
-        leaveRequests: normalLeaveRequestsCurrent // Store current year leave requests for KPI calculations
-      });
-    } catch (err) {
-      console.error('Error fetching leave usage:', err);
-      setLeaveUsageData(null);
-    } finally {
-      setLoadingLeaveUsage(false);
-    }
-  }, []);
-
-  // Fetch leave usage when employee dialog opens or year changes
-  useEffect(() => {
-    if (showEmployeeDialog && dialogEmployee?._id) {
-      // Resolve full employee data — dialog may be opened from Leave Requests tab
-      // where dialogEmployee is a partial object without leaveEntitlements/leaveBalances
-      const fullEmployee = employees.find(e => e._id === dialogEmployee._id) || dialogEmployee;
-      fetchLeaveUsageForYear(fullEmployee._id, dialogSelectedYear, fullEmployee);
-    } else {
-      setLeaveUsageData(null);
-    }
-  }, [showEmployeeDialog, dialogEmployee, dialogSelectedYear, fetchLeaveUsageForYear, employees]);
 
   const getProgressColor = (used, total) => {
     const percentage = total > 0 ? (used / total) * 100 : 0;
@@ -1611,10 +1542,7 @@ const LeavesTrackerPage = () => {
                             onChange={(e) => {
                                 const newYear = e.target.value;
                                 setDialogSelectedYear(newYear);
-                                if (dialogEmployee?._id) {
-                                    const fullEmp = employees.find(e => e._id === dialogEmployee._id) || dialogEmployee;
-                                    fetchLeaveUsageForYear(fullEmp._id, newYear, fullEmp);
-                                }
+                                // The hook auto-refetches when dialogSelectedYear changes
                             }}
                         >
                             {Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i).map(year => (

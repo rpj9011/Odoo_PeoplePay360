@@ -19,6 +19,9 @@ import PublicFormLinkGenerator from '../components/PublicFormLinkGenerator';
 import AdminEmployeeProfileDialog from '../components/AdminEmployeeProfileDialog';
 import PageHeroHeader from '../components/PageHeroHeader';
 import UserAvatar from '../components/common/UserAvatar'; // CENTRALIZED AVATAR COMPONENT
+import EmployeeKanbanView from '../components/EmployeeKanbanView';
+import ViewModuleIcon from '@mui/icons-material/ViewModule';
+import ViewListIcon from '@mui/icons-material/ViewList';
 import socket from '../socket';
 import '../styles/EmployeesPage.css';
 
@@ -95,6 +98,8 @@ const EmployeesPage = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+    // 'kanban' is the default view; 'list' keeps the existing table unchanged
+    const [viewMode, setViewMode] = useState('kanban');
 
     // Debounce: only update debouncedSearch after user stops typing for 400ms
     useEffect(() => {
@@ -378,6 +383,78 @@ const EmployeesPage = () => {
             alignItems="center"
             className="header-actions"
         >
+            {/* ── Kanban / List segmented toggle ── */}
+            <Box
+                sx={{
+                    display: 'flex',
+                    borderRadius: '8px',
+                    border: '1px solid #dee2e6',
+                    overflow: 'hidden',
+                    backgroundColor: '#fff',
+                    flexShrink: 0,
+                }}
+            >
+                <Tooltip title="Kanban view">
+                    <Box
+                        component="button"
+                        onClick={() => setViewMode('kanban')}
+                        aria-label="Kanban view"
+                        aria-pressed={viewMode === 'kanban'}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.625,
+                            px: 1.5,
+                            py: 0.875,
+                            border: 'none',
+                            borderRight: '1px solid #dee2e6',
+                            cursor: 'pointer',
+                            fontSize: '0.8125rem',
+                            fontWeight: 600,
+                            fontFamily: 'inherit',
+                            transition: 'background 0.15s, color 0.15s',
+                            bgcolor: viewMode === 'kanban' ? '#D32F2F' : 'transparent',
+                            color: viewMode === 'kanban' ? '#fff' : '#495057',
+                            '&:hover': {
+                                bgcolor: viewMode === 'kanban' ? '#B71C1C' : '#f8f9fa',
+                            },
+                        }}
+                    >
+                        <ViewModuleIcon sx={{ fontSize: '1rem' }} />
+                        Kanban
+                    </Box>
+                </Tooltip>
+                <Tooltip title="List view">
+                    <Box
+                        component="button"
+                        onClick={() => setViewMode('list')}
+                        aria-label="List view"
+                        aria-pressed={viewMode === 'list'}
+                        sx={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: 0.625,
+                            px: 1.5,
+                            py: 0.875,
+                            border: 'none',
+                            cursor: 'pointer',
+                            fontSize: '0.8125rem',
+                            fontWeight: 600,
+                            fontFamily: 'inherit',
+                            transition: 'background 0.15s, color 0.15s',
+                            bgcolor: viewMode === 'list' ? '#D32F2F' : 'transparent',
+                            color: viewMode === 'list' ? '#fff' : '#495057',
+                            '&:hover': {
+                                bgcolor: viewMode === 'list' ? '#B71C1C' : '#f8f9fa',
+                            },
+                        }}
+                    >
+                        <ViewListIcon sx={{ fontSize: '1rem' }} />
+                        List
+                    </Box>
+                </Tooltip>
+            </Box>
+
             <OutlinedInput
                 size="small"
                 placeholder="Search employees..."
@@ -449,7 +526,7 @@ const EmployeesPage = () => {
                 <MoreVertIcon sx={{ fontSize: '1.2rem', color: '#495057' }} />
             </IconButton>
         </Stack>
-    ), [searchQuery, isRefreshing]);
+    ), [searchQuery, isRefreshing, viewMode]);
 
     if (loading) return <div className="flex-center"><SkeletonBox width="24px" height="24px" borderRadius="50%" /></div>;
 
@@ -465,6 +542,24 @@ const EmployeesPage = () => {
             {error && <Alert severity="error" className="error-alert">{error}</Alert>}
             
             <div className="employees-card">
+                {viewMode === 'kanban' ? (
+                    <Box sx={{ p: 2 }}>
+                        <EmployeeKanbanView
+                            employees={visibleRows}
+                            onOpen={handleOpenProfileDialog}
+                        />
+                        <TablePagination
+                            rowsPerPageOptions={[12, 24, 48]}
+                            component="div"
+                            count={totalCount}
+                            rowsPerPage={rowsPerPage}
+                            page={page}
+                            onPageChange={handleChangePage}
+                            onRowsPerPageChange={handleChangeRowsPerPage}
+                        />
+                    </Box>
+                ) : (
+                <>
                 {/* --- NEW DIV-BASED TABLE --- */}
                 <div className="employee-grid-table">
                     <div className="employee-grid-header">
@@ -572,6 +667,8 @@ const EmployeesPage = () => {
                     onPageChange={handleChangePage}
                     onRowsPerPageChange={handleChangeRowsPerPage}
                 />
+                </>
+                )}
             </div>
 
             <EmployeeForm open={isFormOpen} onClose={handleCloseForm} onSave={handleSaveEmployee} employee={selectedEmployee} shifts={allShifts} />

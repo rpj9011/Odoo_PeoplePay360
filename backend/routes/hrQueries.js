@@ -6,6 +6,7 @@ const NewNotificationService = require('../services/NewNotificationService');
 const authenticateToken = require('../middleware/authenticateToken');
 const requireHRQueryAccess = require('../middleware/requireHRQueryAccess');
 const { logger } = require('../utils/logger');
+const { HR_FAMILY } = require('../config/roles');
 
 // ─── EMPLOYEE ROUTES ────────────────────────────────────────────────────────
 
@@ -174,7 +175,7 @@ router.get('/:queryId', authenticateToken, async (req, res) => {
         
         // Check access rights
         const isEmployee = query.employeeId.toString() === req.user.userId;
-        const isHROrAdmin = req.user.role === 'Admin' || req.user.role === 'HR';
+        const isHROrAdmin = HR_FAMILY.includes(req.user.role);
         
         if (!isEmployee && !isHROrAdmin) {
             return res.status(403).json({ error: 'Unauthorized' });
@@ -463,7 +464,7 @@ router.get('/admin/assignable-users', authenticateToken, requireHRQueryAccess, a
         const users = await User.find({
             isActive: true,
             $or: [
-                { role: { $in: ['Admin', 'HR'] } },
+                { role: { $in: HR_FAMILY } },
                 { 'featurePermissions.canManageHRQueries': true }
             ]
         })

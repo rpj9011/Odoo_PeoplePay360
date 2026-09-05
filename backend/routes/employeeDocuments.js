@@ -5,9 +5,10 @@ const authenticateToken = require('../middleware/authenticateToken');
 const uploadEmployeeDocumentGridFS = require('../middleware/uploadEmployeeDocumentGridFS');
 const ctrl = require('../controllers/employeeDocumentController');
 const templateCtrl = require('../controllers/documentTemplateController');
+const { HR_FAMILY } = require('../config/roles');
 
 const isAdminOrHr = (req, res, next) => {
-    if (!['Admin', 'HR'].includes(req.user.role)) {
+    if (!HR_FAMILY.includes(req.user.role)) {
         return res.status(403).json({ error: 'Access forbidden: Requires Admin or HR role.' });
     }
     next();

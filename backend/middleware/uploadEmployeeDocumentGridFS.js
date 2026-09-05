@@ -3,6 +3,7 @@
 const busboy = require('busboy');
 const crypto = require('crypto');
 const { getPolicyBucket } = require('../db');
+const { HR_FAMILY } = require('../config/roles');
 
 const uuidv4 = () => (crypto.randomUUID ? crypto.randomUUID() : crypto.randomBytes(16).toString('hex'));
 
@@ -53,11 +54,9 @@ function uploadEmployeeDocumentGridFS(req, res, next) {
         return res.status(401).json({ error: 'Authentication required.' });
     }
 
-    if (!['Admin', 'HR'].includes(req.user.role)) {
+    if (!HR_FAMILY.includes(req.user.role)) {
         return res.status(403).json({ error: 'Only Admin or HR can upload employee documents.' });
     }
-
-    const chunks = [];
     let originalname = '';
     let mimetype = '';
     let totalSize = 0;

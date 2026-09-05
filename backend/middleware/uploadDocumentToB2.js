@@ -30,6 +30,7 @@
 
 const busboy     = require('busboy');
 const DOCUMENT_CATEGORIES = require('../config/documentCategories');
+const { HR_FAMILY } = require('../config/roles');
 
 // ─── Magic-byte signatures ────────────────────────────────────────────────────
 //
@@ -173,7 +174,7 @@ function uploadDocumentToB2({ category } = {}) {
         if (!req.user?.userId) {
             return res.status(401).json({ error: 'Authentication required.' });
         }
-        if (!['Admin', 'HR'].includes(req.user.role)) {
+        if (!HR_FAMILY.includes(req.user.role)) {
             return res.status(403).json({ error: 'Admin or HR role required.' });
         }
 

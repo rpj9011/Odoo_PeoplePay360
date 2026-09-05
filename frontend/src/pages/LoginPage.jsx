@@ -560,9 +560,9 @@ const LoginPage = () => {
             <Box className="login-form-section">
                 <Box className="login-form-wrapper">
                     <Box className="login-logo-container">
-                        <img src="/favicon.ico" alt="Byline People Logo" className="login-logo-img" />
+                        <img src="/favicon.ico" alt="People_360 Logo" className="login-logo-img" />
                         <Typography variant="h5" className="login-logo-text">
-                            Byline People
+                            People 360
                         </Typography>
                     </Box>
 

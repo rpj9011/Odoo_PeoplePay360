@@ -2,13 +2,17 @@ import { useEffect, useMemo, useState } from 'react';
 import {
     Dialog, DialogTitle, DialogContent, DialogActions, Box, Typography, Grid, Stack,
     Avatar, Chip, TextField, Button, Snackbar, Alert, IconButton, MenuItem, Autocomplete,
-    Tabs, Tab,
+    Tabs, Tab, Tooltip,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import BadgeOutlinedIcon from '@mui/icons-material/BadgeOutlined';
 import ContactPageOutlinedIcon from '@mui/icons-material/ContactPageOutlined';
 import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import WorkOutlineIcon from '@mui/icons-material/WorkOutline';
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
+import { useNavigate } from 'react-router-dom';
 import CountryCodeSelector from './CountryCodeSelector';
 import CIFSummaryCard from './CIF/CIFSummaryCard';
 import AdminEmployeeCompliancePanel from './adminEmployee/AdminEmployeeCompliancePanel';
@@ -95,6 +99,33 @@ const AdminEmployeeProfileDialog = ({
     const [reportingOptionsLoading, setReportingOptionsLoading] = useState(false);
     const [selectedReportingOption, setSelectedReportingOption] = useState(null);
     const [activeTab, setActiveTab] = useState(0);
+    const navigate = useNavigate();
+
+    // ── Smart-button counts ─────────────────────────────────────────────────
+    // Fetches attendanceCount + timeOffCount from the lightweight counts endpoint.
+    // Contracts and Allocations don't exist in this codebase yet — they show
+    // "Coming soon" until those models are introduced in a separate phase.
+    const [counts, setCounts] = useState({ attendanceCount: null, timeOffCount: null });
+    const [countsLoading, setCountsLoading] = useState(false);
+
+    useEffect(() => {
+        if (!open || !employee?._id) {
+            setCounts({ attendanceCount: null, timeOffCount: null });
+            return;
+        }
+        let cancelled = false;
+        setCountsLoading(true);
+        api.get(`/admin/employees/${employee._id}/counts`)
+            .then(({ data }) => {
+                if (!cancelled) setCounts({ attendanceCount: data.attendanceCount, timeOffCount: data.timeOffCount });
+            })
+            .catch((err) => {
+                console.error('[AdminEmployeeProfileDialog] Failed to load counts:', err);
+                if (!cancelled) setCounts({ attendanceCount: 0, timeOffCount: 0 });
+            })
+            .finally(() => { if (!cancelled) setCountsLoading(false); });
+        return () => { cancelled = true; };
+    }, [open, employee?._id]);
 
     const buildFormState = useMemo(() => (data) => ({
         fullName: data?.fullName || '',
@@ -475,12 +506,159 @@ const AdminEmployeeProfileDialog = ({
                     </Tabs>
                 </Box>
 
+                {/* ── Smart Buttons ─────────────────────────────────────────────────── */}
+                {employee?._id && (
+                    <Box
+                        sx={{
+                            px: 3,
+                            py: 1.25,
+                            background: '#fff',
+                            borderBottom: `1px solid ${BORDER}`,
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: 1,
+                        }}
+                    >
+                        {/* Attendance — navigates to AdminAttendanceSummaryPage pre-filtered */}
+                        <Tooltip title="View attendance records for this employee">
+                            <Chip
+                                icon={<EventAvailableIcon sx={{ fontSize: '0.9rem !important' }} />}
+                                label={
+                                    countsLoading
+                                        ? 'Attendance …'
+                                        : `Attendance ${counts.attendanceCount ?? 0}`
+                                }
+                                onClick={() => {
+                                    navigate(`/admin/attendance-summary?employeeId=${employee._id}`);
+                                }}
+                                size="small"
+                                sx={{
+                                    fontWeight: 600,
+                                    fontSize: '0.75rem',
+                                    cursor: 'pointer',
+                                    bgcolor: '#EFF6FF',
+                                    color: '#1D4ED8',
+                                    border: '1px solid #BFDBFE',
+                                    '&:hover': { bgcolor: '#DBEAFE' },
+                                    '& .MuiChip-icon': { color: '#1D4ED8' },
+                                }}
+                            />
+                        </Tooltip>
+
+                        {/* Time Off — navigates to AdminLeavesPage pre-filtered */}
+                        <Tooltip title="View leave requests for this employee">
+                            <Chip
+                                icon={<AccessTimeIcon sx={{ fontSize: '0.9rem !important' }} />}
+                                label={
+                                    countsLoading
+                                        ? 'Time Off …'
+                                        : `Time Off ${counts.timeOffCount ?? 0}`
+                                }
+                                onClick={() => {
+                                    navigate(`/admin/leaves?employeeId=${employee._id}`);
+                                }}
+                                size="small"
+                                sx={{
+                                    fontWeight: 600,
+                                    fontSize: '0.75rem',
+                                    cursor: 'pointer',
+                                    bgcolor: '#F0FDF4',
+                                    color: '#15803D',
+                                    border: '1px solid #BBF7D0',
+                                    '&:hover': { bgcolor: '#DCFCE7' },
+                                    '& .MuiChip-icon': { color: '#15803D' },
+                                }}
+                            />
+                        </Tooltip>
+
+                        {/* Contracts — Coming soon (no Contract model yet) */}
+                        {/* TODO: Replace "Coming soon" with real count once Contract model is added */}
+                        <Tooltip title="Contracts feature coming soon" arrow>
+                            <span>
+                                <Chip
+                                    label="Contracts —"
+                                    size="small"
+                                    disabled
+                                    sx={{
+                                        fontWeight: 600,
+                                        fontSize: '0.75rem',
+                                        opacity: 0.5,
+                                        cursor: 'not-allowed',
+                                    }}
+                                />
+                            </span>
+                        </Tooltip>
+
+                        {/* Allocations — Coming soon (no Allocation model yet) */}
+                        {/* TODO: Replace "Coming soon" with real count once Allocation model is added */}
+                        <Tooltip title="Allocations feature coming soon" arrow>
+                            <span>
+                                <Chip
+                                    label="Allocations —"
+                                    size="small"
+                                    disabled
+                                    sx={{
+                                        fontWeight: 600,
+                                        fontSize: '0.75rem',
+                                        opacity: 0.5,
+                                        cursor: 'not-allowed',
+                                    }}
+                                />
+                            </span>
+                        </Tooltip>
+                    </Box>
+                )}
+
                 <DialogContent sx={{ backgroundColor: SURFACE, px: 3, py: 2.5 }}>
                     {activeTab === 0 && (
                     <Stack spacing={2}>
                         {(user?.role === 'Admin' || user?.role === 'HR') && employee?._id && (
                             <CIFSummaryCard employeeId={employee._id} />
                         )}
+
+                        {/* ── Work Information ────────────────────────────────────────────── */}
+                        <Box sx={{ ...cardSx, borderLeft: `3px solid #3B82F6` }}>
+                            <Typography sx={sectionTitleSx}>
+                                <WorkOutlineIcon sx={{ fontSize: 18, color: '#3B82F6' }} />
+                                Work Information
+                            </Typography>
+                            <Grid container spacing={2.5}>
+                                {/* Job Position / Designation */}
+                                <Grid item xs={12} sm={6} md={4}>
+                                    {renderValue('Job Position', employee?.designation)}
+                                </Grid>
+
+                                {/* Department */}
+                                <Grid item xs={12} sm={6} md={4}>
+                                    {renderValue('Department', employee?.department)}
+                                </Grid>
+
+                                {/* Manager — resolved from reportingPerson */}
+                                <Grid item xs={12} sm={6} md={4}>
+                                    {renderValue('Manager', employee?.reportingPerson?.fullName)}
+                                </Grid>
+
+                                {/* Working Schedule — resolved from shiftGroup */}
+                                <Grid item xs={12} sm={6} md={4}>
+                                    {renderValue(
+                                        'Working Schedule',
+                                        employee?.shiftGroup
+                                            ? `${employee.shiftGroup.durationHours ?? '—'} Hours / Week`
+                                            : null
+                                    )}
+                                </Grid>
+
+                                {/* Status */}
+                                <Grid item xs={12} sm={6} md={4}>
+                                    {renderValue('Status', employee?.isActive === false ? 'Inactive' : 'Active')}
+                                </Grid>
+
+                                {/* Work Email — `email` is the work/login email; no separate workEmail field on User */}
+                                <Grid item xs={12} sm={6} md={4}>
+                                    {renderValue('Work Email', employee?.email)}
+                                </Grid>
+                            </Grid>
+                        </Box>
 
                         <Box sx={{ ...cardSx, borderLeft: `3px solid ${RED}` }}>
                             <Typography sx={sectionTitleSx}>

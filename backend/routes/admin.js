@@ -1161,6 +1161,7 @@ router.get('/leaves/pending', [authenticateToken, isAdminOrHr], async (req, res)
     }
 });
 
+
 // GET /leaves/employee/:id - Get leave requests for specific employee
 router.get('/leaves/employee/:id', [authenticateToken, isAdminOrHr], async (req, res) => {
     try {
@@ -1391,6 +1392,92 @@ router.patch('/leaves/:id/status', [authenticateToken, isAdminOrHr], async (req,
 
         await session.commitTransaction();
 
+        // ── Allocation bridge (additive, non-blocking) ─────────────────────────
+        // After a successful approval, increment takenAmount on the matching
+        // Confirmed Allocation so the new Allocation UI stays in sync.
+        // This runs OUTSIDE the transaction intentionally: a failure here must
+        // never roll back an already-committed approval — we just log a warning.
+        // Existing balance logic (User.leaveBalances) is already committed above
+        // and is the source of truth for balance enforcement. This is bookkeeping only.
+        if (newStatus === 'Approved' && oldStatus !== 'Approved') {
+            try {
+                const TimeOffType = require('../models/TimeOffType');
+                const Allocation = require('../models/Allocation');
+
+                // 1. Resolve which TimeOffType maps to this requestType
+                const timeOffType = await TimeOffType.findOne({
+                    legacyRequestTypeMapping: request.requestType,
+                    isActive: true,
+                }).lean();
+
+                if (!timeOffType) {
+                    console.warn(
+                        `[Allocation Bridge] No active TimeOffType found for requestType="${request.requestType}" ` +
+                        `(leaveRequest ${request._id}). Skipping takenAmount update.`
+                    );
+                } else if (timeOffType.requiresAllocation) {
+                    // 2. Find the best Confirmed Allocation covering the leave dates
+                    const leaveDate = request.leaveDates?.[0] || new Date();
+                    const allocationQuery = {
+                        employee: request.employee,
+                        timeOffType: timeOffType._id,
+                        status: 'Confirmed',
+                        $or: [
+                            { validFrom: null, validTo: null },
+                            { validFrom: { $lte: leaveDate }, validTo: null },
+                            { validFrom: null, validTo: { $gte: leaveDate } },
+                            { validFrom: { $lte: leaveDate }, validTo: { $gte: leaveDate } },
+                        ],
+                    };
+
+                    const allocation = await Allocation.findOne(allocationQuery).sort({ validFrom: -1 });
+
+                    const workingDayCount = countWorkingDaysInLeaveDates(request.leaveDates);
+                    const consumed = workingDayCount * (request.leaveType === 'Full Day' ? 1 : 0.5);
+
+                    if (!allocation) {
+                        console.warn(
+                            `[Allocation Bridge] No Confirmed Allocation found for employee=${request.employee}, ` +
+                            `timeOffType="${timeOffType.name}", leaveRequest=${request._id}. ` +
+                            `Leave approved via leaveBalances (existing flow). ` +
+                            `Create an Allocation record in the Allocations UI to track this employee's entitlement.`
+                        );
+                        // _allocationNote is picked up below when response is built
+                        request._allocationNote =
+                            'No matching Allocation found for this Time Off Type. ' +
+                            'Leave was approved via the legacy balance system. ' +
+                            'Consider creating an Allocation record for this employee.';
+                    } else if (allocation.remainingAmount !== undefined && allocation.remainingAmount < consumed) {
+                        console.warn(
+                            `[Allocation Bridge] Allocation ${allocation._id} has insufficient remainingAmount ` +
+                            `(${allocation.remainingAmount}) for consumed=${consumed}. ` +
+                            `Incrementing takenAmount anyway (legacy balance already deducted). ` +
+                            `Allocation may show a negative remaining — reconcile manually.`
+                        );
+                        allocation.takenAmount = (allocation.takenAmount || 0) + consumed;
+                        await allocation.save();
+                    } else {
+                        allocation.takenAmount = (allocation.takenAmount || 0) + consumed;
+                        await allocation.save();
+                        if (process.env.NODE_ENV !== 'production') {
+                            console.log(
+                                `[Allocation Bridge] Updated Allocation ${allocation._id}: ` +
+                                `takenAmount += ${consumed} → ${allocation.takenAmount}`
+                            );
+                        }
+                    }
+                }
+                // requiresAllocation === false (e.g. LOP, Compensatory): nothing to track
+            } catch (bridgeErr) {
+                // Non-fatal: approval is already committed. Log and continue.
+                console.error(
+                    `[Allocation Bridge] Error updating Allocation for leaveRequest ${request._id}:`,
+                    bridgeErr
+                );
+            }
+        }
+        // ── End allocation bridge ───────────────────────────────────────────────
+
         if (oldStatus === 'Approved' && newStatus !== 'Approved') {
             NewNotificationService.notifyLeaveReverted(
                 request.employee,
@@ -1446,6 +1533,11 @@ router.patch('/leaves/:id/status', [authenticateToken, isAdminOrHr], async (req,
         if (clockInConflicts.length > 0) {
             response.warning = `Leave approved, but employee already clocked in on ${clockInConflicts.length} day(s): ${clockInConflicts.join(', ')}. Attendance records updated to Leave status.`;
         }
+        // Surface any allocation note set by the bridge hook above
+        if (request._allocationNote) {
+            response.allocationNote = request._allocationNote;
+        }
+
         res.json(response);
     } catch (error) {
         await session.abortTransaction();
@@ -5571,6 +5663,28 @@ router.get('/leaves/auto-conversion-log', [authenticateToken, isAdminOrHr], asyn
     }
 });
 
+// GET /leaves/:id - Get a single leave request by ID
+// NOTE: This MUST be placed after all specific /leaves/<named-path> routes to avoid
+// Express matching named paths (e.g. "year-end-requests", "employee", "all") as the :id param.
+router.get('/leaves/:id', [authenticateToken, isAdminOrHr], async (req, res) => {
+    try {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid leave request ID.' });
+        }
+        const leaveRequest = await LeaveRequest.findById(id)
+            .populate('employee', 'fullName employeeCode department leaveBalances leaveEntitlements employmentStatus probationStatus')
+            .lean();
+        if (!leaveRequest) {
+            return res.status(404).json({ error: 'Leave request not found.' });
+        }
+        res.json(leaveRequest);
+    } catch (error) {
+        console.error('Error fetching leave request by ID:', error);
+        res.status(500).json({ error: 'Failed to fetch leave request.' });
+    }
+});
+
 // --- Bulk attendance actions (admin summary assistant) ---
 const requireBulkAttendanceActionsAccess = require('../middleware/requireBulkAttendanceActionsAccess');
 const {
@@ -5627,6 +5741,132 @@ router.post('/bulk-attendance-actions/execute', [authenticateToken, requireBulkA
             success: false,
             error: error.message || 'Failed to execute bulk action.',
         });
+    }
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// GET /api/admin/attendance/employee-status-list
+// Returns all active non-Admin employees with their most-recent check-in,
+// check-out, and current status. Uses bulk queries (no N+1).
+// ─────────────────────────────────────────────────────────────────────────────
+router.get('/attendance/employee-status-list', [authenticateToken, isAdminOrHr], async (req, res) => {
+    try {
+        // 1. Fetch all active, non-Admin employees
+        const allEmployees = await User.find({ role: { $ne: 'Admin' }, isActive: true })
+            .select('fullName designation profileImageUrl')
+            .lean();
+
+        if (!allEmployees.length) {
+            return res.json({ employees: [] });
+        }
+
+        const employeeIds = allEmployees.map(e => e._id);
+
+        // 2. Bulk-fetch the most-recent AttendanceLog per employee using aggregation
+        //    ($sort → $group picks up the latest doc per user in one pass)
+        const latestLogs = await AttendanceLog.aggregate([
+            { $match: { user: { $in: employeeIds } } },
+            { $sort: { attendanceDate: -1 } },
+            {
+                $group: {
+                    _id: '$user',
+                    logId: { $first: '$_id' },
+                    attendanceDate: { $first: '$attendanceDate' },
+                },
+            },
+        ]);
+
+        // Build a map: employeeId → { logId, attendanceDate }
+        const latestLogMap = new Map();
+        for (const entry of latestLogs) {
+            latestLogMap.set(entry._id.toString(), entry);
+        }
+
+        // 3. Bulk-fetch all AttendanceSessions for those log IDs
+        const logIds = latestLogs.map(e => e.logId);
+        const allSessions = logIds.length
+            ? await AttendanceSession.find({ attendanceLog: { $in: logIds } })
+                .select('attendanceLog startTime endTime')
+                .lean()
+            : [];
+
+        // Build a map: logId → [sessions]
+        const sessionsByLog = new Map();
+        for (const session of allSessions) {
+            const key = session.attendanceLog.toString();
+            if (!sessionsByLog.has(key)) sessionsByLog.set(key, []);
+            sessionsByLog.get(key).push(session);
+        }
+
+        // 4. Assemble the response, sorted by fullName
+        const result = allEmployees
+            .map(emp => {
+                const empIdStr = emp._id.toString();
+                const logEntry = latestLogMap.get(empIdStr);
+
+                if (!logEntry) {
+                    return {
+                        employeeId: emp._id,
+                        fullName: emp.fullName,
+                        designation: emp.designation || '',
+                        profileImageUrl: emp.profileImageUrl || null,
+                        attendanceDate: null,
+                        checkInTime: null,
+                        checkOutTime: null,
+                        status: 'No Record',
+                    };
+                }
+
+                const sessions = sessionsByLog.get(logEntry.logId.toString()) || [];
+
+                let checkInTime = null;
+                let checkOutTime = null;
+                let status = 'No Record';
+
+                if (sessions.length > 0) {
+                    // Earliest startTime = first check-in
+                    checkInTime = sessions.reduce((earliest, s) =>
+                        !earliest || s.startTime < earliest ? s.startTime : earliest,
+                        null
+                    );
+
+                    // Latest session determines check-out / open state
+                    const latestSession = sessions.reduce((latest, s) =>
+                        !latest || s.startTime > latest.startTime ? s : latest,
+                        null
+                    );
+
+                    if (latestSession && latestSession.endTime == null) {
+                        // Session still open — employee is checked in
+                        checkOutTime = null;
+                        status = 'Checked In';
+                    } else {
+                        // All sessions closed — use the latest endTime as check-out
+                        checkOutTime = sessions.reduce((latest, s) =>
+                            !latest || (s.endTime && s.endTime > latest) ? s.endTime : latest,
+                            null
+                        );
+                        status = 'Checked Out';
+                    }
+                }
+
+                return {
+                    employeeId: emp._id,
+                    fullName: emp.fullName,
+                    designation: emp.designation || '',
+                    profileImageUrl: emp.profileImageUrl || null,
+                    attendanceDate: logEntry.attendanceDate,
+                    checkInTime,
+                    checkOutTime,
+                    status,
+                };
+            })
+            .sort((a, b) => a.fullName.localeCompare(b.fullName));
+
+        return res.json({ employees: result });
+    } catch (error) {
+        console.error('[attendance/employee-status-list] Error:', error);
+        res.status(500).json({ error: 'Internal server error.' });
     }
 });
 

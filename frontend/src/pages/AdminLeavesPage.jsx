@@ -3283,6 +3283,20 @@ const AdminLeavesPage = () => {
         }
     }, [searchParams, setSearchParams, fetchYearEndActions, yearEndActions.length]);
 
+    // Pre-filter leave requests by employee from URL param ?employeeId=<id>
+    // Resolves the employee's fullName and seeds the search box so the existing
+    // server-side search path runs — no second fetch needed.
+    useEffect(() => {
+        const employeeIdParam = searchParams.get('employeeId');
+        if (!employeeIdParam || employees.length === 0 || tabSearchQuery) return;
+        const match = employees.find(emp => emp._id === employeeIdParam || emp._id?.toString() === employeeIdParam);
+        if (match) {
+            setCurrentTab(0); // Ensure we're on the Requests tab
+            setTabSearchQuery(match.fullName);
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [employees.length]); // Run only when employee list is first populated
+
     useEffect(() => { fetchInitialData(); }, [fetchInitialData]);
 
     // When switching to Leave Count or Intern Count tab after a mutation, refetch so counts are fresh
@@ -3491,7 +3505,7 @@ const AdminLeavesPage = () => {
     };
     
     const handleViewDetails = (request) => {
-        setViewDialog({ open: true, request });
+        navigate(`/admin/leaves/requests/${request._id}`);
     };
 
     const handleMoreMenuClick = (event) => {

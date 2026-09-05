@@ -3,9 +3,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const { HR_FAMILY } = require('../config/roles');
 
 const DEFAULT_SSO_ROLE = (() => {
-  const allowed = ['Admin', 'HR', 'Employee', 'Intern'];
+  const allowed = ['Admin', 'HRManager', 'HRPayrollUser', 'HRPayrollManager', 'Employee', 'Intern'];
   const envRole = process.env.SSO_DEFAULT_ROLE;
   if (envRole && typeof envRole === 'string') {
     const normalized = envRole.trim();
@@ -544,7 +545,7 @@ router.post('/launch/:appId', verifySSOToken, async (req, res) => {
         redirectUrl = '/dashboard';
         break;
       case 'admin':
-        if (user.role === 'Admin' || user.role === 'HR') {
+        if (HR_FAMILY.includes(user.role)) {
           redirectUrl = '/admin/dashboard';
         } else {
           redirectUrl = '/dashboard';

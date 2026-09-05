@@ -13,9 +13,10 @@ const router  = express.Router();
 const authenticateToken         = require('../middleware/authenticateToken');
 const uploadKycDocumentToR2     = require('../middleware/uploadKycDocumentToR2');
 const ctrl                      = require('../controllers/kycController');
+const { HR_FAMILY } = require('../config/roles');
 
 const isAdminOrHr = (req, res, next) => {
-    if (!['Admin', 'HR'].includes(req.user.role)) {
+    if (!HR_FAMILY.includes(req.user.role)) {
         return res.status(403).json({ error: 'Access forbidden: requires Admin or HR role.' });
     }
     next();

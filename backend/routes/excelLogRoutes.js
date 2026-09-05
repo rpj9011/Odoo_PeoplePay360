@@ -3,9 +3,10 @@ const express = require('express');
 const router = express.Router();
 const authenticateToken = require('../middleware/authenticateToken');
 const { getSheetNames, getSheetData } = require('../services/excelLogService');
+const { HR_FAMILY } = require('../config/roles');
 
 const isAdminOrHr = (req, res, next) => {
-    if (!['Admin', 'HR'].includes(req.user.role)) {
+    if (!HR_FAMILY.includes(req.user.role)) {
         return res.status(403).json({ error: 'Access forbidden: Requires Admin or HR role.' });
     }
     next();

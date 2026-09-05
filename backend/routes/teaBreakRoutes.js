@@ -14,6 +14,7 @@ const {
   TEA_BREAK_SAFETY_CUTOFF_MS,
 } = require('../services/teaBreakService');
 const { emitTeaBreakEnded } = require('../utils/announcementHelpers');
+const { HR_FAMILY } = require('../config/roles');
 
 const router = express.Router();
 
@@ -44,7 +45,7 @@ router.get('/active', authenticateToken, async (req, res) => {
       return res.json({ active: false });
     }
 
-    const isAdminOrHr = ['Admin', 'HR'].includes(req.user.role);
+    const isAdminOrHr = HR_FAMILY.includes(req.user.role);
     if (!isAdminOrHr) {
       const clockedIn = await isEmployeeClockedIn(req.user.userId);
       if (!clockedIn) {

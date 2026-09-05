@@ -48,7 +48,7 @@ const newNotificationSchema = new mongoose.Schema({
     
     // System notification fields
     isSystemNotification: { type: Boolean, default: false },
-    targetRoles: [{ type: String, enum: ['Admin', 'HR', 'Employee', 'Intern'] }],
+    targetRoles: [{ type: String, enum: ['Admin', 'HRManager', 'HRPayrollUser', 'HRPayrollManager', 'Employee', 'Intern'] }],
     
     // Timestamps
     createdAt: { type: Date, default: Date.now, index: true },

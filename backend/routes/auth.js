@@ -36,6 +36,7 @@ const { checkGeofence } = require('../services/geofencingService');
 const ssoService = require('../services/ssoService');
 const SSOVerification = require('../utils/ssoVerification');
 const jwtUtils = require('../utils/jwtUtils');
+const { HR_FAMILY } = require('../config/roles');
 // isNightShiftEmployee was used for the old 7d/10h expiry split; no longer needed
 // with the uniform 15-minute access token model. Import kept as a no-op comment
 // until the module reference is confirmed safe to remove.
@@ -204,7 +205,7 @@ router.post('/login', validateLogin, loginGeofencingMiddleware, async (req, res)
         // Check geofencing for non-admin users
         // NOTE: Geofencing is now OPTIONAL for login to allow remote access
         // Geofencing will still be enforced for attendance check-in/check-out
-        if (user.role !== 'Admin' && user.role !== 'HR') {
+        if (!HR_FAMILY.includes(user.role)) {
             if (req.userLocation) {
                 const geofenceResult = await checkGeofence(
                     req.userLocation.latitude,

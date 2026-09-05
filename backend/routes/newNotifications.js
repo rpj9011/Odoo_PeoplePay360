@@ -6,9 +6,10 @@ const mongoose = require('mongoose');
 const authenticateToken = require('../middleware/authenticateToken');
 const NewNotification = require('../models/NewNotification');
 const User = require('../models/User');
+const { HR_FAMILY } = require('../config/roles');
 
 const isAdminOrHr = (req, res, next) => {
-    if (!['Admin', 'HR'].includes(req.user.role)) {
+    if (!HR_FAMILY.includes(req.user.role)) {
         return res.status(403).json({ error: 'Access forbidden: Requires Admin or HR role.' });
     }
     next();
@@ -17,7 +18,7 @@ const isAdminOrHr = (req, res, next) => {
 const buildUserNotificationQuery = async (userId, role) => {
     const base = { archived: false };
 
-    if (['Admin', 'HR'].includes(role)) {
+    if (HR_FAMILY.includes(role)) {
         return {
             ...base,
             $or: [
@@ -58,7 +59,7 @@ const userCanAccessNotification = async (notification, reqUser) => {
         return true;
     }
 
-    if (['Admin', 'HR'].includes(role) && ['admin', 'both'].includes(notification.recipientType)) {
+    if (HR_FAMILY.includes(role) && ['admin', 'both'].includes(notification.recipientType)) {
         return true;
     }
 

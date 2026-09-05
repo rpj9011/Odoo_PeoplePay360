@@ -7,6 +7,7 @@ const authenticateToken = require('../middleware/authenticateToken');
 const User = require('../models/User');
 const AttendanceSummaryService = require('../services/AttendanceSummaryService');
 const NodeCache = require('node-cache');
+const { HR_FAMILY } = require('../config/roles');
 
 const router = express.Router();
 
@@ -144,7 +145,7 @@ router.get('/tracker', authenticateToken, async (req, res) => {
   try {
     const { role } = req.user;
     
-    if (role !== 'Admin' && role !== 'HR') {
+    if (!HR_FAMILY.includes(role)) {
       return res.status(403).json({ error: 'Access denied' });
     }
 

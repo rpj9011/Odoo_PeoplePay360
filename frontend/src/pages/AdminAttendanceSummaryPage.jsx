@@ -1,6 +1,12 @@
 // src/pages/AdminAttendanceSummaryPage.jsx - IST-ENFORCED, BACKEND-DRIVEN
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { Typography, Alert, FormControl, InputLabel, Select, MenuItem, IconButton, Tooltip, Snackbar, Avatar, Menu, ListItemIcon, ListItemText } from '@mui/material';
+import { useSearchParams } from 'react-router-dom';
+import {
+    Typography, Alert, IconButton, Tooltip, Snackbar, Avatar, Menu, MenuItem,
+    ListItemIcon, ListItemText, Chip,
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper,
+    CircularProgress
+} from '@mui/material';
 import {
     ChevronLeft as ChevronLeftIcon,
     ChevronRight as ChevronRightIcon,
@@ -10,7 +16,8 @@ import {
     CalendarMonth as CalendarMonthIcon,
     MoreVert as MoreVertIcon,
     People as PeopleIcon,
-    Edit as EditIcon
+    Edit as EditIcon,
+    ArrowBack as ArrowBackIcon
 } from '@mui/icons-material';
 import api from '../api/axios';
 import AttendanceTimeline from '../components/AttendanceTimeline';
@@ -42,6 +49,7 @@ import usePermissions from '../hooks/usePermissions';
 const AdminAttendanceSummaryPage = () => {
     const { canAccess } = usePermissions();
     const canUseBulkAssistant = canAccess.manageBulkAttendanceActions();
+    const [searchParams] = useSearchParams();
     const [employees, setEmployees] = useState([]);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState('');
     const [logs, setLogs] = useState([]);
@@ -63,6 +71,10 @@ const AdminAttendanceSummaryPage = () => {
     // Track data freshness for debugging (internal only - not displayed to users)
     const [lastUpdatedAt, setLastUpdatedAt] = useState(null);
     const [overrideModalOpen, setOverrideModalOpen] = useState(false);
+
+    // Employee status list (for the "pick an employee" table shown before selection)
+    const [employeeStatusList, setEmployeeStatusList] = useState([]);
+    const [loadingStatusList, setLoadingStatusList] = useState(true);
 
     // Socket refresh debounce timer
     const socketRefreshTimerRef = React.useRef(null);
@@ -87,6 +99,33 @@ const AdminAttendanceSummaryPage = () => {
             }
         };
         fetchEmployees();
+    }, []);
+
+    // Pre-select employee from URL param ?employeeId=<id>
+    // Runs once after the employees list is populated so the dropdown can resolve the ID.
+    // Intentionally only fires when employees transitions from empty → populated (dep: employees.length).
+    useEffect(() => {
+        const employeeIdParam = searchParams.get('employeeId');
+        if (!employeeIdParam || employees.length === 0 || selectedEmployeeId) return;
+        const match = employees.find(emp => emp._id === employeeIdParam || emp._id?.toString() === employeeIdParam);
+        if (match) setSelectedEmployeeId(match._id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [employees.length]); // Run only when employee list is first populated
+
+    // Fetch employee status list from the dedicated endpoint on page load
+    useEffect(() => {
+        const fetchStatusList = async () => {
+            setLoadingStatusList(true);
+            try {
+                const { data } = await api.get('/admin/attendance/employee-status-list');
+                setEmployeeStatusList(Array.isArray(data.employees) ? data.employees : []);
+            } catch (err) {
+                console.error('Failed to fetch employee status list:', err);
+            } finally {
+                setLoadingStatusList(false);
+            }
+        };
+        fetchStatusList();
     }, []);
 
     // Cleanup on unmount
@@ -271,6 +310,18 @@ const AdminAttendanceSummaryPage = () => {
         setSelectedEmployeeId(event.target.value);
     };
 
+    // Called when user clicks a row in the employee status table
+    const handleSelectFromTable = (employeeId) => {
+        setLogs([]);
+        setSelectedEmployeeId(employeeId);
+    };
+
+    // Clear selection to return to the status table
+    const handleBackToList = () => {
+        setSelectedEmployeeId('');
+        setLogs([]);
+    };
+
     const handleDayClick = (dayData) => {
         setSelectedLog(dayData.log || null);
         setSelectedDate(dayData.date);
@@ -396,11 +447,86 @@ const AdminAttendanceSummaryPage = () => {
 
     const renderTimelineContent = () => {
         if (!selectedEmployeeId) {
+            // ── Employee status list ──────────────────────────────────────────
             return (
-                <div className="timeline-placeholder">
-                    <Alert severity="info">
-                        Please select an employee to view their attendance summary.
-                    </Alert>
+                <div className="employee-status-list-container" style={{ padding: '16px 0' }}>
+                    {loadingStatusList ? (
+                        <div style={{ display: 'flex', justifyContent: 'center', padding: '48px 0' }}>
+                            <CircularProgress size={32} />
+                        </div>
+                    ) : (
+                        <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+                            <Table size="small" aria-label="Employee attendance status">
+                                <TableHead>
+                                    <TableRow sx={{ backgroundColor: 'action.hover' }}>
+                                        <TableCell sx={{ fontWeight: 600 }}>Employee</TableCell>
+                                        <TableCell sx={{ fontWeight: 600 }}>Designation</TableCell>
+                                        <TableCell sx={{ fontWeight: 600 }}>Check In</TableCell>
+                                        <TableCell sx={{ fontWeight: 600 }}>Check Out</TableCell>
+                                        <TableCell sx={{ fontWeight: 600 }}>Status</TableCell>
+                                    </TableRow>
+                                </TableHead>
+                                <TableBody>
+                                    {employeeStatusList.map((emp) => {
+                                        const chipColor =
+                                            emp.status === 'Checked In' ? 'success' :
+                                            emp.status === 'Checked Out' ? 'default' : 'default';
+                                        const chipSx =
+                                            emp.status === 'No Record'
+                                                ? { color: 'text.disabled', borderColor: 'divider' }
+                                                : {};
+                                        return (
+                                            <TableRow
+                                                key={emp.employeeId}
+                                                hover
+                                                onClick={() => handleSelectFromTable(emp.employeeId)}
+                                                sx={{ cursor: 'pointer' }}
+                                            >
+                                                <TableCell>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                                                        <Avatar
+                                                            src={emp.profileImageUrl || undefined}
+                                                            sx={{ width: 32, height: 32, fontSize: '0.85rem' }}
+                                                        >
+                                                            {emp.fullName?.charAt(0) || '?'}
+                                                        </Avatar>
+                                                        <span>{emp.fullName}</span>
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>{emp.designation || '—'}</TableCell>
+                                                <TableCell>
+                                                    {emp.checkInTime
+                                                        ? formatTimeForDisplay(emp.checkInTime)
+                                                        : '—'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    {emp.checkOutTime
+                                                        ? formatTimeForDisplay(emp.checkOutTime)
+                                                        : '—'}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <Chip
+                                                        label={emp.status}
+                                                        color={chipColor}
+                                                        size="small"
+                                                        variant={emp.status === 'No Record' ? 'outlined' : 'filled'}
+                                                        sx={chipSx}
+                                                    />
+                                                </TableCell>
+                                            </TableRow>
+                                        );
+                                    })}
+                                    {employeeStatusList.length === 0 && (
+                                        <TableRow>
+                                            <TableCell colSpan={5} align="center" sx={{ py: 4, color: 'text.secondary' }}>
+                                                No employees found.
+                                            </TableCell>
+                                        </TableRow>
+                                    )}
+                                </TableBody>
+                            </Table>
+                        </TableContainer>
+                    )}
                 </div>
             );
         }
@@ -509,9 +635,15 @@ const AdminAttendanceSummaryPage = () => {
                         <Typography variant="h4" component="h1" className="summary-title">
                             Employee Attendance
                         </Typography>
+                        {selectedEmployeeId && selectedEmployeeObject && (
+                            <Typography variant="subtitle2" color="text.secondary" sx={{ mt: 0.25 }}>
+                                {selectedEmployeeObject.fullName}
+                            </Typography>
+                        )}
                     </div>
                     
                     <div className="header-center">
+                        {selectedEmployeeId && (
                         <div className="date-range-selector">
                             <IconButton 
                                 size="small" 
@@ -532,37 +664,20 @@ const AdminAttendanceSummaryPage = () => {
                                 <ChevronRightIcon />
                             </IconButton>
                         </div>
+                        )}
                     </div>
                     
                     <div className="header-right">
-                        <div className="employee-selector-inline">
-                            <FormControl className="employee-select" size="small">
-                                <InputLabel id="employee-select-label">Select Employee</InputLabel>
-                                <Select
-                                    labelId="employee-select-label"
-                                    value={selectedEmployeeId}
-                                    label="Select Employee"
-                                    onChange={handleEmployeeChange}
-                                    disabled={loadingEmployees}
-                                >
-                                    {employees.map((emp) => (
-                                        <MenuItem key={emp._id} value={emp._id}>
-                                            <div className="employee-option">
-                                                <Avatar sx={{ width: 24, height: 24, mr: 1 }}>
-                                                    {emp.fullName.charAt(0)}
-                                                </Avatar>
-                                                <div className="employee-info">
-                                                    <span className="employee-name">{emp.fullName}</span>
-                                                    <span className="employee-id">({emp.employeeCode})</span>
-                                                </div>
-                                            </div>
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </div>
+                        {selectedEmployeeId && (
+                            <Tooltip title="Back to employee list">
+                                <IconButton size="small" onClick={handleBackToList} sx={{ mr: 1 }}>
+                                    <ArrowBackIcon />
+                                </IconButton>
+                            </Tooltip>
+                        )}
                         
                         <div className="action-icons">
+                            {selectedEmployeeId && (<>
                             <Tooltip title="List View">
                                 <IconButton 
                                     size="small" 
@@ -590,6 +705,7 @@ const AdminAttendanceSummaryPage = () => {
                                     <CalendarMonthIcon />
                                 </IconButton>
                             </Tooltip>
+                            </>)}
                             <Tooltip title="More Options">
                                 <IconButton size="small" onClick={handleMoreMenuClick}>
                                     <MoreVertIcon />

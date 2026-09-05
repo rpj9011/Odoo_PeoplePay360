@@ -12,6 +12,7 @@ const LeaveAccrualService = require('../services/LeaveAccrualService');
 const LeaveAccrualLock = require('../models/LeaveAccrualLock');
 const LeaveLedger = require('../models/LeaveLedger');
 const { getISTNow, getISTDateParts } = require('../utils/istTime');
+const { HR_FAMILY } = require('../config/roles');
 
 // Middleware to check for Admin/HR role
 const isAdminOrHr = async (req, res, next) => {
@@ -20,7 +21,7 @@ const isAdminOrHr = async (req, res, next) => {
     }
 
     const userRole = req.user.role;
-    if (!['Admin', 'HR'].includes(userRole)) {
+    if (!HR_FAMILY.includes(userRole)) {
         return res.status(403).json({ error: 'Access forbidden: Requires Admin or HR role' });
     }
 

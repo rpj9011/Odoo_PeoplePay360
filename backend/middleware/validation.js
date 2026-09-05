@@ -60,8 +60,8 @@ const validateUserCreation = [
     .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/)
     .withMessage('Password must be at least 8 characters with uppercase, lowercase, and number'),
   body('role')
-    .isIn(['Admin', 'HR', 'Employee', 'Intern'])
-    .withMessage('Role must be Admin, HR, Employee, or Intern'),
+    .isIn(['Admin', 'HRManager', 'HRPayrollUser', 'HRPayrollManager', 'Employee', 'Intern'])
+    .withMessage('Role must be Admin, HRManager, HRPayrollUser, HRPayrollManager, Employee, or Intern'),
   body('employeeCode')
     .optional()
     .trim()

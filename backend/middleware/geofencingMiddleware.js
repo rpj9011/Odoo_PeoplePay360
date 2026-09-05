@@ -1,5 +1,6 @@
 // backend/middleware/geofencingMiddleware.js
 const { checkGeofence, validateCoordinates } = require('../services/geofencingService');
+const { HR_FAMILY } = require('../config/roles');
 
 /**
  * Middleware to check geofencing for non-admin users
@@ -10,7 +11,7 @@ const { checkGeofence, validateCoordinates } = require('../services/geofencingSe
 async function geofencingMiddleware(req, res, next) {
     try {
         // Skip geofencing check for admin and HR users
-        if (req.user && (req.user.role === 'Admin' || req.user.role === 'HR')) {
+        if (req.user && HR_FAMILY.includes(req.user.role)) {
             return next();
         }
 
@@ -19,7 +20,7 @@ async function geofencingMiddleware(req, res, next) {
         
         if (!latitude || !longitude) {
             // For non-admin users, location is required for geofencing
-            if (req.user && (req.user.role !== 'Admin' && req.user.role !== 'HR')) {
+            if (req.user && !HR_FAMILY.includes(req.user.role)) {
                 return res.status(400).json({ 
                     error: 'Location coordinates are required for attendance tracking',
                     code: 'LOCATION_REQUIRED'

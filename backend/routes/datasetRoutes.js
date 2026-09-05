@@ -5,10 +5,11 @@ const express = require('express');
 const router = express.Router();
 const datasetController = require('../controllers/datasetController');
 const authenticateToken = require('../middleware/authenticateToken');
+const { HR_FAMILY } = require('../config/roles');
 
 // Middleware to check if user is admin or HR
 const isAdminOrHr = (req, res, next) => {
-    if (!req.user || (req.user.role !== 'Admin' && req.user.role !== 'HR')) {
+    if (!req.user || !HR_FAMILY.includes(req.user.role)) {
         return res.status(403).json({ 
             error: 'Forbidden',
             message: 'Only administrators and HR can manage holiday dataset',

@@ -2,8 +2,13 @@
 // Shared Admin/HR role-check middleware.
 // Used at router-mount level in server.js and in route files that need it.
 // Requires authenticateToken to have run first (req.user must be populated).
+//
+// MIGRATION NOTE (2026): 'HR' role has been split into HRManager / HRPayrollUser /
+// HRPayrollManager.  This middleware grants access to the entire HR_FAMILY so that
+// all existing Employees/Attendance/Leave/Document routes keep working unchanged.
 
 const User = require('../models/User');
+const { HR_FAMILY } = require('../config/roles');
 
 const isAdminOrHr = async (req, res, next) => {
     // Check if req.user exists (authenticateToken must run first)
@@ -36,7 +41,7 @@ const isAdminOrHr = async (req, res, next) => {
     }
 
     const normalizedRole = String(userRole).trim();
-    if (!['Admin', 'HR'].includes(normalizedRole)) {
+    if (!HR_FAMILY.includes(normalizedRole)) {
         console.warn('[isAdminOrHr] Access denied - User role:', normalizedRole, 'User ID:', req.user.userId || req.user.email);
         return res.status(403).json({ error: 'Access forbidden: Requires Admin or HR role.' });
     }

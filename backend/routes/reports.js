@@ -11,9 +11,10 @@ const Holiday = require('../models/Holiday');
 const Shift = require('../models/Shift');
 const AttendanceSummaryService = require('../services/AttendanceSummaryService');
 const { getGracePeriodMinutes } = require('../utils/gracePeriod');
+const { HR_FAMILY } = require('../config/roles');
 
 const isAdminOrHr = (req, res, next) => {
-    if (!['Admin', 'HR'].includes(req.user.role)) {
+    if (!HR_FAMILY.includes(req.user.role)) {
         return res.status(403).json({ error: 'Access forbidden: Requires Admin or HR role.' });
     }
     next();

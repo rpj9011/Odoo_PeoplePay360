@@ -6,10 +6,11 @@ const router = express.Router();
 const authenticateToken = require('../middleware/authenticateToken');
 const ProbationTrackingService = require('../services/probationTrackingService'); // Only for promoteEmployeeToPermanent
 const axios = require('axios'); // For internal API calls
+const { HR_FAMILY } = require('../config/roles');
 
 // Middleware to check if user is admin or HR
 const isAdminOrHr = (req, res, next) => {
-    if (req.user.role === 'Admin' || req.user.role === 'HR') {
+    if (HR_FAMILY.includes(req.user.role)) {
         next();
     } else {
         res.status(403).json({ error: 'Access denied. Admin or HR role required.' });

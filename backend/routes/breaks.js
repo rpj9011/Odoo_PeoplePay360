@@ -10,6 +10,7 @@ const ExtraBreakRequest = require('../models/ExtraBreakRequest');
 const NewNotificationService = require('../services/NewNotificationService');
 const cache = require('../utils/cache');
 const { getISTNow, getISTDateString } = require('../utils/istTime');
+const { HR_FAMILY } = require('../config/roles');
 const { 
     UNPAID_BREAK_ALLOWANCE_MINUTES, 
     EXTRA_BREAK_ALLOWANCE_MINUTES,
@@ -18,7 +19,7 @@ const {
 
 const router = express.Router();
 
-router.post('/start', authenticateToken, async (req, res) => {
+router.post('/start', authenticateToken, async (req, res) => { 
     const { userId } = req.user;
     const { breakType } = req.body;
     const today = getISTDateString();
@@ -54,9 +55,9 @@ router.post('/start', authenticateToken, async (req, res) => {
         const user = await User.findById(userId);
         if (user) {
             // FIX: Prevent user from getting their own notification
-            if (user.role !== 'Admin' && user.role !== 'HR') {
+            if (!HR_FAMILY.includes(user.role)) {
                 NewNotificationService.createAndEmitNotification({
-                    message: `You have started a ${breakType} break.`,
+                    message: `Your ${breakType} break has started.`,
                     type: 'info',
                     userId,
                     userName: user.fullName,
@@ -154,7 +155,7 @@ router.post('/end', authenticateToken, async (req, res) => {
         const user = await User.findById(userId);
         if (user) {
             // FIX: Prevent user from getting their own notification
-            if (user.role !== 'Admin' && user.role !== 'HR') {
+            if (!HR_FAMILY.includes(user.role)) {
                 NewNotificationService.createAndEmitNotification({
                     message: `Your ${activeBreak.breakType} break has ended.`,
                     type: 'info',

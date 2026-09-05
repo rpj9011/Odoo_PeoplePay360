@@ -10,14 +10,17 @@ const authenticateToken = require('../middleware/authenticateToken');
 // --- Models ---
 const User = require('../models/User');
 const Setting = require('../models/Setting');
+const AttendanceLog = require('../models/AttendanceLog');
+const LeaveRequest = require('../models/LeaveRequest');
 
 // --- Services ---
 const { sendEmail } = require('../services/mailService');
 
 const SALT_ROUNDS = 10;
+const { HR_FAMILY } = require('../config/roles');
 
 const isAdminOrHr = (req, res, next) => {
-    if (!['Admin', 'HR'].includes(req.user.role)) {
+    if (!HR_FAMILY.includes(req.user.role)) {
         return res.status(403).json({ error: 'Access forbidden: Requires Admin or HR role.' });
     }
     next();
@@ -637,6 +640,33 @@ router.get('/:id/probation-status', [authenticateToken, isAdminOrHr], async (req
     } catch (error) {
         console.error('Error fetching probation status:', error);
         res.status(500).json({ error: 'Failed to fetch probation status.' });
+    }
+});
+
+// GET /api/admin/employees/:id/counts
+// Returns live counts for smart buttons in the employee profile dialog.
+// Only attendanceCount and timeOffCount are returned — Contracts and Allocations
+// do not exist in this codebase yet and will be added in a separate phase.
+// TODO: When Contract and Allocation models are introduced, add contractCount and
+//       allocationCount here so the dialog's "Contracts" and "Allocations" buttons
+//       can show real data instead of the current "Coming soon" state.
+router.get('/:id/counts', [authenticateToken, isAdminOrHr], async (req, res) => {
+    const { id } = req.params;
+    try {
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: 'Invalid employee ID.' });
+        }
+
+        // Run both counts in parallel — no need for sequential awaits
+        const [attendanceCount, timeOffCount] = await Promise.all([
+            AttendanceLog.countDocuments({ user: new mongoose.Types.ObjectId(id) }),
+            LeaveRequest.countDocuments({ employee: new mongoose.Types.ObjectId(id) }),
+        ]);
+
+        res.json({ attendanceCount, timeOffCount });
+    } catch (error) {
+        console.error('[Employee Counts] Failed to fetch counts for employee', id, error);
+        res.status(500).json({ error: 'Failed to fetch employee counts.' });
     }
 });
 

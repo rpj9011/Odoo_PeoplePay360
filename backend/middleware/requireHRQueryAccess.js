@@ -1,8 +1,9 @@
 const User = require('../models/User');
+const { HR_FAMILY } = require('../config/roles');
 
 /**
  * HR Query management access for delegated employees.
- * Admin/HR already have full access and are excluded here.
+ * Admin/HR family always have full access and are excluded here.
  */
 async function requireHRQueryAccess(req, res, next) {
     try {
@@ -10,8 +11,8 @@ async function requireHRQueryAccess(req, res, next) {
             return res.status(401).json({ error: 'Authentication required.' });
         }
 
-        // Admin and HR always have access
-        if (['Admin', 'HR'].includes(req.user.role)) {
+        // All HR-family roles always have access
+        if (HR_FAMILY.includes(req.user.role)) {
             return next();
         }
 

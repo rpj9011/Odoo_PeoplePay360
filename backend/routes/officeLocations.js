@@ -4,6 +4,7 @@ const OfficeLocation = require('../models/OfficeLocation');
 const authenticateToken = require('../middleware/authenticateToken');
 const { geofencingMiddleware } = require('../middleware/geofencingMiddleware');
 const mongoose = require('mongoose');
+const { HR_FAMILY } = require('../config/roles');
 
 const router = express.Router();
 
@@ -13,8 +14,8 @@ router.use(authenticateToken);
 // Get all office locations (Admin/HR only)
 router.get('/', async (req, res) => {
     try {
-        // Only Admin and HR can view office locations
-        if (req.user.role !== 'Admin' && req.user.role !== 'HR') {
+        // Only HR family can view office locations
+        if (!HR_FAMILY.includes(req.user.role)) {
             return res.status(403).json({ error: 'Access denied. Admin/HR privileges required.' });
         }
 
@@ -33,8 +34,8 @@ router.get('/:id', async (req, res) => {
             return res.status(400).json({ error: 'Invalid office location ID format.' });
         }
 
-        // Only Admin and HR can view office locations
-        if (req.user.role !== 'Admin' && req.user.role !== 'HR') {
+        // Only HR family can view office locations
+        if (!HR_FAMILY.includes(req.user.role)) {
             return res.status(403).json({ error: 'Access denied. Admin/HR privileges required.' });
         }
 
