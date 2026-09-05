@@ -1,0 +1,1261 @@
+/* src/styles/LeavesPage.css */
+
+:root {
+    --theme-red: #FF4057;
+    --theme-red-hover: #EF4444;
+    --theme-red-light: #FFF5F7;
+    --theme-blue: #3B82F6;
+    --theme-blue-light: #F0F9FF;
+    --theme-purple: #8B5CF6;
+    --theme-purple-light: #FAF5FF;
+    --theme-green: #059669;
+    --theme-green-light: #D1FAE5;
+    --theme-red-off: #DC2626;
+    --theme-red-off-light: #FEE2E2;
+    --theme-black: #1F2937;
+    --theme-gray: #6B7280;
+    --theme-light-gray: #9CA3AF;
+    --theme-border: #E5E7EB;
+    --theme-bg: #F9FAFB;
+    --theme-white: #FFFFFF;
+    --shadow-light: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* --- Main Page Container --- */
+.leaves-page-redesigned {
+    background-color: #f8f9fa;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    overflow: hidden; /* Prevent page-level scroll, content scrolls within */
+}
+
+/* --- Employee Leaves Page Specific Layout Changes --- */
+.employee-leaves-page {
+    padding: 1rem 1.5rem !important;
+    gap: 0.75rem !important;
+    /* 
+     * Height calculation for employee-view (padding: 0):
+     * - Topbar height: 56px (--topbar-height)
+     * - Page fills remaining viewport: calc(100vh - 56px)
+     * - This ensures lower grid aligns with Notifications panel at bottom of sidebar
+     */
+    height: calc(100vh - 56px) !important;
+    min-height: calc(100vh - 56px) !important;
+    max-height: calc(100vh - 56px) !important;
+}
+
+/* Ensure carryforward section doesn't break layout */
+.employee-leaves-page .carryforward-section {
+    flex-shrink: 0 !important; /* Fixed height - don't shrink */
+}
+
+/* --- KPI Cards Section --- */
+.leaves-page-redesigned .leave-kpi-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    flex-shrink: 0; /* Fixed height - don't shrink */
+}
+
+/* Compact KPI cards for employee leaves page */
+.employee-leaves-page .leave-kpi-cards {
+    gap: 0.75rem !important;
+    margin-bottom: 0.25rem !important;
+    flex-shrink: 0 !important; /* Ensure consistent behavior for all employee types */
+}
+
+.leaves-page-redesigned .leave-kpi-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+    border-radius: 12px !important;
+    padding: 1rem 1.25rem !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    border: 1px solid #e9ecef !important;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden;
+    min-height: auto;
+    height: auto;
+}
+
+/* Compact KPI card padding */
+.employee-leaves-page .leave-kpi-card {
+    padding: 0.7rem 1rem !important;
+    gap: 0.75rem !important;
+    border-radius: 10px !important;
+}
+
+.leaves-page-redesigned .leave-kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    transition: width 0.3s ease;
+}
+
+.leaves-page-redesigned .leave-kpi-card.sick-leave::before {
+    background: linear-gradient(180deg, #FF6B9D 0%, #C9184A 100%);
+}
+
+.leaves-page-redesigned .leave-kpi-card.casual-leave::before {
+    background: linear-gradient(180deg, #4ECDC4 0%, #1A535C 100%);
+}
+
+.leaves-page-redesigned .leave-kpi-card.planned-leave::before {
+    background: linear-gradient(180deg, #FFB703 0%, #FB8500 100%);
+}
+
+.leaves-page-redesigned .leave-kpi-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    border-color: transparent !important;
+}
+
+.leaves-page-redesigned .leave-kpi-card:hover::before {
+    width: 6px;
+}
+
+.leaves-page-redesigned .kpi-icon-wrapper {
+    width: 48px;
+    height: 48px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.3s ease;
+}
+
+/* Smaller icon wrapper for employee leaves page */
+.employee-leaves-page .kpi-icon-wrapper {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 8px !important;
+}
+
+.leaves-page-redesigned .leave-kpi-card.sick-leave .kpi-icon-wrapper {
+    background: linear-gradient(135deg, rgba(255, 107, 157, 0.15) 0%, rgba(201, 24, 74, 0.15) 100%);
+}
+
+.leaves-page-redesigned .leave-kpi-card.casual-leave .kpi-icon-wrapper {
+    background: linear-gradient(135deg, rgba(78, 205, 196, 0.15) 0%, rgba(26, 83, 92, 0.15) 100%);
+}
+
+.leaves-page-redesigned .leave-kpi-card.planned-leave .kpi-icon-wrapper {
+    background: linear-gradient(135deg, rgba(255, 183, 3, 0.15) 0%, rgba(251, 133, 0, 0.15) 100%);
+}
+
+.leaves-page-redesigned .leave-kpi-card:hover .kpi-icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.leaves-page-redesigned .kpi-icon {
+    transition: all 0.3s ease;
+}
+
+.leaves-page-redesigned .leave-kpi-card.sick-leave .kpi-icon {
+    color: #C9184A;
+}
+
+.leaves-page-redesigned .leave-kpi-card.casual-leave .kpi-icon {
+    color: #1A535C;
+}
+
+.leaves-page-redesigned .leave-kpi-card.planned-leave .kpi-icon {
+    color: #FB8500;
+}
+
+.leaves-page-redesigned .kpi-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    flex: 1;
+}
+
+/* Reduced gap in KPI content */
+.employee-leaves-page .kpi-content {
+    gap: 0.15rem !important;
+}
+
+.leaves-page-redesigned .kpi-value {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    margin: 0 !important;
+}
+
+/* Smaller KPI value */
+.employee-leaves-page .kpi-value {
+    font-size: 1.5rem !important;
+}
+
+.leaves-page-redesigned .leave-kpi-card.sick-leave .kpi-value {
+    color: #C9184A !important;
+}
+
+.leaves-page-redesigned .leave-kpi-card.casual-leave .kpi-value {
+    color: #1A535C !important;
+}
+
+.leaves-page-redesigned .leave-kpi-card.planned-leave .kpi-value {
+    color: #FB8500 !important;
+}
+
+.leaves-page-redesigned .kpi-label {
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    color: #6c757d !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 !important;
+}
+
+/* Smaller KPI label */
+.employee-leaves-page .kpi-label {
+    font-size: 0.7rem !important;
+}
+
+/* --- Main Content Grid (3 Large Rectangles) --- */
+.leaves-page-redesigned .content-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    flex: 1; /* Fill remaining vertical space */
+    min-height: 0; /* Critical for flex children to respect overflow */
+    align-items: stretch; /* Cards stretch to fill grid height */
+    overflow: hidden; /* Prevent grid from overflowing */
+}
+
+/* Compact content grid for employee leaves page */
+.employee-leaves-page .content-grid {
+    gap: 0.75rem !important;
+    flex: 1 !important; /* Ensure consistent flex behavior for all employee types */
+    min-height: 0 !important;
+}
+
+.leaves-page-redesigned .content-card {
+    background-color: #ffffff !important;
+    border-radius: 12px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+    width: 100%;
+    height: 100%; /* Fill grid cell height */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Contain content within card */
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid #e9ecef;
+}
+
+/* Compact content card */
+.employee-leaves-page .content-card {
+    border-radius: 10px !important;
+    height: 100% !important; /* Ensure cards fill grid cell consistently */
+}
+
+.leaves-page-redesigned .content-card:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+    border-color: #3498db;
+    transform: translateY(-2px);
+}
+
+.leaves-page-redesigned .content-card-title {
+    font-weight: 600 !important;
+    color: #2c3e50 !important;
+    padding: 0.875rem 1.25rem !important;
+    margin: 0 !important;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    text-align: left;
+    font-size: 0.95rem !important;
+    letter-spacing: 0.025em;
+    position: relative;
+    overflow: hidden;
+    border-bottom: 2px solid #3498db;
+    flex-shrink: 0;
+    z-index: 1;
+}
+
+/* Compact card title */
+.employee-leaves-page .content-card-title {
+    padding: 0.625rem 1rem !important;
+    font-size: 0.875rem !important;
+    border-bottom-width: 1.5px !important;
+}
+
+.leaves-page-redesigned .scrollable-content {
+    flex: 1; /* Fill remaining card height */
+    overflow-y: auto; /* Enable internal scrolling */
+    overflow-x: hidden;
+    position: relative;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    min-height: 0; /* Critical for flex children to respect overflow */
+}
+
+/* Compact scrollable content - internal scrolling */
+.employee-leaves-page .scrollable-content {
+    padding: 0.75rem !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+}
+
+/* Custom Scrollbar - scoped to leaves page */
+.leaves-page-redesigned .scrollable-content::-webkit-scrollbar,
+.leaves-page-redesigned .content-card-list-scroll::-webkit-scrollbar {
+    width: 6px;
+}
+
+.leaves-page-redesigned .scrollable-content::-webkit-scrollbar-track,
+.leaves-page-redesigned .content-card-list-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.leaves-page-redesigned .scrollable-content::-webkit-scrollbar-thumb,
+.leaves-page-redesigned .content-card-list-scroll::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 10px;
+}
+
+.leaves-page-redesigned .scrollable-content::-webkit-scrollbar-thumb:hover,
+.leaves-page-redesigned .content-card-list-scroll::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* List area in Company Holidays & Saturday Schedule: internal scrolling */
+.leaves-page-redesigned .content-card-list-scroll {
+    flex: 1; /* Fill remaining card height */
+    min-height: 0; /* Critical for flex children to respect overflow */
+    overflow-y: auto; /* Enable internal scrolling */
+    overflow-x: hidden;
+    padding: 0.75rem;
+}
+
+/* Compact list scroll - internal scrolling */
+.employee-leaves-page .content-card-list-scroll {
+    flex: 1 !important;
+    min-height: 0 !important;
+    padding: 0.75rem !important;
+}
+
+/* --- Empty State --- */
+.leaves-page-redesigned .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 20px;
+    text-align: center;
+    height: 100%;
+    min-height: 150px;
+}
+
+/* Compact empty state */
+.employee-leaves-page .empty-state {
+    padding: 20px 16px !important;
+    min-height: 120px !important;
+}
+
+.leaves-page-redesigned .empty-state-icon {
+    font-size: 48px !important;
+    color: #dee2e6 !important;
+    margin-bottom: 12px;
+    opacity: 0.6;
+}
+
+/* Smaller empty state icon */
+.employee-leaves-page .empty-state-icon {
+    font-size: 36px !important;
+    margin-bottom: 8px !important;
+}
+
+.leaves-page-redesigned .empty-state-title {
+    font-weight: 600 !important;
+    color: var(--leave-text-primary) !important;
+    margin-bottom: 6px !important;
+}
+
+.leaves-page-redesigned .empty-state-subtitle {
+    color: var(--leave-text-secondary) !important;
+    max-width: 300px;
+    line-height: 1.6;
+}
+
+/* --- Table Container Adjustments --- */
+.leaves-page-redesigned .table-container {
+    /* Removed height: 100%, flex: 1, min-height: 0, max-height to allow natural growth */
+    width: 100%;
+    border-radius: 8px;
+    /* Removed overflow: auto - let table flow naturally, page scrolls */
+    border: 1px solid #e9ecef;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    /* Table grows naturally with content */
+}
+
+/* Compact table container - natural flow */
+.employee-leaves-page .table-container {
+    border-radius: 6px !important;
+    /* Removed max-height - let table grow naturally */
+}
+
+.leaves-page-redesigned .table-container .MuiTable-root {
+    width: 100%;
+}
+
+.leaves-page-redesigned .table-container .MuiTableCell-head {
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+    color: #2c3e50 !important;
+    border-bottom: 2px solid #e9ecef !important;
+    text-align: center !important;
+    padding: 0.75rem 0.5rem !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.leaves-page-redesigned .table-container .MuiTableCell-body {
+    color: #495057 !important;
+    text-align: center !important;
+    padding: 0.75rem 0.5rem !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    font-size: 0.8rem !important;
+}
+
+/* Compact table cells */
+.employee-leaves-page .table-container .MuiTableCell-head {
+    padding: 0.5rem 0.375rem !important;
+    font-size: 0.7rem !important;
+}
+
+.employee-leaves-page .table-container .MuiTableCell-body {
+    padding: 0.5rem 0.375rem !important;
+    font-size: 0.75rem !important;
+}
+
+.table-row-clickable {
+    cursor: pointer !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.leaves-page-redesigned .table-container .MuiTableRow-root:hover {
+    background-color: #f8f9fa !important;
+}
+
+.leaves-page-redesigned .table-pagination {
+    border-top: 1px solid #e9ecef;
+    padding: 0.5rem 0 !important;
+    flex-shrink: 0;
+    background: white;
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+}
+
+/* Compact table pagination */
+.employee-leaves-page .table-pagination {
+    padding: 0.375rem 0 !important;
+}
+
+/* --- Custom Status Chip Styles --- */
+.status-chip {
+    border-radius: 16px !important;
+    color: white !important;
+    font-weight: 600 !important;
+    font-size: 0.7rem !important;
+    height: 24px !important;
+    padding: 0 12px !important;
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.status-chip-approved {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%) !important;
+}
+
+.status-chip-rejected {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%) !important;
+}
+
+.status-chip-pending {
+    background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%) !important;
+    color: #212121 !important;
+}
+
+/* --- Vector list styles for Holidays and Saturday Schedule --- */
+.leaves-page-redesigned .vector-list {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    list-style: none;
+}
+
+/* Compact vector list */
+.employee-leaves-page .vector-list {
+    gap: 0.5rem !important;
+}
+
+.leaves-page-redesigned .vector-item {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    background: #ffffff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Compact vector items */
+.employee-leaves-page .vector-item {
+    padding: 0.5rem 0.625rem !important;
+    gap: 0.625rem !important;
+    border-radius: 6px !important;
+    margin-bottom: 0.375rem !important;
+}
+
+.leaves-page-redesigned .vector-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, #3498db 0%, #2980b9 100%);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.leaves-page-redesigned .vector-item:hover {
+    transform: translateX(4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-color: #3498db;
+}
+
+.leaves-page-redesigned .vector-item:hover::before {
+    transform: scaleY(1);
+}
+
+.leaves-page-redesigned .vector-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px rgba(52, 152, 219, 0.15);
+    border: 1px solid rgba(52, 152, 219, 0.2);
+}
+
+/* Smaller vector icon */
+.employee-leaves-page .vector-icon {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 6px !important;
+}
+
+.leaves-page-redesigned .vector-icon svg,
+.leaves-page-redesigned .vector-icon .MuiSvgIcon-root {
+    width: 18px;
+    height: 18px;
+    fill: #3498db;
+    color: #3498db !important;
+}
+
+/* Smaller icon inside vector icon */
+.employee-leaves-page .vector-icon svg,
+.employee-leaves-page .vector-icon .MuiSvgIcon-root {
+    width: 14px !important;
+    height: 14px !important;
+}
+
+.leaves-page-redesigned .vector-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.leaves-page-redesigned .vector-title {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 0.85rem;
+    margin-bottom: 0.2rem;
+}
+
+.leaves-page-redesigned .vector-subtitle {
+    font-size: 0.75rem;
+    color: #6c757d;
+    line-height: 1.4;
+}
+
+/* Smaller vector text */
+.employee-leaves-page .vector-title {
+    font-size: 0.8rem !important;
+    margin-bottom: 0.15rem !important;
+}
+
+.employee-leaves-page .vector-subtitle {
+    font-size: 0.7rem !important;
+}
+
+.badge {
+    margin-left: auto;
+    font-size: 0.7rem;
+    font-weight: 700;
+    padding: 0.375rem 0.875rem;
+    border-radius: 20px;
+    border: 2px solid;
+    white-space: nowrap;
+    letter-spacing: 0.3px;
+    flex-shrink: 0;
+}
+
+.badge.working {
+    background: #d1fae5;
+    color: #059669;
+    border-color: rgba(5, 150, 105, 0.3);
+}
+
+.badge.off {
+    background: #fee2e2;
+    color: #dc2626;
+    border-color: rgba(220, 38, 38, 0.3);
+}
+
+/* --- Loading Spinner --- */
+.loading-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+/* --- Leave Details Modal Styles --- */
+.leave-details-modal-header {
+    background: var(--leave-card-bg);
+    color: var(--leave-text-primary);
+    padding: 28px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--leave-card-shadow);
+    border-bottom: 1px solid var(--leave-border-color);
+}
+
+.leave-details-modal-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--leave-red-accent), transparent);
+}
+
+.leave-details-header-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 1;
+}
+
+.leave-details-header-icon {
+    font-size: 34px !important;
+    color: var(--leave-red-accent) !important;
+    filter: drop-shadow(0 2px 4px rgba(255, 71, 87, 0.2));
+    transition: transform 0.3s ease;
+}
+
+.leave-details-header-content:hover .leave-details-header-icon {
+    transform: scale(1.1);
+}
+
+.leave-details-title {
+    font-weight: 700 !important;
+    color: var(--leave-text-primary) !important;
+    margin: 0 !important;
+    letter-spacing: 0.025em;
+    font-size: 1.5rem !important;
+}
+
+.leave-details-close-button {
+    color: var(--leave-text-secondary) !important;
+    background: var(--leave-secondary-bg) !important;
+    z-index: 1;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border-radius: 10px !important;
+    padding: 8px !important;
+    border: 1px solid var(--leave-border-color);
+}
+
+.leave-details-close-button:hover {
+    background: var(--leave-red-accent) !important;
+    color: white !important;
+    transform: rotate(90deg) scale(1.1);
+    box-shadow: 0 4px 12px rgba(255, 71, 87, 0.3);
+}
+
+.leave-details-content {
+    padding: 32px !important;
+    background: var(--leave-secondary-bg);
+    min-height: 400px;
+}
+
+.leave-details-status-banner {
+    padding: 24px 28px !important;
+    border-radius: 16px !important;
+    margin-bottom: 12px;
+    border: 2px solid;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+}
+
+.leave-details-status-banner:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.12);
+}
+
+.leave-details-status-banner::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: inherit;
+    border-radius: 16px 16px 0 0;
+}
+
+.leave-details-status-banner::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 100%);
+    pointer-events: none;
+}
+
+.leave-details-status-banner.approved {
+    background: linear-gradient(135deg, rgba(40, 167, 69, 0.12) 0%, rgba(40, 167, 69, 0.06) 50%, rgba(40, 167, 69, 0.08) 100%) !important;
+    border-color: rgba(40, 167, 69, 0.4) !important;
+}
+
+.leave-details-status-banner.rejected {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.12) 0%, rgba(220, 53, 69, 0.06) 50%, rgba(220, 53, 69, 0.08) 100%) !important;
+    border-color: rgba(220, 53, 69, 0.4) !important;
+}
+
+.leave-details-status-banner.pending {
+    background: linear-gradient(135deg, rgba(255, 193, 7, 0.12) 0%, rgba(255, 193, 7, 0.06) 50%, rgba(255, 193, 7, 0.08) 100%) !important;
+    border-color: rgba(255, 193, 7, 0.4) !important;
+}
+
+.status-banner-content {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.status-icon {
+    font-size: 40px !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.05);
+    }
+}
+
+.leave-details-status-banner.approved .status-icon {
+    color: #28a745 !important;
+}
+
+.leave-details-status-banner.rejected .status-icon {
+    color: #dc3545 !important;
+}
+
+.leave-details-status-banner.pending .status-icon {
+    color: #ffc107 !important;
+}
+
+.status-banner-label {
+    display: block;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 0.7rem;
+    margin-bottom: 4px;
+    opacity: 0.8;
+}
+
+.status-banner-value {
+    font-weight: 700 !important;
+    margin: 0 !important;
+}
+
+.leave-details-status-banner.approved .status-banner-value {
+    color: #28a745 !important;
+}
+
+.leave-details-status-banner.rejected .status-banner-value {
+    color: #dc3545 !important;
+}
+
+.leave-details-status-banner.pending .status-banner-value {
+    color: #ff9800 !important;
+}
+
+.detail-field {
+    margin-bottom: 20px;
+    animation: fadeInUp 0.4s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.detail-field-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding-left: 2px;
+}
+
+.detail-field-icon {
+    font-size: 22px !important;
+    color: #2C3E50 !important;
+    transition: all 0.3s ease;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.05));
+}
+
+.detail-field:hover .detail-field-icon {
+    transform: scale(1.1);
+    color: #e74c3c !important;
+}
+
+.detail-field-icon.rejection-icon {
+    color: #dc3545 !important;
+}
+
+.detail-field-label {
+    font-weight: 700 !important;
+    color: #495057 !important;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-size: 0.75rem !important;
+    margin: 0 !important;
+}
+
+.detail-field-value {
+    background: linear-gradient(135deg, #ffffff 0%, #fafbfc 100%) !important;
+    padding: 16px 20px !important;
+    border-radius: 12px !important;
+    border: 2px solid #e9ecef !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    position: relative;
+    overflow: hidden;
+}
+
+.detail-field-value::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #2C3E50 0%, #34495e 100%);
+    transform: scaleY(0);
+    transition: transform 0.3s ease;
+}
+
+.detail-field-value:hover {
+    border-color: #2C3E50 !important;
+    box-shadow: 0 4px 16px rgba(44, 62, 80, 0.12);
+    transform: translateX(2px);
+}
+
+.detail-field-value:hover::before {
+    transform: scaleY(1);
+}
+
+.detail-field-text {
+    font-weight: 600 !important;
+    color: #212121 !important;
+    margin: 0 !important;
+    font-size: 0.95rem !important;
+    letter-spacing: 0.2px;
+}
+
+.dates-field {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    padding: 16px !important;
+}
+
+.date-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    width: 100%;
+    padding: 8px 0;
+    transition: all 0.2s ease;
+}
+
+.date-item:hover {
+    padding-left: 4px;
+}
+
+.date-label {
+    font-weight: 700 !important;
+    color: #6c757d !important;
+    min-width: 150px;
+    font-size: 0.85rem !important;
+    letter-spacing: 0.3px;
+}
+
+.date-value {
+    font-weight: 600 !important;
+    color: #212121 !important;
+    font-size: 0.95rem !important;
+}
+
+.dates-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.date-chip {
+    background: linear-gradient(135deg, #2C3E50 0%, #34495e 50%, #2C3E50 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    padding: 6px 14px !important;
+    box-shadow: 0 2px 8px rgba(44, 62, 80, 0.2);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.date-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+}
+
+.reason-field {
+    min-height: 90px !important;
+    padding: 18px 22px !important;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%) !important;
+}
+
+.reason-text {
+    color: #495057 !important;
+    line-height: 1.8 !important;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0 !important;
+    font-size: 0.95rem !important;
+    letter-spacing: 0.1px;
+}
+
+.rejection-notes-field {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 50%, rgba(220, 53, 69, 0.08) 100%) !important;
+    border-color: rgba(220, 53, 69, 0.4) !important;
+    min-height: 90px !important;
+    padding: 18px 22px !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.rejection-notes-field::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(180deg, #dc3545 0%, #c82333 100%);
+}
+
+.rejection-notes-field:hover {
+    border-color: rgba(220, 53, 69, 0.6) !important;
+    box-shadow: 0 4px 16px rgba(220, 53, 69, 0.15);
+    transform: translateX(2px);
+}
+
+.rejection-text {
+    color: #c82333 !important;
+    line-height: 1.8 !important;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    font-size: 0.95rem !important;
+    letter-spacing: 0.1px;
+}
+
+.leave-details-actions {
+    padding: 24px 32px !important;
+    background: linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%);
+    border-top: 1px solid #e9ecef;
+    display: flex;
+    justify-content: flex-end;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.leave-details-close-btn {
+    background: var(--leave-red-accent) !important;
+    color: white !important;
+    padding: 12px 32px !important;
+    border-radius: 12px !important;
+    font-weight: 600 !important;
+    text-transform: none !important;
+    box-shadow: 0 4px 16px rgba(255, 71, 87, 0.3) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    letter-spacing: 0.025em;
+    font-size: 0.95rem !important;
+    position: relative;
+    overflow: hidden;
+}
+
+.leave-details-close-btn:hover {
+    background: var(--leave-apply-hover-bg) !important;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(255, 71, 87, 0.4) !important;
+}
+
+.leave-details-close-btn:active {
+    transform: translateY(-1px);
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 1400px) {
+    .content-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .content-grid .content-card:last-child {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 1024px) {
+    .leaves-page-redesigned {
+        padding: 1.25rem;
+    }
+    
+    .leaves-page-redesigned .leave-kpi-cards {
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 0.875rem;
+    }
+    
+    .leaves-page-redesigned .leave-kpi-card {
+        padding: 0.875rem 1rem !important;
+    }
+    
+    .leaves-page-redesigned .kpi-icon-wrapper {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .leaves-page-redesigned .kpi-value {
+        font-size: 1.6rem !important;
+    }
+    
+    .leaves-page-redesigned .content-grid {
+        max-height: calc(100vh - 260px);
+    }
+    
+    .leaves-page-redesigned .content-card {
+        max-height: calc(100vh - 260px);
+    }
+    
+    .leaves-page-redesigned .scrollable-content,
+    .leaves-page-redesigned .content-card-list-scroll {
+        max-height: calc(100vh - 360px);
+    }
+    
+    .leaves-page-redesigned .table-container {
+        max-height: calc(100vh - 400px);
+    }
+}
+
+@media (max-width: 768px) {
+    .leaves-page-redesigned {
+        padding: 1rem;
+        gap: 0.75rem;
+    }
+    
+    .leaves-page-redesigned .leave-kpi-cards {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .leaves-page-redesigned .leave-kpi-card {
+        padding: 0.875rem !important;
+    }
+    
+    .leaves-page-redesigned .content-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        max-height: none;
+    }
+    
+    .leaves-page-redesigned .content-grid .content-card:last-child {
+        grid-column: span 1;
+        max-height: none;
+    }
+    
+    .leaves-page-redesigned .content-card {
+        max-height: 50vh;
+    }
+    
+    .leaves-page-redesigned .scrollable-content,
+    .leaves-page-redesigned .content-card-list-scroll {
+        max-height: calc(50vh - 100px);
+    }
+    
+    .leaves-page-redesigned .table-container {
+        max-height: calc(50vh - 140px);
+    }
+    
+    .leaves-page-redesigned .vector-item {
+        padding: 0.75rem;
+    }
+    
+    .leaves-page-redesigned .vector-icon {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 480px) {
+    .leaves-page-redesigned {
+        padding: 0.75rem;
+    }
+    
+    .leave-kpi-card {
+        flex-direction: column;
+        text-align: center;
+        gap: 0.75rem;
+    }
+    
+    .kpi-icon-wrapper {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .kpi-value {
+        font-size: 1.5rem !important;
+    }
+    
+    .content-card-title {
+        padding: 1rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .scrollable-content {
+        padding: 1rem;
+    }
+    
+    /* Modal responsive styles */
+    .leave-details-modal-header {
+        padding: 1.25rem 1rem;
+    }
+    
+    .leave-details-title {
+        font-size: 1.25rem !important;
+    }
+    
+    .leave-details-header-icon {
+        font-size: 24px !important;
+    }
+    
+    .leave-details-content {
+        padding: 1.25rem 1rem !important;
+    }
+    
+    .leave-details-status-banner {
+        padding: 1rem !important;
+    }
+    
+    .status-icon {
+        font-size: 28px !important;
+    }
+    
+    .detail-field-value {
+        padding: 0.75rem 1rem !important;
+    }
+    
+    .date-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .date-label {
+        min-width: auto;
+    }
+    
+    .leave-details-actions {
+        padding: 1rem !important;
+    }
+    
+    .leave-details-close-btn {
+        width: 100%;
+    }
+}

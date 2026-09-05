@@ -1,0 +1,40 @@
+# Use this ONLY if cPanel document root is ~/attendance-test.bylinelms.com/
+# (parent folder) and frontend files live in ./frontend/
+#
+# Better fix: in cPanel → Domains → attendance-test.bylinelms.com →
+# set Document Root to .../attendance-test.bylinelms.com/frontend
+# and use the .htaccess inside frontend/ instead.
+
+Options -MultiViews +FollowSymLinks -Indexes
+RewriteEngine On
+RewriteBase /
+
+<IfModule mod_passenger.c>
+  PassengerEnabled off
+</IfModule>
+
+# Backend → PM2
+RewriteCond %{HTTP:Upgrade} =websocket [NC]
+RewriteCond %{REQUEST_URI} ^/api/socket.io [NC]
+RewriteRule .* ws://127.0.0.1:3011%{REQUEST_URI} [P,L]
+
+RewriteCond %{REQUEST_URI} ^/api [NC,OR]
+RewriteCond %{REQUEST_URI} ^/health$ [NC,OR]
+RewriteCond %{REQUEST_URI} ^/avatars [NC,OR]
+RewriteCond %{REQUEST_URI} ^/medical-certificates [NC,OR]
+RewriteCond %{REQUEST_URI} ^/public/ [NC]
+RewriteRule .* http://127.0.0.1:3011%{REQUEST_URI} [P,L,QSA]
+
+# Static assets from frontend/
+RewriteRule ^assets/(.*)$ frontend/assets/$1 [L]
+RewriteRule ^(AMS\.(jpg|webp)|BL\.svg|Byline_logo\.(png|svg)|Office\.png|Time-Mangement\.png)$ frontend/$1 [L]
+
+# Real files/dirs in frontend/
+RewriteCond %{DOCUMENT_ROOT}/frontend%{REQUEST_URI} -f [OR]
+RewriteCond %{DOCUMENT_ROOT}/frontend%{REQUEST_URI} -d
+RewriteRule ^(.*)$ frontend/$1 [L]
+
+# SPA fallback
+RewriteCond %{REQUEST_URI} !^/api
+RewriteCond %{REQUEST_URI} !^/health$
+RewriteRule ^ frontend/index.html [L]

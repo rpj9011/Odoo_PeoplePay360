@@ -1,0 +1,1007 @@
+/* ProbationTracker.css - Modern UI Styling */
+
+.probation-tracker {
+  width: 100%;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Actions Styling */
+.probation-tracker .header-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+/* Summary Cards */
+.probation-tracker .MuiCard-root {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.probation-tracker .MuiCard-root:hover {
+  transform: translateY(-2px);
+}
+
+/* Table Styling */
+.probation-tracker .MuiTableContainer-root {
+  border-radius: 8px;
+}
+
+/* Custom Scrollbar Styling */
+.probation-tracker .MuiTableContainer-root::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.probation-tracker .MuiTableContainer-root::-webkit-scrollbar-track {
+  background: #F3F4F6;
+  border-radius: 3px;
+}
+
+.probation-tracker .MuiTableContainer-root::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+  transition: background 0.2s ease;
+}
+
+.probation-tracker .MuiTableContainer-root::-webkit-scrollbar-thumb:hover {
+  background: #9CA3AF;
+}
+
+/* Firefox Scrollbar */
+.probation-tracker .MuiTableContainer-root {
+  scrollbar-width: thin;
+  scrollbar-color: #D1D5DB #F3F4F6;
+}
+
+/* Table Row Styling */
+.probation-tracker .MuiTableRow-root {
+  transition: all 0.2s ease;
+}
+
+.probation-tracker .MuiTableRow-root:hover {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Table Header Styling */
+.probation-tracker .MuiTableHead-root .MuiTableCell-root {
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background-color: #F9FAFB !important;
+  color: #374151 !important;
+  border-bottom: 1px solid #E5E7EB !important;
+  padding-top: 10px !important;
+  padding-bottom: 10px !important;
+}
+
+/* Table Cell Styling */
+.probation-tracker .MuiTableBody-root .MuiTableCell-root {
+  border-bottom: 1px solid #F3F4F6;
+  padding: 8px 16px;
+}
+
+/* Accessibility - Focus States */
+.probation-tracker .MuiIconButton-root:focus {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+.probation-tracker .MuiButtonBase-root:focus {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+.probation-tracker .MuiInputBase-root:focus-within {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* Keyboard Navigation */
+.probation-tracker .MuiTableRow-root {
+  position: relative;
+}
+
+.probation-tracker .MuiTableRow-root:focus {
+  outline: 2px solid #3B82F6;
+  outline-offset: -2px;
+}
+
+/* Tooltip Styling */
+.probation-tracker .MuiTooltip-tooltip {
+  background-color: #1F2937;
+  color: white;
+  font-size: 0.875rem;
+  border-radius: 6px;
+  padding: 8px 12px;
+}
+
+/* Animation for Expand/Collapse */
+.probation-tracker .MuiCollapse-root {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Skeleton Loading Animation */
+.probation-tracker .MuiSkeleton-root {
+  border-radius: 6px;
+  background: linear-gradient(90deg, #F3F4F6 25%, #E5E7EB 50%, #F3F4F6 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .probation-tracker .MuiCard-root {
+    border: 2px solid #000000;
+  }
+  
+  .probation-tracker .MuiTableRow-root {
+    border-bottom: 2px solid #000000;
+  }
+  
+  .probation-tracker .MuiTableCell-root {
+    border-bottom: 2px solid #000000;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .probation-tracker .MuiCard-root,
+  .probation-tracker .MuiTableRow-root,
+  .probation-tracker .MuiIconButton-root,
+  .probation-tracker .MuiSkeleton-root {
+    transition: none;
+    animation: none;
+  }
+  
+  .probation-tracker .MuiCollapse-root {
+    transition: none;
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 960px) {
+  .probation-tracker .MuiTableContainer-root {
+    overflow-x: auto;
+  }
+  
+  .probation-tracker .MuiTableCell-root {
+    white-space: nowrap;
+    min-width: 100px;
+  }
+}
+
+/* Print Styles */
+@media print {
+  .probation-tracker .MuiIconButton-root,
+  .probation-tracker .MuiPagination-root {
+    display: none !important;
+  }
+  
+  .probation-tracker .MuiCard-root {
+    border: 1px solid #000 !important;
+    box-shadow: none !important;
+    break-inside: avoid;
+  }
+}
+
+/* Focus Visible for Better Keyboard Navigation */
+.probation-tracker .MuiTableRow-root:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: -2px;
+}
+
+.probation-tracker .MuiIconButton-root:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* ─── Breakdown modal (portaled — scoped on dialog, not .probation-tracker) ─── */
+.probation-breakdown-dialog .MuiDialog-paper {
+  border-radius: 12px;
+  width: min(1200px, 96vw);
+  max-width: min(1200px, 96vw);
+  max-height: calc(100vh - 48px);
+}
+
+.probation-breakdown-dialog .probation-breakdown-dialog-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid #E5E7EB;
+  background: #FFFFFF;
+}
+
+.probation-breakdown-dialog .probation-breakdown-employee-name {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.probation-breakdown-dialog .probation-breakdown-employee-meta {
+  margin: 4px 0 0;
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+.probation-breakdown-dialog .probation-breakdown-dialog-subtitle {
+  margin: 8px 0 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9CA3AF;
+}
+
+.probation-breakdown-dialog .probation-breakdown-dialog-content {
+  padding: 0 !important;
+  background-color: #F3F4F6;
+}
+
+.probation-breakdown-dialog .probation-breakdown-content {
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Level 1 — Period bar */
+.probation-breakdown-dialog .probation-breakdown-period-bar {
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-left: 4px solid #6366F1;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-split {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-part {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-part.base {
+  padding-right: 16px;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-part.final {
+  padding-left: 16px;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-divider {
+  width: 1px;
+  flex-shrink: 0;
+  background-color: #E5E7EB;
+  align-self: stretch;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-part-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6366F1;
+  margin: 0;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-part.final .probation-breakdown-period-part-label {
+  color: #4F46E5;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-part-hint {
+  font-size: 0.75rem;
+  color: #9CA3AF;
+  margin: 0;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-range {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-sep {
+  margin: 0 10px;
+  font-weight: 500;
+  color: #9CA3AF;
+}
+
+.probation-breakdown-dialog .probation-breakdown-final-end {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.35;
+  margin: 0;
+}
+
+.probation-breakdown-dialog .probation-breakdown-final-end.extended {
+  color: #B91C1C;
+}
+
+.probation-breakdown-dialog .probation-breakdown-period-note {
+  display: block;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #F3F4F6;
+  font-size: 0.8125rem;
+  color: #6B7280;
+}
+
+@media (max-width: 520px) {
+  .probation-breakdown-dialog .probation-breakdown-period-split {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .probation-breakdown-dialog .probation-breakdown-period-divider {
+    width: 100%;
+    height: 1px;
+  }
+
+  .probation-breakdown-dialog .probation-breakdown-period-part.base {
+    padding-right: 0;
+  }
+
+  .probation-breakdown-dialog .probation-breakdown-period-part.final {
+    padding-left: 0;
+  }
+}
+
+/* Level 2 — KPI section */
+.probation-breakdown-dialog .probation-breakdown-kpi-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.probation-breakdown-dialog .probation-breakdown-section-eyebrow {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #6B7280;
+  margin: 0;
+}
+
+.probation-breakdown-dialog .probation-breakdown-divider {
+  border-color: #E5E7EB;
+}
+
+.probation-breakdown-dialog .probation-summary-card {
+  height: 100%;
+  padding: 16px 18px;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  background-color: #FFFFFF;
+}
+
+.probation-breakdown-dialog .probation-summary-card.leave {
+  border-color: #93C5FD;
+  border-top: 3px solid #3B82F6;
+}
+
+.probation-breakdown-dialog .probation-summary-card.absent {
+  border-color: #FCA5A5;
+  border-top: 3px solid #EF4444;
+}
+
+.probation-breakdown-dialog .probation-summary-card.combined {
+  border-color: #D1D5DB;
+  border-top: 3px solid #059669;
+}
+
+.probation-breakdown-dialog .probation-summary-label {
+  display: block;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6B7280;
+  margin-bottom: 8px;
+}
+
+.probation-breakdown-dialog .probation-summary-card.leave .probation-summary-label {
+  color: #1D4ED8;
+}
+
+.probation-breakdown-dialog .probation-summary-card.absent .probation-summary-label {
+  color: #B91C1C;
+}
+
+.probation-breakdown-dialog .probation-summary-card.combined .probation-summary-label {
+  color: #047857;
+}
+
+.probation-breakdown-dialog .probation-summary-value {
+  margin: 0;
+  font-size: 1.75rem;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #111827;
+}
+
+.probation-breakdown-dialog .probation-summary-card.leave .probation-summary-value {
+  color: #1E40AF;
+}
+
+.probation-breakdown-dialog .probation-summary-card.absent .probation-summary-value {
+  color: #B91C1C;
+}
+
+.probation-breakdown-dialog .probation-summary-card.combined .probation-summary-value {
+  color: #047857;
+}
+
+.probation-breakdown-dialog .probation-summary-unit {
+  margin-left: 4px;
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: #6B7280;
+}
+
+.probation-breakdown-dialog .probation-summary-meta {
+  display: block;
+  margin-top: 10px;
+  font-size: 0.75rem;
+  color: #6B7280;
+  line-height: 1.45;
+}
+
+/* Level 3 — Detail panels (two columns) */
+.probation-breakdown-dialog .probation-breakdown-detail-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-items: stretch;
+}
+
+@media (max-width: 900px) {
+  .probation-breakdown-dialog .probation-breakdown-detail-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.probation-breakdown-dialog .probation-breakdown-detail-panel {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.probation-breakdown-dialog .probation-breakdown-detail-panel.leave {
+  border-left: 4px solid #3B82F6;
+}
+
+.probation-breakdown-dialog .probation-breakdown-detail-panel.absent {
+  border-left: 4px solid #EF4444;
+}
+
+.probation-breakdown-dialog .probation-breakdown-panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 12px 14px;
+  background: #F9FAFB;
+  border-bottom: 1px solid #E5E7EB;
+  flex-shrink: 0;
+}
+
+.probation-breakdown-dialog .probation-breakdown-detail-panel.leave .probation-breakdown-panel-header {
+  background: linear-gradient(90deg, #EFF6FF 0%, #F9FAFB 40%);
+}
+
+.probation-breakdown-dialog .probation-breakdown-detail-panel.absent .probation-breakdown-panel-header {
+  background: linear-gradient(90deg, #FEF2F2 0%, #F9FAFB 40%);
+}
+
+.probation-breakdown-dialog .probation-breakdown-panel-title-group {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.probation-breakdown-dialog .probation-breakdown-panel-icon {
+  font-size: 1.35rem !important;
+  margin-top: 2px;
+}
+
+.probation-breakdown-dialog .probation-breakdown-detail-panel.leave .probation-breakdown-panel-icon {
+  color: #2563EB;
+}
+
+.probation-breakdown-dialog .probation-breakdown-detail-panel.absent .probation-breakdown-panel-icon {
+  color: #DC2626;
+}
+
+.probation-breakdown-dialog .probation-breakdown-panel-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.3;
+}
+
+.probation-breakdown-dialog .probation-breakdown-panel-subtitle {
+  margin: 2px 0 0;
+  font-size: 0.75rem;
+  color: #6B7280;
+  font-weight: 400;
+  line-height: 1.3;
+}
+
+.probation-breakdown-dialog .probation-section-badge {
+  display: inline-flex;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.probation-breakdown-dialog .probation-section-badge.leave {
+  color: #1D4ED8;
+  background-color: #DBEAFE;
+}
+
+.probation-breakdown-dialog .probation-section-badge.absent {
+  color: #B91C1C;
+  background-color: #FEE2E2;
+}
+
+.probation-breakdown-dialog .probation-breakdown-panel-body {
+  padding: 12px 14px 14px;
+  flex: 1;
+  min-height: 0;
+  max-height: min(480px, 50vh);
+  overflow-y: auto;
+}
+
+.probation-breakdown-dialog .probation-breakdown-panel-body::-webkit-scrollbar {
+  width: 5px;
+}
+
+.probation-breakdown-dialog .probation-breakdown-panel-body::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 3px;
+}
+
+/* Level 4 — Month cards */
+.probation-breakdown-dialog .probation-month-card {
+  border-radius: 8px;
+  border: 1px solid #E5E7EB;
+  background: #FAFAFA;
+  overflow: hidden;
+}
+
+.probation-breakdown-dialog .probation-month-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 10px 14px;
+  background: #FFFFFF;
+  border-bottom: 1px solid #F3F4F6;
+}
+
+.probation-breakdown-dialog .probation-month-title {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: #374151;
+}
+
+.probation-breakdown-dialog .probation-month-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.probation-breakdown-dialog .probation-leave-stat,
+.probation-breakdown-dialog .probation-absent-stat {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.probation-breakdown-dialog .probation-leave-stat.full {
+  color: #1D4ED8;
+  background-color: #DBEAFE;
+}
+
+.probation-breakdown-dialog .probation-leave-stat.half {
+  color: #6D28D9;
+  background-color: #EDE9FE;
+}
+
+.probation-breakdown-dialog .probation-absent-stat.full {
+  color: #B91C1C;
+  background-color: #FEE2E2;
+}
+
+.probation-breakdown-dialog .probation-absent-stat.half {
+  color: #C2410C;
+  background-color: #FFEDD5;
+}
+
+.probation-breakdown-dialog .probation-leave-stat.total,
+.probation-breakdown-dialog .probation-absent-stat.total {
+  color: #047857;
+  background-color: #D1FAE5;
+}
+
+.probation-breakdown-dialog .probation-month-card-body {
+  padding: 10px 14px 12px;
+}
+
+.probation-breakdown-dialog .probation-dates-label {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #9CA3AF;
+}
+
+.probation-breakdown-dialog .probation-month-dates {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.probation-breakdown-dialog .probation-date-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.75rem;
+  line-height: 1.25;
+}
+
+.probation-breakdown-dialog .probation-leave-date-chip.full,
+.probation-breakdown-dialog .probation-date-chip.probation-leave-date-chip.full {
+  background-color: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #1E40AF;
+}
+
+.probation-breakdown-dialog .probation-leave-date-chip.half,
+.probation-breakdown-dialog .probation-date-chip.probation-leave-date-chip.half {
+  background-color: #F5F3FF;
+  border-color: #DDD6FE;
+  color: #5B21B6;
+}
+
+.probation-breakdown-dialog .probation-absent-date-chip.full,
+.probation-breakdown-dialog .probation-date-chip.probation-absent-date-chip.full {
+  background-color: #FEF2F2;
+  border-color: #FECACA;
+  color: #B91C1C;
+}
+
+.probation-breakdown-dialog .probation-absent-date-chip.half,
+.probation-breakdown-dialog .probation-date-chip.probation-absent-date-chip.half {
+  background-color: #FFF7ED;
+  border-color: #FED7AA;
+  color: #C2410C;
+}
+
+.probation-breakdown-dialog .probation-date-text {
+  font-weight: 600;
+}
+
+.probation-breakdown-dialog .probation-date-type {
+  font-size: 0.625rem;
+  font-weight: 600;
+  opacity: 0.9;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.probation-breakdown-dialog .probation-period-empty {
+  padding: 24px 16px;
+  text-align: center;
+  background: #F9FAFB;
+  border-radius: 8px;
+  border: 1px dashed #D1D5DB;
+  font-size: 0.875rem;
+  color: #6B7280;
+}
+
+/* Alert & footnote */
+.probation-breakdown-dialog .probation-breakdown-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #FFFBEB;
+  border: 1px solid #FDE68A;
+  color: #92400E;
+  font-size: 0.8125rem;
+  line-height: 1.45;
+}
+
+.probation-breakdown-dialog .probation-breakdown-alert .MuiSvgIcon-root {
+  color: #D97706;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.probation-breakdown-dialog .probation-breakdown-footnote {
+  padding: 14px 16px;
+  border-radius: 8px;
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+}
+
+.probation-breakdown-dialog .probation-breakdown-footnote-title {
+  display: block;
+  margin: 0 0 8px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #9CA3AF;
+}
+
+.probation-breakdown-dialog .probation-breakdown-footnote p,
+.probation-breakdown-dialog .probation-breakdown-footnote .MuiTypography-root {
+  margin: 0 0 6px;
+  font-size: 0.75rem;
+  color: #6B7280;
+  line-height: 1.5;
+}
+
+.probation-breakdown-dialog .probation-breakdown-footnote .MuiTypography-root:last-child {
+  margin-bottom: 0;
+}
+
+.probation-breakdown-dialog .MuiDialogActions-root {
+  border-top: 1px solid #E5E7EB;
+  background-color: #FFFFFF;
+  padding: 12px 24px;
+}
+
+/* Legacy page-scoped styles (table view) */
+.probation-tracker .probation-summary-card {
+  height: 100%;
+  padding: 16px;
+  border-radius: 10px;
+  border: 1px solid #E5E7EB;
+  background-color: #FAFAFA;
+}
+
+.probation-tracker .probation-summary-card.leave {
+  border-color: #BFDBFE;
+  background: linear-gradient(180deg, #F8FAFF 0%, #EFF6FF 100%);
+}
+
+.probation-tracker .probation-summary-card.absent {
+  border-color: #FECACA;
+  background: linear-gradient(180deg, #FFFBFB 0%, #FEF2F2 100%);
+}
+
+.probation-tracker .probation-summary-card.combined {
+  border-color: #D1D5DB;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F3F4F6 100%);
+}
+
+.probation-tracker .probation-summary-label {
+  display: block;
+  color: #6B7280;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 6px;
+}
+
+.probation-tracker .probation-summary-card.leave .probation-summary-label {
+  color: #1D4ED8;
+}
+
+.probation-tracker .probation-summary-card.absent .probation-summary-label {
+  color: #B91C1C;
+}
+
+.probation-tracker .probation-summary-card.combined .probation-summary-label {
+  color: #374151;
+}
+
+.probation-tracker .probation-summary-value {
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+}
+
+.probation-tracker .probation-summary-card.leave .probation-summary-value {
+  color: #1E40AF;
+}
+
+.probation-tracker .probation-summary-card.absent .probation-summary-value {
+  color: #B91C1C;
+}
+
+.probation-tracker .probation-summary-card.combined .probation-summary-value {
+  color: #047857;
+}
+
+.probation-tracker .probation-summary-meta {
+  display: block;
+  margin-top: 8px;
+  color: #6B7280;
+  line-height: 1.4;
+}
+
+.probation-tracker .probation-section-badge {
+  display: inline-flex;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.probation-tracker .probation-section-badge.leave {
+  color: #1D4ED8;
+  background-color: #EFF6FF;
+}
+
+.probation-tracker .probation-section-badge.absent {
+  color: #B91C1C;
+  background-color: #FEF2F2;
+}
+
+/* Month blocks — leave & absent */
+.probation-tracker .probation-leave-month-block,
+.probation-tracker .probation-absent-month-block {
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.probation-tracker .probation-leave-month-block:hover,
+.probation-tracker .probation-absent-month-block:hover {
+  border-color: #D1D5DB;
+  background-color: #F9FAFB;
+}
+
+.probation-tracker .probation-leave-stat,
+.probation-tracker .probation-absent-stat {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.7rem;
+  line-height: 1.4;
+}
+
+.probation-tracker .probation-leave-stat.full {
+  color: #1D4ED8;
+  background-color: #DBEAFE;
+}
+
+.probation-tracker .probation-leave-stat.half {
+  color: #6D28D9;
+  background-color: #EDE9FE;
+}
+
+.probation-tracker .probation-absent-stat.full {
+  color: #B91C1C;
+  background-color: #FEE2E2;
+}
+
+.probation-tracker .probation-absent-stat.half {
+  color: #C2410C;
+  background-color: #FFEDD5;
+}
+
+.probation-tracker .probation-leave-stat.total,
+.probation-tracker .probation-absent-stat.total {
+  color: #047857;
+  background-color: #D1FAE5;
+}
+
+.probation-tracker .probation-leave-date-chip,
+.probation-tracker .probation-absent-date-chip {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  cursor: default;
+}
+
+.probation-tracker .probation-leave-date-chip.full {
+  background-color: #EFF6FF;
+  border-color: #BFDBFE;
+  color: #1E40AF;
+}
+
+.probation-tracker .probation-leave-date-chip.half {
+  background-color: #F5F3FF;
+  border-color: #DDD6FE;
+  color: #5B21B6;
+}
+
+.probation-tracker .probation-absent-date-chip.full {
+  background-color: #FEF2F2;
+  border-color: #FECACA;
+  color: #B91C1C;
+}
+
+.probation-tracker .probation-absent-date-chip.half {
+  background-color: #FFF7ED;
+  border-color: #FED7AA;
+  color: #C2410C;
+}
+
+.probation-tracker .probation-leave-date-text,
+.probation-tracker .probation-absent-date-text {
+  font-weight: 600;
+}
+
+.probation-tracker .probation-leave-type-text,
+.probation-tracker .probation-absent-type-text {
+  font-size: 0.65rem;
+  font-weight: 500;
+  opacity: 0.85;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Screen Reader Only Text */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

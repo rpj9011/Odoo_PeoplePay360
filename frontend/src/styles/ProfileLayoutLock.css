@@ -1,0 +1,409 @@
+/**
+ * PROFILE PAGE LAYOUT LOCK
+ * ZERO TOLERANCE FOR POST-LOAD MUTATIONS
+ * 
+ * This file enforces HARD CONSTRAINTS on the Profile Page layout.
+ * First paint = Final paint. NO EXCEPTIONS.
+ * 
+ * Apply this AFTER ProfilePage.css for maximum enforcement.
+ */
+
+/* ============================================
+   PHASE 1: CONTAINMENT & ISOLATION
+   Prevent layout recalculation propagation
+   ============================================ */
+
+.profile-page {
+    /* HARD LOCK: Prevent layout/style recalculation */
+    contain: layout style paint !important;
+    
+    /* HARD LOCK: Disable all dynamic sizing */
+    box-sizing: border-box !important;
+    
+    /* HARD LOCK: Prevent flex/grid recalculation */
+    flex: none !important;
+    
+    /* HARD LOCK: Disable will-change (prevents GPU layer shifts) */
+    will-change: auto !important;
+}
+
+.profile-container {
+    /* HARD LOCK: Fixed max-width, no responsive changes */
+    max-width: 1600px !important;
+    width: 100% !important;
+    margin: 0 auto !important;
+    
+    /* HARD LOCK: Containment */
+    contain: layout style !important;
+}
+
+.profile-layout {
+    /* HARD LOCK: Grid structure is IMMUTABLE */
+    display: grid !important;
+    grid-template-columns: 280px minmax(600px, 1fr) 320px !important;
+    gap: 24px !important;
+    align-items: start !important;
+    
+    /* HARD LOCK: Prevent grid recalculation */
+    contain: layout !important;
+    
+    /* HARD LOCK: No dynamic row sizing */
+    grid-auto-rows: auto !important;
+}
+
+/* ============================================
+   PHASE 2: COLUMN WIDTH ENFORCEMENT
+   Lock all three columns to exact dimensions
+   ============================================ */
+
+.profile-sidebar {
+    /* HARD LOCK: Exact width, no flexibility */
+    width: 280px !important;
+    min-width: 280px !important;
+    max-width: 280px !important;
+    flex: 0 0 280px !important;
+    
+    /* HARD LOCK: Prevent internal recalculation */
+    contain: layout style !important;
+}
+
+.profile-main {
+    /* HARD LOCK: Minimum width enforced */
+    min-width: 600px !important;
+    
+    /* HARD LOCK: Prevent flex shrink/grow */
+    flex: 1 1 auto !important;
+    
+    /* HARD LOCK: Containment */
+    contain: layout style !important;
+}
+
+.profile-policies {
+    /* HARD LOCK: Exact width, no flexibility */
+    width: 320px !important;
+    min-width: 320px !important;
+    max-width: 320px !important;
+    flex: 0 0 320px !important;
+    
+    /* HARD LOCK: Prevent internal recalculation */
+    contain: layout style !important;
+}
+
+/* ============================================
+   PHASE 3: HEIGHT STABILIZATION
+   Lock all section heights to prevent reflow
+   ============================================ */
+
+.profile-avatar-section {
+    /* HARD LOCK: Fixed minimum height */
+    min-height: 280px !important;
+    
+    /* HARD LOCK: Prevent padding collapse */
+    padding: 32px 24px 24px !important;
+    box-sizing: border-box !important;
+}
+
+.profile-info-section {
+    /* HARD LOCK: Fixed minimum height */
+    min-height: 200px !important;
+    
+    /* HARD LOCK: Prevent padding collapse */
+    padding: 24px !important;
+    box-sizing: border-box !important;
+}
+
+.profile-card {
+    /* HARD LOCK: Prevent padding mutations */
+    padding: 24px !important;
+    box-sizing: border-box !important;
+    
+    /* HARD LOCK: Containment */
+    contain: layout style !important;
+}
+
+/* ============================================
+   PHASE 4: TYPOGRAPHY LOCK
+   Prevent font loading shifts
+   ============================================ */
+
+.profile-name,
+.profile-title,
+.profile-card-title,
+.profile-card-subtitle,
+.team-info-label,
+.team-info-value,
+.profile-info-label,
+.profile-info-value,
+.policy-name,
+.policy-meta,
+.feedback-helper {
+    /* HARD LOCK: Fixed line heights */
+    line-height: 1.5 !important;
+    
+    /* HARD LOCK: Prevent font size changes */
+    font-size: inherit !important;
+    
+    /* HARD LOCK: Prevent text reflow */
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+}
+
+/* Avatar - LOCK font metrics */
+.profile-avatar {
+    /* HARD LOCK: Exact dimensions */
+    width: 120px !important;
+    height: 120px !important;
+    line-height: 120px !important;
+    
+    /* HARD LOCK: Font size locked */
+    font-size: 48px !important;
+    
+    /* HARD LOCK: Prevent flex/grid interference */
+    flex: none !important;
+}
+
+/* ============================================
+   PHASE 5: FORM FIELD STABILIZATION
+   Lock all input heights and grid structures
+   ============================================ */
+
+.profile-form-grid {
+    /* HARD LOCK: Grid structure */
+    display: grid !important;
+    gap: 12px !important;
+    
+    /* HARD LOCK: Containment */
+    contain: layout !important;
+}
+
+.profile-form-row {
+    /* HARD LOCK: Grid structure */
+    display: grid !important;
+    gap: 12px !important;
+    
+    /* HARD LOCK: Prevent row height changes */
+    align-items: start !important;
+}
+
+/* HARD LOCK: Row layouts - NO BREAKPOINT OVERRIDES */
+.profile-form-row.row-3 {
+    grid-template-columns: repeat(3, 1fr) !important;
+}
+
+.profile-form-row.row-4 {
+    grid-template-columns: repeat(4, 1fr) !important;
+}
+
+.profile-form-row.row-5 {
+    grid-template-columns: 1fr 0.6fr 1fr 1.2fr 0.6fr !important;
+}
+
+.profile-form-row.row-emergency {
+    grid-template-columns: 0.6fr 1fr !important;
+}
+
+/* Input fields - EXACT HEIGHT */
+.profile-form-field input,
+.profile-form-field select {
+    /* HARD LOCK: Exact height */
+    height: 42px !important;
+    
+    /* HARD LOCK: Padding locked */
+    padding: 10px 12px !important;
+    box-sizing: border-box !important;
+    
+    /* HARD LOCK: Prevent border width changes */
+    border-width: 1px !important;
+}
+
+/* ============================================
+   PHASE 6: POLICY LIST STABILIZATION
+   Ensure empty and loaded states have same height
+   ============================================ */
+
+.policy-list {
+    /* HARD LOCK: Minimum height (empty state) */
+    min-height: 120px !important;
+    
+    /* HARD LOCK: Containment */
+    contain: layout style !important;
+}
+
+.policy-item,
+.policy-empty {
+    /* HARD LOCK: Exact minimum height */
+    min-height: 80px !important;
+    
+    /* HARD LOCK: Padding locked */
+    padding: 12px !important;
+    box-sizing: border-box !important;
+}
+
+/* ============================================
+   PHASE 7: DISABLE RESPONSIVE BREAKPOINTS
+   Profile page uses FIXED layout only
+   ============================================ */
+
+/* OVERRIDE: Disable all media query mutations */
+@media (max-width: 1200px) {
+    .profile-layout {
+        /* MAINTAIN desktop layout */
+        grid-template-columns: 280px minmax(600px, 1fr) 320px !important;
+    }
+    
+    .profile-main {
+        min-width: 600px !important;
+    }
+}
+
+/* CRITICAL: Only allow mobile breakpoint if explicitly needed */
+@media (max-width: 768px) {
+    /* Mobile layout is allowed but LOCKED */
+    .profile-layout {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .profile-sidebar,
+    .profile-policies,
+    .profile-main {
+        width: 100% !important;
+        min-width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+/* ============================================
+   PHASE 8: NEUTRALIZE DYNAMIC BEHAVIORS
+   Disable all runtime style changes
+   ============================================ */
+
+/* Disable MUI sx prop mutations */
+.profile-page *[style*="padding"],
+.profile-page *[style*="margin"],
+.profile-page *[style*="width"],
+.profile-page *[style*="height"] {
+    /* HARD LOCK: Inline styles cannot override */
+    padding: revert !important;
+    margin: revert !important;
+    width: revert !important;
+    height: revert !important;
+}
+
+/* Disable transition-based layout changes */
+.profile-page * {
+    /* HARD LOCK: No layout-affecting transitions */
+    transition-property: color, background-color, border-color, opacity, transform !important;
+    
+    /* HARD LOCK: Never transition layout properties */
+    transition-property: none !important;
+}
+
+/* ============================================
+   PHASE 9: FONT LOADING PROTECTION
+   Prevent FOIT/FOUT layout shifts
+   ============================================ */
+
+.profile-page {
+    /* HARD LOCK: Font metrics stable during load */
+    font-display: swap !important;
+    
+    /* HARD LOCK: Prevent font size adjustments */
+    -webkit-text-size-adjust: 100% !important;
+    -moz-text-size-adjust: 100% !important;
+    text-size-adjust: 100% !important;
+}
+
+/* ============================================
+   PHASE 10: SNACKBAR ISOLATION
+   Ensure snackbar doesn't affect layout
+   ============================================ */
+
+.snackbar {
+    /* HARD LOCK: Fixed position, no layout impact */
+    position: fixed !important;
+    
+    /* HARD LOCK: Remove from layout flow */
+    contain: layout style paint !important;
+    
+    /* HARD LOCK: Disable will-change */
+    will-change: auto !important;
+}
+
+/* ============================================
+   PHASE 11: BUTTON HEIGHT LOCK
+   ============================================ */
+
+.profile-save-btn,
+.feedback-submit-btn {
+    /* HARD LOCK: Exact height */
+    height: 48px !important;
+    
+    /* HARD LOCK: Padding locked */
+    padding: 12px 32px !important;
+    box-sizing: border-box !important;
+    
+    /* HARD LOCK: Prevent flex interference */
+    flex: none !important;
+}
+
+/* ============================================
+   PHASE 12: GRID STABILIZATION
+   Lock team info and form grids
+   ============================================ */
+
+.team-info-grid {
+    /* HARD LOCK: Grid structure */
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 16px !important;
+    
+    /* HARD LOCK: Minimum height */
+    min-height: 60px !important;
+    
+    /* HARD LOCK: Containment */
+    contain: layout !important;
+}
+
+.team-info-item {
+    /* HARD LOCK: Minimum height */
+    min-height: 60px !important;
+}
+
+/* ============================================
+   PHASE 13: FINAL ENFORCEMENT
+   Nuclear option - disable ALL dynamic sizing
+   ============================================ */
+
+.profile-page,
+.profile-page * {
+    /* HARD LOCK: Disable all will-change */
+    will-change: auto !important;
+    
+    /* HARD LOCK: Disable all transforms that affect layout */
+    transform: none !important;
+}
+
+/* Allow only safe transforms (visual only) */
+.profile-page *:hover,
+.profile-page *:focus {
+    /* SAFE: Visual transforms only */
+    transform: translateZ(0) !important;
+}
+
+/* ============================================
+   VALIDATION: CLS = 0
+   ============================================ */
+
+/* If you see ANY layout shift after first paint:
+   1. Check browser DevTools Performance tab
+   2. Look for "Layout Shift" events
+   3. Identify the element causing shift
+   4. Add HARD LOCK rules above
+   
+   ACCEPTANCE CRITERIA:
+   - CLS score = 0
+   - No padding/margin changes after 500ms
+   - No grid recalculation after 500ms
+   - No font reflow after 500ms
+   - No resize events after 500ms
+*/

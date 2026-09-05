@@ -1,0 +1,197 @@
+/* Employee Leaves Tracker - Full-Width Layout */
+
+.leaves-tracker-container {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+/* Removed: .leaves-tracker-breadcrumb - replaced by PageHeroHeader */
+/* Removed: .leaves-tracker-header - replaced by PageHeroHeader */
+/* Removed: .leaves-tracker-header-left - replaced by PageHeroHeader */
+/* Removed: .leaves-tracker-header-right - replaced by PageHeroHeader */
+
+.leaves-tracker-summary-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.leaves-tracker-summary-card {
+  background: white;
+  border: 1px solid #f1f1f1;
+  border-radius: 10px;
+  padding: 20px;
+  min-height: 100px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.leaves-tracker-summary-card:hover {
+  border-color: #dc3545;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.leaves-tracker-summary-card h3 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #000;
+  margin: 0 0 8px 0;
+}
+
+.leaves-tracker-summary-card p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+  font-weight: 500;
+}
+
+.leaves-tracker-filters {
+  background: white;
+  border: 1px solid #f1f1f1;
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.leaves-tracker-table-container {
+  background: white;
+  border: 1px solid #f1f1f1;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.leaves-tracker-table-header {
+  padding: 20px;
+  border-bottom: 1px solid #f1f1f1;
+}
+
+.leaves-tracker-table-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #000;
+  margin: 0 0 4px 0;
+}
+
+.leaves-tracker-table-header p {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+/* Table Improvements */
+.leaves-tracker-table {
+  width: 100%;
+  table-layout: auto;
+}
+
+.leaves-tracker-table thead th {
+  background-color: #fafafa;
+  font-weight: 600;
+  font-size: 14px;
+  color: #333;
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f1f1;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.leaves-tracker-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.leaves-tracker-table tbody tr:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+}
+
+.leaves-tracker-table tbody td {
+  padding: 16px 20px;
+  border-bottom: 1px solid #f1f1f1;
+  font-size: 14px;
+  color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .leaves-tracker-container {
+    max-width: 100%;
+    margin-left: 0;
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .leaves-tracker-summary-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .leaves-tracker-container {
+    padding: 1rem;
+    margin-left: 0;
+  }
+  
+  .leaves-tracker-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .leaves-tracker-summary-cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .leaves-tracker-table-container {
+    overflow-x: auto;
+  }
+}
+
+/* Tabs Styling */
+.leaves-tracker-tabs {
+  background: white;
+  border: 1px solid #f1f1f1;
+  border-radius: 10px;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+
+/* Action Buttons */
+.leaves-tracker-action-btn {
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-transform: none;
+}
+
+.leaves-tracker-action-btn-primary {
+  background-color: #dc3545;
+  color: white;
+}
+
+.leaves-tracker-action-btn-primary:hover {
+  background-color: #c82333;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.leaves-tracker-action-btn-secondary {
+  background-color: white;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.leaves-tracker-action-btn-secondary:hover {
+  background-color: #dc3545;
+  color: white;
+}

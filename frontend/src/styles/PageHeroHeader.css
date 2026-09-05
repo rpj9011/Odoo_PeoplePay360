@@ -1,0 +1,195 @@
+/* PageHeroHeader — Industry-standard compact page header */
+/* Matches the Attendance Summary page reference design */
+
+.page-hero-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 0.875rem 1.25rem;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 1rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Remove all decorative blobs entirely */
+.page-hero-header::before,
+.page-hero-header::after {
+  display: none;
+}
+
+.page-hero-header__content {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+/* Eyebrow: small, muted, uppercase — subtle context label */
+.page-hero-header__eyebrow {
+  font-size: 0.7rem !important;
+  letter-spacing: 0.12em !important;
+  color: #94a3b8 !important;
+  font-weight: 600 !important;
+  text-transform: uppercase;
+  line-height: 1.2;
+  margin: 0 !important;
+}
+
+.page-hero-header__title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.page-hero-header__icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(52, 152, 219, 0.1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #3498db;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.page-hero-header__title {
+  font-size: 1.5rem !important;
+  font-weight: 700 !important;
+  color: #2c3e50 !important;
+  margin: 0 !important;
+  line-height: 1.2;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 8px;
+}
+
+/* Underline accent — spans full title text */
+.page-hero-header__title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: #3498db;
+  border-radius: 2px;
+}
+
+.page-hero-header__description {
+  font-size: 0.82rem !important;
+  color: #6c757d !important;
+  margin: 4px 0 0 0 !important;
+  line-height: 1.4;
+}
+
+/* Stats row — kept but made compact */
+.page-hero-header__stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.page-hero-header__stat {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+  background: #f8f9fa;
+}
+
+.page-hero-header__stat-value {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  display: block;
+  line-height: 1.2;
+}
+
+.page-hero-header__stat-label {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #94a3b8;
+}
+
+.page-hero-header__stat-helper {
+  font-size: 0.7rem;
+  color: #059669;
+}
+
+/* Actions: right side, vertically centered with title */
+.page-hero-header__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Center variant */
+.page-hero-header--center {
+  justify-content: center;
+  text-align: center;
+}
+
+.page-hero-header--center .page-hero-header__content {
+  align-items: center;
+  text-align: center;
+}
+
+.page-hero-header--center .page-hero-header__title-row {
+  justify-content: center;
+}
+
+.page-hero-header--center .page-hero-header__title::after {
+  left: 0;
+  transform: none;
+  width: 100%;
+}
+
+.page-hero-header--center .page-hero-header__description {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.page-hero-header--center .page-hero-header__actions {
+  justify-content: center;
+}
+
+/* Responsive */
+@media (max-width: 960px) {
+  .page-hero-header {
+    padding: 0.75rem 1rem;
+    gap: 12px;
+  }
+
+  .page-hero-header__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 600px) {
+  .page-hero-header {
+    padding: 0.75rem;
+  }
+
+  .page-hero-header__title {
+    font-size: 1.25rem !important;
+  }
+
+  .page-hero-header__icon {
+    width: 30px;
+    height: 30px;
+  }
+}

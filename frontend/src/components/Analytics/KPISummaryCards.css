@@ -1,0 +1,124 @@
+/* KPI Summary Cards Styles */
+
+.kpi-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.kpi-icon {
+    font-size: 1.75rem;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.kpi-icon svg {
+    font-size: 1.5rem;
+}
+
+.kpi-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.kpi-title {
+    font-size: 0.7rem;
+    color: #64748b;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.kpi-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+/* Color variants */
+.kpi-card-blue { border-left: 3px solid #3b82f6; }
+.kpi-card-blue .kpi-icon { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+
+.kpi-card-green { border-left: 3px solid #10b981; }
+.kpi-card-green .kpi-icon { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+
+.kpi-card-orange { border-left: 3px solid #f59e0b; }
+.kpi-card-orange .kpi-icon { background: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+
+.kpi-card-red { border-left: 3px solid #ef4444; }
+.kpi-card-red .kpi-icon { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+
+.kpi-card-purple { border-left: 3px solid #8b5cf6; }
+.kpi-card-purple .kpi-icon { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+.kpi-card-teal { border-left: 3px solid #14b8a6; }
+.kpi-card-teal .kpi-icon { background: rgba(20, 184, 166, 0.1); color: #14b8a6; }
+
+.kpi-card-indigo { border-left: 3px solid #6366f1; }
+.kpi-card-indigo .kpi-icon { background: rgba(99, 102, 241, 0.1); color: #6366f1; }
+
+.kpi-card-cyan { border-left: 3px solid #06b6d4; }
+.kpi-card-cyan .kpi-icon { background: rgba(6, 182, 212, 0.1); color: #06b6d4; }
+
+.kpi-card-pink { border-left: 3px solid #ec4899; }
+.kpi-card-pink .kpi-icon { background: rgba(236, 72, 153, 0.1); color: #ec4899; }
+
+.kpi-card-yellow { border-left: 3px solid #eab308; }
+.kpi-card-yellow .kpi-icon { background: rgba(234, 179, 8, 0.1); color: #eab308; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .kpi-summary-cards {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+    
+    .kpi-card {
+        padding: 0.75rem;
+    }
+    
+    .kpi-icon {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .kpi-icon svg {
+        font-size: 1.25rem;
+    }
+    
+    .kpi-value {
+        font-size: 1.1rem;
+    }
+    
+    .kpi-title {
+        font-size: 0.65rem;
+    }
+}

@@ -1,0 +1,432 @@
+.baa-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1390;
+    border: none;
+    background: rgba(15, 23, 42, 0.2);
+    cursor: default;
+    animation: baa-fade-in 0.15s ease-out;
+}
+
+@keyframes baa-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.baa-root {
+    position: fixed;
+    right: 24px;
+    bottom: 20px;
+    z-index: 1400;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+    pointer-events: none;
+}
+
+/* Adjust position when stacked above HR Query FAB */
+.baa-root.baa-root--stacked {
+    bottom: 96px;
+}
+
+.baa-fab {
+    width: 52px;
+    height: 52px;
+    border: none;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #d32f2f;
+    color: #fff;
+    box-shadow: 0 6px 20px rgba(211, 47, 47, 0.4);
+    cursor: pointer;
+    pointer-events: auto;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.baa-fab:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 24px rgba(211, 47, 47, 0.48);
+}
+
+.baa-fab--open {
+    background: #1f2937;
+    box-shadow: 0 6px 20px rgba(15, 23, 42, 0.25);
+}
+
+.baa-fab--open:hover {
+    background: #111827;
+}
+
+/* Hide Bulk Actions FAB when HR Query drawer is open */
+body:has(.hr-query-drawer.MuiDrawer-root .MuiDrawer-paper) .baa-root {
+    display: none;
+}
+
+.baa-panel {
+    width: min(300px, calc(100vw - 40px));
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    height: fit-content;
+    max-height: min(70vh, 480px);
+    border-radius: 12px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid #e8ecf1;
+    box-shadow:
+        0 4px 6px rgba(15, 23, 42, 0.04),
+        0 16px 40px rgba(15, 23, 42, 0.12);
+    animation: baa-slide-up 0.18s ease-out;
+}
+
+@keyframes baa-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.baa-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 10px 10px 10px 12px;
+    background: #fafbfc;
+    border-bottom: 1px solid #eef2f6;
+    flex-shrink: 0;
+}
+
+.baa-panel__title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 0;
+}
+
+.baa-panel__titles {
+    min-width: 0;
+}
+
+.baa-panel__back {
+    color: #374151 !important;
+    padding: 4px !important;
+}
+
+.baa-panel__title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #111827;
+}
+
+.baa-panel__subtitle {
+    font-size: 0.72rem;
+    color: #6b7280;
+    margin-top: 1px;
+}
+
+.baa-panel__header > .MuiIconButton-root:last-child {
+    color: #6b7280;
+    padding: 4px !important;
+}
+
+.baa-body {
+    padding: 8px;
+    overflow-y: auto;
+    flex: 0 1 auto;
+}
+
+.baa-status {
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.78rem;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.baa-status--error {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fecaca;
+}
+
+.baa-status--success {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.baa-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 12px;
+    color: #6b7280;
+    font-size: 0.8rem;
+}
+
+.baa-action-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.baa-action-item {
+    display: grid;
+    grid-template-columns: 32px 1fr auto auto;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s ease;
+}
+
+.baa-action-item:hover {
+    background: #f8fafc;
+}
+
+.baa-action-item__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    background: #fef2f2;
+    color: #d32f2f;
+}
+
+.baa-action-item__label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #1f2937;
+    line-height: 1.3;
+}
+
+.baa-action-item__count {
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 0.7rem;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.baa-action-item__chevron {
+    color: #cbd5e1;
+}
+
+.baa-confirm {
+    padding: 4px;
+}
+
+.baa-confirm__desc {
+    margin: 0 0 12px;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+    color: #4b5563;
+}
+
+.baa-confirm__impact {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    border-radius: 8px;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    margin-bottom: 12px;
+}
+
+.baa-confirm__impact-label {
+    font-size: 0.78rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.baa-confirm__impact-value {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #d32f2f;
+}
+
+.baa-confirm__actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.baa-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+}
+
+.baa-btn--primary {
+    background: #d32f2f;
+    color: #fff;
+}
+
+.baa-btn--primary:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+.baa-btn--ghost {
+    background: #fff;
+    color: #374151;
+    border: 1px solid #e5e7eb;
+}
+
+.baa-btn--ghost:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+@media (max-width: 600px) {
+    .baa-root {
+        right: 24px;
+        bottom: 14px;
+    }
+    
+    .baa-root.baa-root--stacked {
+        bottom: 90px;
+    }
+
+    .baa-panel {
+        width: calc(100vw - 28px);
+    }
+}
+
+/* ── Tea break overrun action styles ── */
+.baa-action-item__icon--amber {
+    background: #fffbeb;
+    color: #b45309;
+}
+
+.baa-action-item__count--amber {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.baa-confirm__impact-value--amber {
+    color: #b45309;
+}
+
+.baa-btn--amber {
+    background: #d97706;
+    color: #fff;
+}
+
+.baa-btn--amber:hover {
+    background: #b45309;
+}
+
+.baa-btn--amber:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+}
+
+/* Overrun employee list */
+.baa-overrun-section {
+    margin-bottom: 12px;
+    border: 1px solid #fde68a;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.baa-overrun-header {
+    padding: 6px 10px;
+    background: #fffbeb;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #92400e;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #fde68a;
+}
+
+.baa-overrun-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    max-height: 140px;
+    overflow-y: auto;
+}
+
+.baa-overrun-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 7px 10px;
+    border-bottom: 1px solid #fef3c7;
+}
+
+.baa-overrun-item:last-child {
+    border-bottom: none;
+}
+
+.baa-overrun-name {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #1f2937;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.baa-overrun-code {
+    font-weight: 400;
+    color: #6b7280;
+}
+
+.baa-overrun-badge {
+    flex-shrink: 0;
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: #b45309;
+    background: #fef3c7;
+    border-radius: 999px;
+    padding: 2px 8px;
+    white-space: nowrap;
+}
+
+.baa-overrun-empty {
+    margin: 0;
+    padding: 10px;
+    font-size: 0.78rem;
+    color: #6b7280;
+    text-align: center;
+}

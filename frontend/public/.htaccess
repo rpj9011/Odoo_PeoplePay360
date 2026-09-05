@@ -1,0 +1,50 @@
+# =============================================================================
+# Attendance AMS — A2 / CloudLinux
+# Document root MUST be the folder that contains index.html + assets/
+#   e.g. ~/attendance.bylinelms.com/frontend/
+#
+# Apache serves the React app directly (no proxy for /login, /dashboard, etc.)
+# Only /api and other backend paths are proxied to PM2 on port 3011.
+#
+# PM2:
+#   cd ~/attendance.bylinelms.com/backend && pm2 start server.js --name attendance-system
+#
+# backend/.env:
+#   NODE_ENV=production
+#   PORT=3011
+#   FRONTEND_URL=https://attendance.bylinelms.com
+#
+# cPanel: point attendance.bylinelms.com document root to the frontend/ folder.
+# Remove any "Setup Node.js Application" / Passenger block from this file.
+# =============================================================================
+
+Options -MultiViews +FollowSymLinks -Indexes
+DirectoryIndex index.html
+RewriteEngine On
+RewriteBase /
+
+<IfModule mod_passenger.c>
+  PassengerEnabled off
+</IfModule>
+
+# ─── 1) Proxy ONLY backend paths to PM2 (port 3011) ─────────────────────────
+# If /api still fails, PM2 may be down: curl http://127.0.0.1:3011/health
+
+RewriteCond %{HTTP:Upgrade} =websocket [NC]
+RewriteCond %{REQUEST_URI} ^/api/socket.io [NC]
+RewriteRule .* ws://127.0.0.1:3011%{REQUEST_URI} [P,L]
+
+RewriteCond %{REQUEST_URI} ^/api [NC,OR]
+RewriteCond %{REQUEST_URI} ^/health$ [NC,OR]
+RewriteCond %{REQUEST_URI} ^/avatars [NC,OR]
+RewriteCond %{REQUEST_URI} ^/medical-certificates [NC,OR]
+RewriteCond %{REQUEST_URI} ^/internal [NC,OR]
+RewriteCond %{REQUEST_URI} ^/public/ [NC]
+RewriteRule .* http://127.0.0.1:3011%{REQUEST_URI} [P,L,QSA]
+
+# ─── 2) Frontend: real files, then React SPA fallback (NO proxy) ─────────────
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+RewriteRule ^ /index.html [L]

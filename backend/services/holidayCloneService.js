@@ -1,0 +1,364 @@
+// backend/services/holidayCloneService.js
+// Service for intelligent holiday cloning
+
+const Holiday = require('../models/Holiday');
+const LeaveYear = require('../models/LeaveYear');
+const InternalHolidayDataset = require('../models/InternalHolidayDataset');
+const HolidayCloneLog = require('../models/HolidayCloneLog');
+const {
+    calculateWeekday,
+    calculateFixedHolidayDate,
+    formatDateString
+} = require('../utils/holidayEngine');
+
+class HolidayCloneService {
+    /**
+     * Generate clone preview
+     * @param {ObjectId} sourceYearId - Source year ID
+     * @param {ObjectId} targetYearId - Target year ID
+     * @param {ObjectId} userId - User performing clone
+     * @returns {Object} - Clone preview data
+     */
+    async generateClonePreview(sourceYearId, targetYearId, userId) {
+        try {
+            // Fetch source and target years
+            const sourceYear = await LeaveYear.findById(sourceYearId);
+            const targetYear = await LeaveYear.findById(targetYearId);
+            
+            if (!sourceYear || !targetYear) {
+                throw new Error('Source or target year not found');
+            }
+            
+            // Fetch source holidays
+            const sourceHolidays = await Holiday.find({ leaveYearId: sourceYearId }).lean();
+            
+            if (sourceHolidays.length === 0) {
+                throw new Error('No holidays found in source year');
+            }
+            
+            // Process each holiday
+            const clonedHolidays = [];
+            let stats = {
+                totalHolidays: sourceHolidays.length,
+                fixedHolidays: 0,
+                lunarHolidays: 0,
+                manualHolidays: 0,
+                missingDatasets: 0,
+                successfulClones: 0
+            };
+            
+            for (const holiday of sourceHolidays) {
+                const result = await this.processHolidayClone(holiday, targetYear.year, targetYearId);
+                clonedHolidays.push(result);
+                
+                // Update statistics
+                if (result.calculationType === 'FIXED') stats.fixedHolidays++;
+                if (result.calculationType === 'LUNAR') stats.lunarHolidays++;
+                if (result.calculationType === 'MANUAL') stats.manualHolidays++;
+                if (result.status === 'DATASET_MISSING') stats.missingDatasets++;
+                if (result.status === 'SUCCESS') stats.successfulClones++;
+            }
+            
+            // Create clone log
+            const cloneLog = await HolidayCloneLog.create({
+                sourceYearId,
+                targetYearId,
+                clonedBy: userId,
+                ...stats,
+                clonedHolidays,
+                status: 'PREVIEW'
+            });
+            
+            return {
+                cloneLogId: cloneLog._id,
+                sourceYear: sourceYear.year,
+                targetYear: targetYear.year,
+                statistics: stats,
+                holidays: clonedHolidays
+            };
+            
+        } catch (error) {
+            console.error('Error generating clone preview:', error);
+            throw error;
+        }
+    }
+    
+    /**
+     * Confirm and save clone
+     * @param {ObjectId} cloneLogId - Clone log ID
+     * @param {Array} previewEdits - Edits made in preview
+     * @param {ObjectId} userId - User confirming clone
+     * @returns {Object} - Clone results
+     */
+    async confirmClone(cloneLogId, previewEdits = [], userId) {
+        try {
+            // Fetch clone log
+            const cloneLog = await HolidayCloneLog.findById(cloneLogId);
+            
+            if (!cloneLog) {
+                throw new Error('Clone log not found');
+            }
+            
+            if (cloneLog.status !== 'PREVIEW') {
+                throw new Error('Clone already confirmed or cancelled');
+            }
+            
+            // Check for missing datasets
+            if (cloneLog.missingDatasets > 0) {
+                throw new Error('Cannot confirm clone with missing datasets');
+            }
+            
+            // Apply preview edits
+            const holidaysToCreate = this.applyPreviewEdits(cloneLog.clonedHolidays, previewEdits);
+            
+            // Create holidays in target year
+            const createdHolidays = await Holiday.insertMany(
+                holidaysToCreate.map(h => ({
+                    name: h.name,
+                    date: h.date,
+                    day: h.day,
+                    type: h.type,
+                    appliesTo: h.appliesTo,
+                    calculationType: h.calculationType,
+                    baseMonth: h.baseMonth,
+                    baseDate: h.baseDate,
+                    indianHolidayCode: h.indianHolidayCode,
+                    sourceDatasetVersion: h.sourceDatasetVersion,
+                    isAutoGenerated: h.isAutoGenerated,
+                    leaveYearId: cloneLog.targetYearId,
+                    createdBy: userId
+                }))
+            );
+            
+            // Update clone log
+            cloneLog.status = 'CONFIRMED';
+            cloneLog.confirmedAt = new Date();
+            cloneLog.wasPreviewEdited = previewEdits.length > 0;
+            cloneLog.previewEdits = previewEdits;
+            await cloneLog.save();
+            
+            return {
+                success: true,
+                createdCount: createdHolidays.length,
+                cloneLogId: cloneLog._id,
+                holidays: createdHolidays
+            };
+            
+        } catch (error) {
+            console.error('Error confirming clone:', error);
+            throw error;
+        }
+    }
+    
+    /**
+     * Process single holiday clone
+     * @param {Object} holiday - Source holiday
+     * @param {Number} targetYear - Target year number
+     * @param {ObjectId} targetYearId - Target year ID
+     * @returns {Object} - Clone result
+     */
+    async processHolidayClone(holiday, targetYear, targetYearId) {
+        const calculationType = holiday.calculationType || 'MANUAL';
+        
+        switch (calculationType) {
+            case 'FIXED':
+                return await this.cloneFixedHoliday(holiday, targetYear, targetYearId);
+            case 'LUNAR':
+                return await this.cloneLunarHoliday(holiday, targetYear, targetYearId);
+            case 'MANUAL':
+                return await this.cloneManualHoliday(holiday, targetYear, targetYearId);
+            default:
+                return await this.cloneManualHoliday(holiday, targetYear, targetYearId);
+        }
+    }
+    
+    /**
+     * Clone fixed holiday
+     * @param {Object} holiday - Source holiday
+     * @param {Number} targetYear - Target year
+     * @param {ObjectId} targetYearId - Target year ID
+     * @returns {Object} - Clone result
+     */
+    async cloneFixedHoliday(holiday, targetYear, targetYearId) {
+        try {
+            const newDate = calculateFixedHolidayDate(
+                holiday.baseMonth,
+                holiday.baseDate,
+                targetYear
+            );
+            const newDay = calculateWeekday(newDate);
+            const oldDay = holiday.day;
+            
+            return {
+                name: holiday.name,
+                date: newDate,
+                day: newDay,
+                type: holiday.type,
+                appliesTo: holiday.appliesTo,
+                calculationType: 'FIXED',
+                baseMonth: holiday.baseMonth,
+                baseDate: holiday.baseDate,
+                isAutoGenerated: true,
+                leaveYearId: targetYearId,
+                status: 'SUCCESS',
+                oldDate: holiday.date,
+                oldDay: oldDay,
+                newDay: newDay,
+                message: `Fixed date recalculated: ${oldDay} → ${newDay}`
+            };
+        } catch (error) {
+            return {
+                name: holiday.name,
+                calculationType: 'FIXED',
+                status: 'ERROR',
+                message: error.message
+            };
+        }
+    }
+    
+    /**
+     * Clone lunar holiday
+     * @param {Object} holiday - Source holiday
+     * @param {Number} targetYear - Target year
+     * @param {ObjectId} targetYearId - Target year ID
+     * @returns {Object} - Clone result
+     */
+    async cloneLunarHoliday(holiday, targetYear, targetYearId) {
+        try {
+            const dataset = await InternalHolidayDataset.getHolidayForYear(
+                holiday.indianHolidayCode,
+                targetYear
+            );
+            
+            if (!dataset) {
+                return {
+                    name: holiday.name,
+                    calculationType: 'LUNAR',
+                    indianHolidayCode: holiday.indianHolidayCode,
+                    status: 'DATASET_MISSING',
+                    oldDate: holiday.date,
+                    oldDay: holiday.day,
+                    message: `Dataset missing for ${holiday.indianHolidayCode} in ${targetYear}`
+                };
+            }
+            
+            const newDay = calculateWeekday(dataset.date);
+            
+            return {
+                name: holiday.name,
+                date: dataset.date,
+                day: newDay,
+                type: holiday.type,
+                appliesTo: holiday.appliesTo,
+                calculationType: 'LUNAR',
+                indianHolidayCode: holiday.indianHolidayCode,
+                sourceDatasetVersion: dataset.datasetVersion,
+                isAutoGenerated: true,
+                leaveYearId: targetYearId,
+                status: 'SUCCESS',
+                oldDate: holiday.date,
+                oldDay: holiday.day,
+                newDay: newDay,
+                holidayCode: holiday.indianHolidayCode,
+                message: `Date fetched from dataset: ${formatDateString(dataset.date)} (${newDay})`
+            };
+        } catch (error) {
+            return {
+                name: holiday.name,
+                calculationType: 'LUNAR',
+                indianHolidayCode: holiday.indianHolidayCode,
+                status: 'ERROR',
+                message: error.message
+            };
+        }
+    }
+    
+    /**
+     * Clone manual holiday
+     * @param {Object} holiday - Source holiday
+     * @param {Number} targetYear - Target year
+     * @param {ObjectId} targetYearId - Target year ID
+     * @returns {Object} - Clone result
+     */
+    async cloneManualHoliday(holiday, targetYear, targetYearId) {
+        try {
+            // Keep same month and date but in target year
+            const oldDate = new Date(holiday.date);
+            const newDate = new Date(targetYear, oldDate.getMonth(), oldDate.getDate());
+            const newDay = calculateWeekday(newDate);
+            
+            return {
+                name: holiday.name,
+                date: newDate,
+                day: newDay,
+                type: holiday.type,
+                appliesTo: holiday.appliesTo,
+                calculationType: 'MANUAL',
+                isAutoGenerated: false,
+                leaveYearId: targetYearId,
+                status: 'NEEDS_REVIEW',
+                oldDate: holiday.date,
+                oldDay: holiday.day,
+                newDay: newDay,
+                message: 'Manual holiday - please review date'
+            };
+        } catch (error) {
+            return {
+                name: holiday.name,
+                calculationType: 'MANUAL',
+                status: 'ERROR',
+                message: error.message
+            };
+        }
+    }
+    
+    /**
+     * Apply preview edits to cloned holidays
+     * @param {Array} clonedHolidays - Original cloned holidays
+     * @param {Array} previewEdits - Edits to apply
+     * @returns {Array} - Updated holidays
+     */
+    applyPreviewEdits(clonedHolidays, previewEdits) {
+        if (!previewEdits || previewEdits.length === 0) {
+            return clonedHolidays;
+        }
+        
+        const editMap = new Map();
+        previewEdits.forEach(edit => {
+            if (!editMap.has(edit.holidayName)) {
+                editMap.set(edit.holidayName, {});
+            }
+            editMap.get(edit.holidayName)[edit.field] = edit.newValue;
+        });
+        
+        return clonedHolidays.map(holiday => {
+            const edits = editMap.get(holiday.name);
+            if (edits) {
+                return { ...holiday, ...edits, isManuallyEdited: true };
+            }
+            return holiday;
+        });
+    }
+    
+    /**
+     * Cancel clone preview
+     * @param {ObjectId} cloneLogId - Clone log ID
+     * @returns {Boolean} - Success
+     */
+    async cancelClone(cloneLogId) {
+        try {
+            const cloneLog = await HolidayCloneLog.findById(cloneLogId);
+            if (cloneLog && cloneLog.status === 'PREVIEW') {
+                cloneLog.status = 'CANCELLED';
+                await cloneLog.save();
+                return true;
+            }
+            return false;
+        } catch (error) {
+            console.error('Error cancelling clone:', error);
+            throw error;
+        }
+    }
+}
+
+module.exports = new HolidayCloneService();

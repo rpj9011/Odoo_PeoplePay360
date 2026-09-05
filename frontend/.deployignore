@@ -1,0 +1,59 @@
+# Development files
+node_modules/
+.env
+.env.*
+.env.local
+.env.development
+*.log
+.DS_Store
+Thumbs.db
+
+# Source files (only deploy dist)
+src/
+public/
+
+# Test files
+test/
+tests/
+__tests__/
+*.test.js
+*.spec.js
+*.test.jsx
+*.spec.jsx
+
+# Configuration files
+vite.config.js
+eslint.config.js
+.eslintrc*
+.prettierrc*
+package-lock.json
+
+# Documentation
+*.md
+!README.md
+TEST_*.md
+
+# Build artifacts
+*.zip
+*.tar.gz
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Git
+.git/
+.gitignore
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Scripts
+test-*.js
+
+

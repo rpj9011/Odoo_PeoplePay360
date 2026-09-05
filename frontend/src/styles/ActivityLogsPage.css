@@ -1,0 +1,259 @@
+/* src/styles/ActivityLogsPage.css */
+
+.activity-logs-page {
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    background-color: #f8f9fa;
+    /* Isolate this page from other page styles */
+    isolation: isolate;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Activity Log tabs — indicator aligned to active tab only */
+.activity-logs-page .activity-log-tabs {
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    box-shadow: none !important;
+}
+
+.activity-logs-page .activity-log-tabs .MuiTabs-root {
+    min-height: 48px;
+}
+
+.activity-logs-page .activity-log-tabs .MuiTab-root {
+    text-transform: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #64748b;
+    max-width: none;
+}
+
+.activity-logs-page .activity-log-tabs .MuiTab-root.Mui-selected {
+    color: #2563eb;
+}
+
+.activity-logs-page .activity-log-tabs .MuiTabs-indicator {
+    height: 3px;
+    background-color: #3498db;
+    border-radius: 3px 3px 0 0;
+}
+
+.activity-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.activity-summary-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Scoped to activity-logs-page to prevent conflicts with other pages */
+.activity-logs-page .summary-card {
+    border-radius: 16px !important;
+    box-shadow: 0 8px 24px rgba(23, 32, 90, 0.05) !important;
+    border: 1px solid #eef2ff;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    box-sizing: border-box !important;
+    /* Reset any inherited transforms or scales */
+    transform: none !important;
+    zoom: 1 !important;
+}
+
+/* Scoped to activity-logs-page to prevent conflicts */
+.activity-logs-page .summary-label {
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #94a3b8;
+    font-weight: 600;
+}
+
+.activity-logs-page .summary-value {
+    font-weight: 600;
+}
+
+.activity-logs-page .summary-sublabel {
+    color: #64748b;
+}
+
+.quick-filter-panel {
+    padding: 16px 20px;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.quick-filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* --- Pill Header --- */
+.activity-logs-page .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    background-color: #2c3e50;
+    color: #ffffff;
+    padding: 12px 24px;
+    border-radius: 50px;
+}
+.activity-logs-page .page-title {
+    font-weight: 600 !important;
+    color: #ffffff;
+}
+.activity-logs-page .page-subtitle {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+.activity-logs-page .header-actions {
+    display: flex;
+    gap: 12px;
+}
+.activity-logs-page .header-actions .MuiButton-outlined {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: #ffffff;
+}
+.activity-logs-page .header-actions .MuiButton-outlined:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: #ffffff;
+}
+
+/* --- Filter Card --- */
+.search-filters-container {
+    background-color: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* --- Main Table Card --- */
+.activity-logs-container {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #f3f4f6;
+}
+
+.activity-table-wrapper {
+    overflow-x: auto;
+    overflow-y: scroll;
+    max-height: 600px;
+    border-radius: 16px;
+}
+
+/* Custom scrollbar styling - Always visible */
+.activity-table-wrapper::-webkit-scrollbar {
+    width: 14px;
+    height: 14px;
+}
+
+.activity-table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.activity-table-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 7px;
+    border: 3px solid #f1f1f1;
+}
+
+.activity-table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.activity-table-wrapper::-webkit-scrollbar-corner {
+    background: #f1f1f1;
+}
+
+/* Firefox scrollbar */
+.activity-table-wrapper {
+    scrollbar-width: auto;
+    scrollbar-color: #888 #f1f1f1;
+}
+
+.activity-logs-container .MuiTableContainer-root {
+    flex-grow: 1;
+}
+
+.activity-logs-container .MuiTableHead-root .MuiTableCell-root {
+    background-color: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.activity-logs-container .MuiTableBody-root .MuiTableRow-root {
+    transition: background-color 0.2s;
+}
+
+.activity-logs-container .MuiTableBody-root .MuiTableRow-root:hover {
+    background-color: #f0f9ff !important;
+}
+
+.activity-progress-bar {
+    height: 4px;
+    border-radius: 0;
+}
+
+.activity-row-unread {
+    background-color: #f7f9ff;
+}
+
+.activity-row-unread .MuiTableCell-root {
+    font-weight: 600;
+}
+
+.message-cell {
+    max-width: 420px;
+}
+
+.message-truncate {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    color: #334155;
+}
+
+/* --- Empty/Loading States --- */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 48px;
+    gap: 16px;
+    color: #6c757d;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+}
+
+.error-alert {
+    margin-bottom: 24px;
+}

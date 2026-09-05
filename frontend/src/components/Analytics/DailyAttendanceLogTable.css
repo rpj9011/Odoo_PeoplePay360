@@ -1,0 +1,288 @@
+/**
+ * DAILY ATTENDANCE LOG TABLE STYLES
+ * 
+ * Premium table styling with sticky header, alternating rows, and status colors.
+ */
+
+.daily-log-table-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    margin-top: 24px;
+    overflow: hidden;
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table-header h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.record-count {
+    font-size: 14px;
+    color: #6b7280;
+    background: #f3f4f6;
+    padding: 4px 12px;
+    border-radius: 12px;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    max-height: 600px;
+    overflow-y: scroll; /* Changed from auto to scroll to always show scrollbar */
+}
+
+/* Custom scrollbar styling - Always visible */
+.table-wrapper::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+}
+
+.table-wrapper::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 6px;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 6px;
+    border: 2px solid #f1f1f1;
+}
+
+.table-wrapper::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+/* Firefox scrollbar */
+.table-wrapper {
+    scrollbar-width: auto; /* Changed from thin to auto for better visibility */
+    scrollbar-color: #888 #f1f1f1;
+}
+
+.daily-log-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.daily-log-table thead {
+    position: sticky;
+    top: 0;
+    background: #f9fafb;
+    z-index: 10;
+}
+
+.daily-log-table thead th {
+    padding: 14px 16px;
+    text-align: center;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.daily-log-table thead th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.daily-log-table thead th.sortable:hover {
+    background-color: #f3f4f6;
+}
+
+.daily-log-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s;
+}
+
+.daily-log-table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+.daily-log-table tbody tr:hover {
+    background-color: #f0f9ff;
+}
+
+.daily-log-table tbody tr.admin-override {
+    background-color: #fef3c7;
+}
+
+.daily-log-table tbody tr.admin-override:hover {
+    background-color: #fde68a;
+}
+
+.daily-log-table tbody td {
+    padding: 14px 16px;
+    color: #4b5563;
+    text-align: center;
+}
+
+.date-cell {
+    font-weight: 500;
+    color: #1f2937;
+    text-align: center;
+}
+
+.day-cell {
+    font-weight: 600;
+    color: #4b5563;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 0.8125rem;
+}
+
+.time-cell {
+    font-family: 'Courier New', monospace;
+    color: #6b7280;
+    text-align: center;
+}
+
+.number-cell {
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    color: #374151;
+}
+
+.day-type-cell {
+    font-weight: 500;
+    text-align: center;
+}
+
+.half-day-reason {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+}
+
+/* Status Badges */
+.status-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-present {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.status-absent {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.status-leave {
+    background-color: #fed7aa;
+    color: #9a3412;
+}
+
+.status-holiday {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.status-default {
+    background-color: #e5e7eb;
+    color: #374151;
+}
+
+.admin-badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    background-color: #fbbf24;
+    color: #78350f;
+}
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+}
+
+.empty-state .empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    color: #1f2937;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.empty-state p {
+    color: #6b7280;
+    font-size: 15px;
+    margin: 0;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .table-wrapper {
+        max-height: 500px;
+    }
+    
+    .daily-log-table {
+        font-size: 13px;
+    }
+    
+    .daily-log-table thead th,
+    .daily-log-table tbody td {
+        padding: 12px 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .table-wrapper {
+        max-height: 400px;
+    }
+    
+    .daily-log-table {
+        font-size: 12px;
+    }
+    
+    .daily-log-table thead th,
+    .daily-log-table tbody td {
+        padding: 10px 8px;
+    }
+    
+    .status-badge {
+        font-size: 11px;
+        padding: 3px 8px;
+    }
+}
+
+/* Overtime positive highlight */
+.overtime-positive {
+    color: #16a34a;
+    font-weight: 600;
+}
+

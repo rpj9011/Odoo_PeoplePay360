@@ -1,0 +1,224 @@
+/* Employee Analytics Table Styles */
+
+.employee-analytics-table-container {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.table-header {
+    margin-bottom: 1.5rem;
+}
+
+.table-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #0f172a;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.table-wrapper {
+    overflow-x: auto;
+    max-height: 600px;
+    overflow-y: auto;
+}
+
+.employee-analytics-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.employee-analytics-table thead {
+    position: sticky;
+    top: 0;
+    background: #f9fafb;
+    z-index: 10;
+}
+
+.employee-analytics-table th {
+    padding: 14px 16px;
+    text-align: center;
+    font-weight: 600;
+    color: #374151;
+    border-bottom: 2px solid #e5e7eb;
+    white-space: nowrap;
+}
+
+.employee-analytics-table th.sortable {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.2s;
+}
+
+.employee-analytics-table th.sortable:hover {
+    background-color: #f3f4f6;
+}
+
+.employee-analytics-table td {
+    padding: 14px 16px;
+    color: #4b5563;
+    text-align: center;
+}
+
+.employee-analytics-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s;
+}
+
+.employee-analytics-table tbody tr:nth-child(even) {
+    background-color: #fafbfc;
+}
+
+.employee-analytics-table tbody tr.clickable-row {
+    cursor: pointer;
+}
+
+.employee-analytics-table tbody tr:hover {
+    background-color: #f0f9ff;
+}
+
+.employee-analytics-table tbody tr.clickable-row:hover {
+    background-color: #f0f9ff;
+}
+
+.employee-analytics-table .analytics-employee-name {
+    font-weight: 500;
+    color: #1f2937;
+    text-align: center;
+}
+
+.employee-analytics-table .analytics-employee-code {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 4px;
+    text-align: center;
+}
+
+.number {
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    color: #374151;
+}
+
+.rank {
+    font-weight: 700;
+    color: #EF4444;
+    text-align: center !important;
+}
+
+.percentage {
+    font-weight: 600;
+    color: #10b981;
+}
+
+/* Empty state */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+}
+
+.empty-icon {
+    font-size: 64px;
+    margin-bottom: 16px;
+}
+
+.empty-state h3 {
+    color: #1f2937;
+    font-size: 20px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+}
+
+.empty-state p {
+    color: #6b7280;
+    font-size: 15px;
+    margin: 0;
+    text-align: center;
+}
+
+/* Pagination */
+.pagination-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.pagination-btn {
+    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 600;
+    transition: all 0.2s;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    transform: translateY(-1px);
+}
+
+.pagination-btn:disabled {
+    background: #e2e8f0;
+    color: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.pagination-info {
+    color: #64748b;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* Responsive design */
+@media (max-width: 1024px) {
+    .table-wrapper {
+        max-height: 500px;
+    }
+    
+    .employee-analytics-table {
+        font-size: 13px;
+    }
+    
+    .employee-analytics-table th,
+    .employee-analytics-table td {
+        padding: 12px 12px;
+    }
+}
+
+@media (max-width: 768px) {
+    .table-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .table-wrapper {
+        max-height: 400px;
+    }
+    
+    .employee-analytics-table {
+        font-size: 12px;
+    }
+    
+    .employee-analytics-table th,
+    .employee-analytics-table td {
+        padding: 10px 8px;
+    }
+}

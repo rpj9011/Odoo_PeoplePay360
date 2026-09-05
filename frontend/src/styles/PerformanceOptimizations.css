@@ -1,0 +1,183 @@
+/* frontend/src/styles/PerformanceOptimizations.css */
+/* Global CSS optimizations for smooth UI performance */
+
+/* ============================================
+   PERFORMANCE OPTIMIZATIONS
+   ============================================ */
+
+/* 
+ * Use transform and opacity for animations instead of position/size
+ * This leverages GPU acceleration and avoids layout reflows
+ */
+.performance-optimized {
+    will-change: transform, opacity;
+}
+
+/* Smooth scroll behavior (where appropriate) */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Prevent layout shifts during loading */
+.page-content-wrapper {
+    min-height: 400px; /* Adjust based on typical page height */
+}
+
+/* Optimize transitions */
+.smooth-transition {
+    transition: transform 0.2s ease-out, opacity 0.2s ease-out;
+    will-change: transform, opacity;
+}
+
+/* GPU-accelerated transforms */
+.gpu-accelerated {
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Reduce repaints on scroll */
+.scroll-optimized {
+    transform: translateZ(0);
+    will-change: scroll-position;
+}
+
+/* Optimize box shadows (lighter shadows for better performance) */
+.optimized-shadow {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    /* Avoid heavy shadows on frequently scrolling elements */
+}
+
+/* Optimize hover effects */
+.button-optimized {
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.button-optimized:hover {
+    transform: translateY(-1px);
+}
+
+.button-optimized:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Prevent layout shifts with images */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Loading placeholder to prevent layout shift */
+.loading-placeholder {
+    min-height: 200px;
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+/* Optimize table rendering */
+.optimized-table {
+    transform: translateZ(0);
+}
+
+.optimized-table tbody {
+    will-change: contents;
+}
+
+/* Reduce reflows for dynamic content */
+.dynamic-content-container {
+    contain: layout style paint;
+}
+
+/* Optimize card animations */
+.card-optimized {
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+    will-change: transform;
+}
+
+.card-optimized:hover {
+    transform: translateY(-2px);
+}
+
+/* Skeleton loader base styles */
+.skeleton-base {
+    background: linear-gradient(
+        90deg,
+        #f0f0f0 25%,
+        #e0e0e0 50%,
+        #f0f0f0 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+/* Prevent text selection during animations */
+.no-select {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Optimize modal animations */
+.modal-optimized {
+    transform: translateZ(0);
+    will-change: opacity, transform;
+}
+
+/* Reduce paint operations */
+.reduced-paint {
+    contain: paint;
+}
+
+/* Optimize list rendering */
+.virtualized-list {
+    will-change: scroll-position;
+    transform: translateZ(0);
+}
+
+/* Media queries for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* Performance hint for browsers */
+.main-content {
+    contain: layout style;
+}
+
+/* Optimize font loading */
+.font-optimized {
+    font-display: swap;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,503 @@
+/* Attendance Calendar - Matching the reference image exactly */
+
+.attendance-calendar-container {
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  margin: 1.5rem 0;
+}
+
+.calendar-header {
+  padding: 1.5rem 1.5rem 1rem 1.5rem;
+  border-bottom: 1px solid #f1f3f4;
+}
+
+.calendar-title {
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.calendar-grid {
+  padding: 0;
+}
+
+.calendar-header-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.calendar-day-header {
+  padding: 0.75rem 0.5rem;
+  text-align: center;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #6c757d;
+  border-right: 1px solid #e9ecef;
+}
+
+.calendar-day-header:last-child {
+  border-right: none;
+}
+
+.calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: minmax(80px, 1fr);
+  min-height: 400px;
+}
+
+.calendar-day {
+  border-right: 1px solid #e9ecef;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.75rem 0.5rem;
+  min-height: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  position: relative;
+}
+
+.calendar-day:hover {
+  background-color: #f8f9fa;
+}
+
+.calendar-day:last-child {
+  border-right: none;
+}
+
+.calendar-day.other-month {
+  background-color: #f8f9fa;
+  color: #adb5bd;
+}
+
+.calendar-day.today {
+  border: 2px solid #3498db;
+  background-color: #f0f8ff;
+}
+
+.calendar-day.non-clickable {
+  cursor: default;
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.calendar-day.non-clickable:hover {
+  background-color: transparent;
+}
+
+.day-number {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.calendar-day.other-month .day-number {
+  color: #adb5bd;
+}
+
+.day-number-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Removed leave-initial-chip (HF/FF) - using full text in status badge for clarity */
+
+.attendance-status {
+  width: 100%;
+  border-radius: 6px;
+  padding: 0.5rem;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-top: auto;
+  /* Unified card layout (UI-only): consistent hierarchy across half-day/leave variants */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 0.25rem;
+}
+
+.attendance-status.present {
+  background-color: #d4edda;
+  border: 1px solid #c3e6cb;
+}
+
+.attendance-status.absent {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.attendance-status.weekend {
+  background-color: #fff3cd;
+  border: 1px solid #ffeaa7;
+}
+
+.attendance-status.week-off {
+  background-color: #fff8e1;
+  border: 1px solid #ffd54f;
+}
+
+.attendance-status.working-day {
+  background-color: #e3f2fd;
+  border: 1px solid #90caf9;
+}
+
+.attendance-status.holiday {
+  background-color: #e1bee7;
+  border: 1px solid #ce93d8;
+}
+
+.attendance-status.leave {
+  background-color: #bbdefb;
+  border: 1px solid #90caf9;
+}
+
+.attendance-status.half-day {
+  background-color: #ffe0b2;
+  border: 1px solid #ff9800;
+}
+
+.attendance-status.half-day .status-secondary {
+  border: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+/* New leave types - Comp Off and Swap Leave */
+.attendance-status.comp-off {
+  background-color: #CCE5FF;
+  border: 1px solid #4A90E2;
+  border-style: dotted;
+}
+
+.attendance-status.swap-leave {
+  background-color: #FFE5B4;
+  border: 1px solid #FF9800;
+  border-style: dotted;
+}
+
+.status-label {
+  color: #155724;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+/* Calendar card typography helpers (used by half-day + leave variants) */
+.status-badge {
+  font-weight: 700;
+  font-size: 0.72rem;
+  line-height: 1.1;
+}
+
+.status-primary {
+  font-weight: 700;
+  font-size: 0.72rem;
+  line-height: 1.15;
+}
+
+.status-secondary {
+  font-weight: 600;
+  font-size: 0.62rem;
+  line-height: 1.25;
+  color: rgba(0, 0, 0, 0.72);
+  padding: 2px 4px;
+  background-color: rgba(255, 255, 255, 0.35);
+  border-radius: 3px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* Early checkout note indicator: "ECN" = Early Checkout Note */
+.early-checkout-nt-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: #2c3e50;
+  background-color: #b8d4a8;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  padding: 1px 4px;
+  border-radius: 3px;
+  margin-top: 2px;
+  line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.status-meta {
+  margin-top: auto;
+  font-weight: 700;
+  font-size: 0.62rem;
+  line-height: 1.1;
+  text-align: right;
+  opacity: 0.95;
+}
+
+/* Variant: meta shown at the top of the card (used by half-day leave) */
+.status-meta-top {
+  margin-top: 0;
+  margin-bottom: 0.1rem;
+}
+
+.attendance-status.absent .status-label {
+  color: #721c24;
+}
+
+.attendance-status.weekend .status-label {
+  color: #856404;
+}
+
+.attendance-status.week-off .status-label {
+  color: #b8860b;
+}
+
+.attendance-status.working-day .status-label {
+  color: #0d47a1;
+}
+
+.attendance-status.holiday .status-label {
+  color: #4a148c;
+}
+
+.attendance-status.leave .status-label {
+  color: #0d47a1;
+}
+
+.attendance-status.half-day .status-label {
+  color: #e65100;
+}
+
+/* State-specific colors for unified card fields */
+.attendance-status.half-day .status-badge,
+.attendance-status.half-day .status-primary,
+.attendance-status.half-day .status-meta {
+  color: #e65100;
+}
+
+.attendance-status.leave .status-badge,
+.attendance-status.leave .status-primary,
+.attendance-status.leave .status-meta {
+  color: #0d47a1;
+}
+
+/* Half-day leave: orange text for emphasis (UI-only) */
+.attendance-status.leave.half-day-leave .status-badge,
+.attendance-status.leave.half-day-leave .status-primary,
+.attendance-status.leave.half-day-leave .status-secondary,
+.attendance-status.leave.half-day-leave .status-meta {
+  color: #e65100;
+}
+
+.attendance-status.comp-off .status-label {
+  color: #1976d2;
+}
+
+.attendance-status.swap-leave .status-label {
+  color: #f57c00;
+}
+
+.hours-worked {
+  color: #155724;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.attendance-status.half-day .hours-worked {
+  color: #e65100;
+  margin-top: 0.3rem;
+}
+
+.override-hours-secondary {
+  text-align: right;
+  width: 100%;
+}
+
+/* Half-day reason text - improved visibility and spacing */
+.attendance-status.half-day .half-day-reason {
+  font-size: 0.65rem;
+  color: #424242;
+  margin-top: 0.3rem;
+  padding: 0 4px;
+  max-width: 100%;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  min-height: 1.2em;
+}
+
+/* Ensure text is fully visible with good contrast */
+.attendance-status.half-day .half-day-reason {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  padding: 2px 4px;
+}
+
+.holiday-name, .leave-type {
+  color: #4a148c;
+  font-size: 0.65rem;
+  font-weight: 500;
+  margin-top: 0.25rem;
+}
+
+.leave-type {
+  color: #0d47a1;
+}
+
+/* Holiday name: show full text (no truncation) and render in uppercase */
+.attendance-status.holiday .holiday-name {
+  text-transform: uppercase;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  overflow: visible;
+  text-overflow: clip;
+  line-height: 1.2;
+  font-size: 0.62rem; /* slightly smaller to fit longer holiday names */
+}
+
+/* Leave Half-Day styling - matches Late Half-Day structure */
+.attendance-status.leave.half-day-leave {
+  /* Half-day leave uses Leave (blue) palette but same typography/layout as half-day card */
+  background-color: #bbdefb;
+  border: 1px solid #90caf9;
+}
+
+.attendance-status.leave.half-day-leave .status-label {
+  color: #0d47a1;
+}
+
+.leave-type-half-day {
+  color: #424242;
+  font-size: 0.65rem;
+  font-weight: 500;
+  margin-top: 0.3rem;
+  padding: 2px 4px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+  line-height: 1.3;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.attendance-status.leave.half-day-leave .hours-worked {
+  color: #e65100;
+  margin-top: 0.3rem;
+}
+
+.comp-off-type {
+  color: #1976d2;
+}
+
+.swap-leave-type {
+  color: #f57c00;
+}
+
+/* Half Day Leave Styling */
+.attendance-status.leave.half-day-leave {
+  /* Ensure no dashed border for half-day leave to keep consistent Leave styling */
+  border: 1px solid #90caf9;
+}
+
+.attendance-status.leave.full-day-leave {
+  background-color: #bbdefb;
+  border: 1px solid #90caf9;
+}
+
+.leave-half-day-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background-color: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-top: 4px;
+  font-size: 0.7rem;
+  color: #856404;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+}
+
+.leave-half-day-badge .half-day-icon {
+  font-size: 0.8rem;
+}
+
+.leave-half-day-badge .half-day-text {
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.half-day-leave-badge-present {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background-color: #fff3cd;
+  border: 2px solid #ffc107;
+  border-radius: 6px;
+  padding: 4px 8px;
+  margin-top: 6px;
+  font-size: 0.7rem;
+  color: #856404;
+  font-weight: 700;
+  box-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.half-day-leave-badge-present .half-day-icon {
+  font-size: 0.8rem;
+}
+
+.half-day-leave-badge-present .half-day-text {
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .calendar-day {
+    min-height: 60px;
+    padding: 0.5rem 0.25rem;
+  }
+  
+  .day-number {
+    font-size: 0.875rem;
+  }
+  
+  .attendance-status {
+    padding: 0.25rem;
+    font-size: 0.7rem;
+  }
+  
+  .hours-worked {
+    font-size: 0.65rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .calendar-day {
+    min-height: 50px;
+    padding: 0.25rem;
+  }
+  
+  .day-number {
+    font-size: 0.75rem;
+  }
+  
+  .attendance-status {
+    padding: 0.2rem;
+    font-size: 0.65rem;
+  }
+  
+  .hours-worked {
+    font-size: 0.6rem;
+  }
+}

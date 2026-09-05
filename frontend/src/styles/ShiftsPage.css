@@ -1,0 +1,84 @@
+/* frontend/src/styles/ShiftsPage.css */
+
+/* --- Theme Variables --- */
+:root {
+    --theme-red: #D32F2F;
+    --theme-black: #212121;
+    --theme-white: #FFFFFF;
+    --theme-bg-light: #f8f9fa;
+    --theme-border: #e0e0e0;
+    --theme-text-primary: #212121;
+    --shadow-color: rgba(0, 0, 0, 0.05);
+}
+
+/* --- Main Page Container --- */
+.shifts-page {
+    padding: 24px;
+    height: 100%; /* Ensure page takes full height */
+}
+
+/* --- NEW HEADER DESIGN --- */
+.shifts-page .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    background-color: #2c3e50; /* Dark slate blue */
+    color: var(--theme-white);
+    padding: 12px 24px;
+    border-radius: 50px;
+    margin-bottom: 24px;
+}
+
+.shifts-page .page-title {
+    font-weight: 600 !important;
+    color: var(--theme-white);
+}
+
+.shifts-page .page-header .MuiButton-contained {
+    background-color: var(--theme-red);
+}
+.shifts-page .page-header .MuiButton-contained:hover {
+    background-color: #A02020;
+}
+
+/* --- Table Card --- */
+.shifts-page .shifts-card {
+    background-color: var(--theme-white);
+    border-radius: 12px;
+    border: 1px solid var(--theme-border);
+    box-shadow: 0 4px 12px var(--shadow-color);
+    overflow: hidden; /* Important for child border radius */
+    flex-grow: 1; /* Allow card to fill remaining space */
+}
+
+.shifts-page .table-container {
+    max-height: calc(100vh - 250px); /* Adjust based on your header/footer height */
+}
+
+.shifts-page .shift-table-head .MuiTableCell-root {
+    background-color: var(--theme-bg-light);
+    font-weight: 600;
+    color: var(--theme-text-primary);
+}
+
+/* --- Table Cell Styling --- */
+.shifts-page .shift-name-cell {
+    font-weight: 500;
+    color: var(--theme-black);
+}
+
+.shifts-page .actions-cell {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+}
+
+/* --- Utility for Loading Spinner --- */
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+}

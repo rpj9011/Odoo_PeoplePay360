@@ -1,0 +1,25 @@
+{
+  "name": "Byline Attendance Management",
+  "short_name": "Byline Attendance",
+  "description": "Attendance management system for Byline Learning",
+  "start_url": "/",
+  "display": "standalone",
+  "theme_color": "#D32F2F",
+  "background_color": "#ffffff",
+  "orientation": "portrait-primary",
+  "lang": "en-IN",
+  "icons": [
+    {
+      "src": "/BL.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/BL.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

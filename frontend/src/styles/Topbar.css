@@ -1,0 +1,139 @@
+/* frontend/src/styles/Topbar.css */
+
+/* --- NEW: Black, White, & Red Theme Variables --- */
+:root {
+    --theme-red: #D32F2F; /* A strong, professional red */
+    --theme-black: #212121; /* A very dark grey, softer than pure black */
+    --theme-white: #FFFFFF;
+    --theme-text-secondary: #757575;
+    --theme-bg-hover: #F5F5F5; /* A light grey for hover states */
+    --theme-border: #EEEEEE;
+}
+
+/* --- Main Topbar Container --- */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1201;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 0 18px;
+  box-shadow: 0 1px 0 0 rgba(0, 0, 0, 0.05);
+  transition: background 0.3s ease, border-bottom 0.3s ease;
+}
+
+/* Optional: Enhanced effect when scrolled */
+.topbar.scrolled {
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Left Section: Logo & Tabs --- */
+.topbar-left {
+  display: flex;
+  align-items: center;
+  height: 100%;
+}
+
+/* NEW: Style for the SVG logo image */
+.topbar-logo-img {
+  height: 30px; /* Adjust size as needed */
+  margin-right: 20px;
+}
+
+.topbar-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.topbar-tab {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  height: 100%;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--theme-text-secondary);
+  border: none;
+  background: none;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: color 0.2s, border-bottom-color 0.2s;
+  text-decoration: none;
+}
+
+.topbar-tab.active, .topbar-tab:hover {
+  color: var(--theme-black);
+  border-bottom-color: var(--theme-red);
+}
+
+
+/* --- Right Section: Icons & Profile --- */
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* General styling for the icon buttons */
+.topbar-icon-btn {
+  color: var(--theme-text-secondary) !important;
+  transition: background-color 0.2s, color 0.2s !important;
+}
+
+.topbar-icon-btn:hover {
+  background-color: var(--theme-bg-hover) !important;
+  color: var(--theme-red) !important;
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 900px) {
+  .topbar {
+    padding: 0 16px;
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    height: 56px;
+    padding: 0 8px;
+  }
+  .topbar-logo-img {
+    height: 30px;
+    margin-right: 12px;
+  }
+  .topbar-tab {
+    padding: 0 12px;
+    font-size: 0.95rem;
+  }
+  .topbar-right {
+      gap: 4px;
+  }
+}
+
+/* Socket Status Indicator Animation - Faster, consistent with global loading */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Apply faster animation speed */
+.socket-status-indicator {
+  animation: spin 0.5s linear infinite;
+}

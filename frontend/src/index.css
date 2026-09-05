@@ -1,0 +1,323 @@
+/* ROOT CAUSE FIX: Load layout lock CSS FIRST to prevent overrides */
+@import './styles/ProfileLayoutLock.css';
+
+:root {
+  --accent-blue: #2563eb;
+  --sidebar-bg: #192a56;
+  --sidebar-active: #2336a3;
+  --sidebar-icon: #e3f2fd;
+  --sidebar-icon-hover: #fff;
+  --sidebar-text: #fff;
+  --card-bg: #fff;
+  --card-radius: 12px;
+  --card-shadow: 0 2px 12px 0 rgba(44,62,80,0.07);
+  --border-color: #e5e7eb;
+  --text-muted: #6b7280;
+  --topbar-bg: #fff;
+  --topbar-text: #213547;
+  --topbar-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  --quickadd-bg: #2563eb;
+  --quickadd-text: #fff;
+  --search-bg: #f4f7fb;
+  --search-border: #e5e7eb;
+  --profile-bg: #e3f2fd;
+  --profile-text: #213547;
+  --notif-bg: #e3f2fd;
+  --notif-text: #213547;
+  --background: #f4f7fb;
+}
+
+[data-theme="dark"] {
+  --accent-blue: #90caf9;
+  --sidebar-bg: #192a56;
+  --sidebar-active: #2336a3;
+  --sidebar-icon: #bbdefb;
+  --sidebar-icon-hover: #fff;
+  --sidebar-text: #fff;
+  --card-bg: #1a2236;
+  --card-radius: 12px;
+  --card-shadow: 0 2px 12px 0 rgba(44,62,80,0.18);
+  --border-color: #2c3550;
+  --text-muted: #b0b8c1;
+  --topbar-bg: #192040;
+  --topbar-text: #e3f2fd;
+  --topbar-shadow: 0 2px 8px rgba(0,0,0,0.18);
+  --quickadd-bg: #1976d2;
+  --quickadd-text: #fff;
+  --search-bg: #232c47;
+  --search-border: #2c3550;
+  --profile-bg: #2336a3;
+  --profile-text: #e3f2fd;
+  --notif-bg: #2336a3;
+  --notif-text: #e3f2fd;
+  --background: #181f36;
+}
+
+body {
+  background: var(--background);
+  color: var(--topbar-text);
+}
+
+a {
+  font-weight: 500;
+  color: var(--accent-blue);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+a:hover {
+  color: #174ea6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inter', 'Roboto', system-ui, sans-serif;
+  font-weight: 600;
+  margin: 0 0 0.5em 0;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #fff;
+  color: var(--accent-blue);
+  cursor: pointer;
+  transition: border-color 0.25s, box-shadow 0.2s;
+  box-shadow: none;
+}
+button:hover {
+  border-color: var(--accent-blue);
+  box-shadow: 0 2px 8px 0 rgba(44,62,80,0.07);
+}
+button:focus,
+button:focus-visible {
+  outline: 2px solid var(--accent-blue);
+}
+
+.card {
+  background: var(--card-bg);
+  border-radius: var(--card-radius);
+  box-shadow: var(--card-shadow);
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid var(--border-color);
+}
+
+/* Utility classes */
+.flex {
+  display: flex;
+}
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.gap-16 {
+  gap: 16px;
+}
+.text-muted {
+  color: var(--text-muted);
+}
+
+/* Remove dark mode for now */
+/* frontend/src/index.css */
+
+/*
+ * --- Global CSS Reset ---
+ * This is the KEY to removing the unwanted white space around the application.
+ * It removes the default margin/padding applied by the browser.
+ */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+/*
+ * A universal box-sizing rule.
+ * This is a modern standard that makes layout math much more predictable.
+ * It ensures that padding and borders are included in the element's total width and height.
+ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/*
+ * Set a base font and background for the entire application.
+ * The body background will be visible in any empty space or behind transparent elements.
+ */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #f8f9fa; /* Matches the page background for consistency */
+}
+
+/* === Global Loading Animation === */
+/* Fast, consistent loading spinner animation across all sections */
+@keyframes spin-fast {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Global loading spinner class - faster animation (0.5s instead of 1s) */
+.loading-spinner {
+  animation: spin-fast 0.5s linear infinite;
+}
+
+/* Performance optimizations for 300ms budget */
+
+/* GPU acceleration for animated elements */
+.skeleton-shimmer,
+.shimmer-animation {
+  transform: translateZ(0);
+  will-change: background-position;
+}
+
+/* Content visibility for below-fold content */
+.below-fold {
+  content-visibility: auto;
+  contain-intrinsic-size: 200px;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .shimmer-animation {
+    animation-duration: 2s;
+  }
+
+  .skeleton-shimmer {
+    animation: none;
+    background: #E5E7EB;
+  }
+}
+
+/* Optimize font loading */
+@font-face {
+  font-display: swap;
+}
+
+/* Optimize images */
+img {
+  loading: lazy;
+}
+
+/* Optimize scrolling */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Performance hints for browser */
+.skeleton-container {
+  contain: layout style paint;
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   GLOBAL MOBILE UTILITIES
+   These apply to all pages on mobile without touching desktop.
+═══════════════════════════════════════════════════════════════ */
+
+/* Prevent body from scrolling sideways on mobile */
+@media (max-width: 768px) {
+  body {
+    overflow-x: hidden;
+  }
+
+  /* PageHeroHeader: reduce padding and font sizes on mobile */
+  .page-hero-header {
+    padding: 16px !important;
+    margin-bottom: 16px !important;
+    border-radius: 14px !important;
+  }
+
+  .page-hero-header__title {
+    font-size: 1.35rem !important;
+  }
+
+  .page-hero-header__description {
+    font-size: 0.82rem !important;
+  }
+
+  /* All pill-style page headers (dark rounded bar) */
+  .page-header-pill,
+  .activity-logs-page .page-header,
+  .admin-leaves-page .page-header,
+  .shifts-page .page-header {
+    border-radius: 14px !important;
+    padding: 12px 16px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 10px !important;
+  }
+
+  /* All header-actions rows inside pill headers */
+  .header-actions {
+    width: 100%;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+
+  .header-actions .MuiButton-root {
+    flex: 1 1 auto;
+    min-height: 40px;
+  }
+
+  /* MUI Tabs — horizontal scroll on mobile, hide scrollbar */
+  .MuiTabs-root {
+    overflow-x: auto !important;
+  }
+  .MuiTabs-scroller {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .MuiTabs-root .MuiTabs-scrollButtons {
+    display: flex !important;
+  }
+
+  /* MUI Table — always scrollable horizontally when content overflows */
+  .MuiTableContainer-root {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Tooltips — disable hover-triggered tooltips on touch (they don't work) */
+  .sidebar-link::after {
+    display: none !important;
+  }
+
+  /* Minimum touch target for all MUI buttons and icon buttons */
+  .MuiButtonBase-root {
+    min-height: 44px !important;
+  }
+  .MuiIconButton-root {
+    min-width: 44px !important;
+    min-height: 44px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens: tighter hero header */
+  .page-hero-header {
+    padding: 12px !important;
+  }
+  .page-hero-header__title {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* Smooth touch scrolling globally */
+* {
+  -webkit-overflow-scrolling: touch;
+}

@@ -1,0 +1,347 @@
+/* frontend/src/styles/EmployeeDashboardPage.css */
+
+/* --- Theme Variables (Updated with Admin Dashboard Palette) --- */
+:root {
+    --theme-red: #dc3545;
+    --theme-red-light: rgba(220, 53, 69, 0.1);
+    --theme-red-hover: #b02a37;
+    --theme-black: #1f2937;
+    --theme-white: #ffffff;
+    --theme-bg: #f7f8fa;
+    --theme-border: #e5e7eb;
+    --theme-text-secondary: #6b7280;
+    --theme-success: #109e03;
+    --theme-break: #fd7e14;
+    --accent-blue: #0d6efd;
+    --accent-unpaid: #ffc107;
+    --accent-extra: #6f42c1;
+
+    --shadow-light: 0 8px 24px rgba(0, 0, 0, 0.06);
+    --shadow-hover: 0 14px 30px rgba(0, 0, 0, 0.12);
+    
+    /* Custom easing curve for snappy, natural animations */
+    --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* --- Page Container --- */
+.employee-dashboard-container {
+    width: 100%;
+    min-height: 100vh;
+    padding: 28px;
+    background: radial-gradient(1200px 800px at 10% -10%, rgba(220,53,69,0.06), rgba(0,0,0,0) 40%), var(--theme-bg);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    overflow-y: auto;
+}
+
+/* Cards base and depth */
+.dashboard-card-base {
+    background-color: var(--theme-white);
+    border-radius: 16px !important;
+    box-shadow: var(--shadow-light) !important;
+    border: 1px solid var(--theme-border);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.dashboard-card-base:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover) !important;
+    border-color: rgba(220, 53, 69, 0.35);
+}
+
+/* Decorative top bar accent */
+.dashboard-card-base::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--theme-red), rgba(220,53,69,0.4));
+}
+
+/* Section titles and dividers */
+.card-title {
+    color: var(--theme-black) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.2px;
+}
+
+.card-subtitle {
+    color: var(--theme-text-secondary);
+    font-size: 0.875rem;
+}
+
+.section-divider {
+    border-color: var(--theme-red) !important;
+    border-width: 2px !important;
+    width: 48px;
+    margin: 8px 0 16px 0 !important;
+}
+
+/* Specific cards sizing/padding */
+.action-card {
+    padding: 28px !important;
+    min-height: 450px;
+    width: 700px;
+}
+.weekly-view-card {
+    padding: 16px !important;
+    min-height: 350px;
+}
+.profile-card {
+    text-align: center;
+    position: relative;
+    padding: 50px 24px 24px 24px !important;
+    height: 320px;
+}
+.profile-avatar {
+    width: 80px !important;
+    height: 80px !important;
+    margin: -40px auto 16px;
+    border: 3px solid var(--theme-white);
+    background-color: var(--theme-red-light);
+    color: var(--theme-red);
+    box-shadow: inset 0 0 0 2px rgba(220,53,69,0.15);
+    /* Prevent blinking by ensuring stable rendering */
+    will-change: auto;
+}
+.profile-avatar-letter { font-size: 3rem; font-weight: bold; }
+
+.shift-info-card { padding: 24px !important; height: 480px;  width: 400px; }
+.recent-activity-card { padding: 20px !important; height: 500px; width: 500px; }
+.saturday-schedule-card { padding: 24px !important; height: 300px; }
+
+/* Progress Bar */
+.progress-bar-container { position: relative; height: 12px; border-radius: 8px; background-color: #eef0f2; overflow: hidden; }
+.progress-bar-segment { position: absolute; top: 0; left: 0; height: 100%; transition: width 0.4s ease, left 0.4s ease; }
+.progress-bar-work { background: linear-gradient(90deg, #16a34a, #22c55e); z-index: 2; }
+.progress-bar-work.overtime { background: linear-gradient(90deg, var(--theme-red), #ef4444); }
+.progress-bar-break { background: linear-gradient(90deg, #ffe259, #f7b733); z-index: 3; }
+
+/* Typography and buttons */
+.theme-text-black { color: var(--theme-black) !important; }
+.theme-button-red {
+    background-color: var(--theme-red) !important;
+    color: var(--theme-white) !important;
+    font-weight: 700 !important;
+    box-shadow: none !important;
+    padding: 10px 20px !important;
+    border-radius: 10px !important;
+    letter-spacing: 0.2px;
+    transition: all 0.2s ease-in-out !important;
+}
+.theme-button-red:hover { background-color: var(--theme-red-hover) !important; transform: translateY(-2px); box-shadow: var(--shadow-hover) !important; }
+
+/* Smooth transition for Start Break / End Break button */
+.theme-button-break,
+.theme-button-break-end {
+    transition: background-color 0.3s ease !important;
+}
+
+.theme-button-checkout { border-color: var(--theme-red) !important; color: var(--theme-red) !important; font-weight: 700 !important; border-radius: 10px !important; }
+.theme-button-checkout:hover { background-color: var(--theme-red-light) !important; border-color: var(--theme-red-hover) !important; }
+
+/* Chips */
+.MuiChip-root { font-weight: 700 !important; }
+
+/* Scroll areas subtle styling */
+.recent-activity-card > div,
+.saturday-schedule-card > div {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.25) transparent;
+}
+.recent-activity-card > div::-webkit-scrollbar,
+.saturday-schedule-card > div::-webkit-scrollbar { width: 8px; }
+.recent-activity-card > div::-webkit-scrollbar-thumb,
+.saturday-schedule-card > div::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.25); border-radius: 999px; }
+
+/* Time Tracking: reserved height to prevent CLS when swapping skeleton for content */
+.time-tracking-skeleton,
+.time-tracking-content {
+    min-height: 200px;
+}
+
+/* Time Tracking Content — start hidden so first paint is never visible */
+.time-tracking-content {
+    opacity: 0;
+    visibility: hidden;
+    will-change: opacity;
+}
+
+/* Fade-in via animation so it runs from 0→1 on first apply (transition does not run on new elements) */
+@keyframes time-tracking-fade-in {
+    from {
+        opacity: 0;
+        visibility: hidden;
+    }
+    to {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+.time-tracking-content.visible {
+    visibility: visible;
+    animation: time-tracking-fade-in 0.4s 0.15s var(--ease-out-quint) forwards;
+}
+
+.time-tracking-content.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    animation: none;
+}
+
+/* Break modal styles */
+/* Material-UI Dialog backdrop fade animation */
+.MuiDialog-root .MuiBackdrop-root {
+    transition: opacity 0.3s ease !important;
+}
+
+.break-modal-paper { 
+    border-radius: 16px !important; 
+    min-width: 360px;
+    max-width: 420px;
+    max-height: min(90vh, 520px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: scale(0.95);
+    transition: transform 0.4s var(--ease-out-quint), opacity 0.4s var(--ease-out-quint) !important;
+    will-change: transform, opacity;
+}
+
+.break-modal-content {
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* When Material-UI Fade transition enters (dialog opening) - add scale */
+.MuiDialog-root .MuiFadeTransition-entering .break-modal-paper,
+.MuiDialog-root .MuiFadeTransition-entered .break-modal-paper {
+    transform: scale(1) !important;
+}
+
+/* Ensure the transition works when dialog closes */
+.MuiDialog-root .MuiFadeTransition-exiting .break-modal-paper {
+    transform: scale(0.95) !important;
+}
+
+/* Break modal card styles - animations handled by Framer Motion */
+
+.break-modal-title { color: var(--theme-black); font-weight: 700 !important; }
+.break-modal-card { padding: 16px 18px; border: 1px solid var(--theme-border); border-radius: 12px !important; cursor: pointer; transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out, background-color 0.2s ease-in-out; display: flex; align-items: center; gap: 16px; background-color: var(--theme-white); box-sizing: border-box; }
+.break-modal-card:hover { box-shadow: var(--shadow-hover) !important; border-color: var(--theme-red); background-color: #fff; }
+.break-modal-card.extra:hover { border-color: var(--accent-extra); }
+.break-modal-card.paid:hover { border-color: var(--theme-success); }
+.break-modal-card.unpaid:hover { border-color: var(--accent-unpaid); }
+.break-modal-card.selected { border-width: 2px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important; }
+.break-modal-card.paid.selected { border-color: var(--theme-success); background-color: rgba(34, 197, 94, 0.07); }
+.break-modal-card.unpaid.selected { border-color: var(--accent-unpaid); background-color: rgba(245, 158, 11, 0.08); }
+.break-modal-card.extra.selected { border-color: var(--accent-extra); background-color: rgba(139, 92, 246, 0.07); }
+.break-modal-card.disabled { opacity: 0.6; cursor: not-allowed; background-color: var(--theme-bg); }
+.break-modal-card.disabled:hover { box-shadow: none !important; border-color: var(--theme-border); }
+.break-modal-card.time-locked { filter: grayscale(0.8); border-color: var(--theme-border) !important; background-color: var(--theme-bg); }
+.break-modal-card.time-locked .break-modal-icon { color: var(--theme-border); }
+.break-modal-icon { font-size: 2.5rem !important; padding: 8px; border-radius: 50%; color: var(--theme-white); }
+.break-modal-icon.paid { background-color: var(--theme-success); }
+.break-modal-icon.unpaid { background-color: var(--accent-unpaid); }
+.break-modal-icon.extra { background-color: var(--accent-extra); }
+
+/* Early checkout: single unified popup (no animations) */
+.early-checkout-dialog-paper {
+    width: 100%;
+    max-width: 640px !important;
+    max-height: min(90vh, 680px);
+    border-radius: 14px !important;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.12) !important;
+    padding: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+.early-checkout-dialog-title {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.02em;
+    color: var(--theme-black) !important;
+    padding: 24px 32px 16px !important;
+    margin-bottom: 0;
+}
+.early-checkout-dialog-divider {
+    margin: 0 32px !important;
+    border-color: var(--theme-border) !important;
+}
+.early-checkout-dialog-content {
+    padding: 20px 32px 28px !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+.early-checkout-dialog-content .early-checkout-body-text {
+    font-size: 0.9375rem;
+    line-height: 1.55;
+    color: var(--theme-text-secondary);
+    margin-bottom: 20px;
+}
+.early-checkout-remaining {
+    font-size: 0.9375rem !important;
+    font-weight: 600 !important;
+    color: var(--theme-black) !important;
+    padding: 12px 16px;
+    background-color: var(--theme-bg);
+    border-radius: 8px;
+    border: 1px solid var(--theme-border);
+    display: inline-block;
+    margin-bottom: 24px;
+}
+.early-checkout-reason-field {
+    margin-top: 4px !important;
+}
+.early-checkout-reason-field .MuiOutlinedInput-root {
+    min-height: 96px;
+}
+.early-checkout-actions {
+    padding: 16px 32px 24px !important;
+    justify-content: flex-end !important;
+    gap: 12px !important;
+}
+.early-checkout-actions .MuiButton-root {
+    min-height: 42px !important;
+    padding: 10px 22px !important;
+    font-weight: 600 !important;
+    border-radius: 10px !important;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.theme-button-checkout.tour-preview-active {
+    border-color: var(--theme-red) !important;
+    background-color: rgba(211, 47, 47, 0.06) !important;
+    box-shadow: 0 0 0 2px rgba(211, 47, 47, 0.14) !important;
+    color: var(--theme-red) !important;
+}
+
+.early-checkout-actions .theme-button-red.selected {
+    box-shadow: 0 0 0 3px rgba(211, 47, 47, 0.28) !important;
+}
+
+/* Late warning dialog */
+.late-warning-dialog { border-radius: 16px !important; padding: 6px; }
+.late-warning-header { display: flex; align-items: center; gap: 14px; justify-content: center; text-align: center; }
+.late-warning-icon { width: 56px; height: 56px; border-radius: 14px; display: grid; place-items: center; background: linear-gradient(135deg, #ffe0e6, #fff); color: var(--theme-red); border: 1px solid rgba(220,53,69,0.15); box-shadow: var(--shadow-light); }
+.late-warning-title { font-weight: 800 !important; }
+.late-warning-subtitle { color: var(--theme-text-secondary); font-weight: 600; }
+.late-warning-message { font-weight: 600; color: var(--theme-black); }
+.late-warning-pill { background-color: var(--theme-red-light); color: var(--theme-red); padding: 8px 16px; border-radius: 999px; border: 1px solid rgba(220,53,69,0.2); }
+.late-warning-dates { width: 100%; }
+.late-date-chip { background-color: var(--theme-bg) !important; border: 1px solid var(--theme-border) !important; font-weight: 700 !important; }

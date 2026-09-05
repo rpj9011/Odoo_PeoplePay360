@@ -1,0 +1,18 @@
+.cif-management-page {
+  width: 100%;
+  min-height: 100vh;
+  background: #f5f6fb;
+  padding: 32px;
+}
+
+@media (max-width: 960px) {
+  .cif-management-page {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 600px) {
+  .cif-management-page {
+    padding: 16px;
+  }
+}

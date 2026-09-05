@@ -1,0 +1,240 @@
+/* frontend/src/styles/MainLayout.css */
+
+/* Define layout variables for easy customization */
+:root {
+    /* Updated color palette to match the Zoho image */
+    --sidebar-bg-navy: #192a56;
+    --sidebar-link-bg: #273c75;
+    --sidebar-link-hover-bg: #3b508c;
+    --sidebar-brand-blue: #3b82f6;
+    --sidebar-text-color: #aeb8d0;
+    --sidebar-icon-color: #aeb8d0;
+    --sidebar-text-active: #ffffff;
+    --sidebar-icon-active: #ffffff;
+    
+    /* A single, fixed width for the sidebar */
+    --sidebar-width: 70px;
+    --topbar-height: 56px;
+}
+
+/* Overlay hidden by default — only shown on mobile via media query */
+.mobile-sidebar-overlay {
+    display: none;
+}
+
+body, html {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f4f6f8;
+}
+
+.app-container {
+    /* This container holds everything */
+    position: relative;
+    width: 100%;
+}
+
+/* --- Topbar Styling --- */
+.topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--topbar-height);
+    background-color: #ffffff;
+    border-bottom: 1px solid #e0e0e0;
+    z-index: 1001; /* Must be above the sidebar */
+    display: flex;
+    align-items: center;
+    padding: 0 20px;
+}
+
+/* Find the .sidebar rule and update it completely */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background-color: var(--sidebar-bg-navy);
+    width: var(--sidebar-width); /* Static width */
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+/* --- Main Content Styling --- */
+.main-content {
+    margin-left: var(--sidebar-width);
+    padding: 72px 20px 24px;
+    min-width: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+/* --- DYNAMIC STYLES BASED ON PARENT CLASS --- */
+
+/* Styles when sidebar is OPEN */
+.app-container.sidebar-open .sidebar {
+    width: var(--sidebar-width-open);
+}
+
+.app-container.sidebar-open .main-content {
+    margin-left: var(--sidebar-width-open);
+}
+
+/* Styles when sidebar is CLOSED (the default state) */
+.app-container.sidebar-closed .sidebar {
+    width: var(--sidebar-width-closed);
+}
+
+.app-container.sidebar-closed .main-content {
+    margin-left: var(--sidebar-width-closed);
+}
+
+/* Bonus: Style for text inside sidebar items to hide it when collapsed */
+.app-container.sidebar-closed .sidebar .menu-text {
+    opacity: 0;
+    visibility: hidden;
+    white-space: nowrap; /* Prevent text from wrapping and affecting width */
+    transition: opacity 0.1s, visibility 0.1s;
+}
+
+.app-container.sidebar-open .sidebar .menu-text {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 0.2s ease-in-out 0.1s; /* Delay the text appearing */
+}
+/* frontend/src/styles/MainLayout.css */
+
+/* --- Layout Variables --- */
+:root {
+    /* ADMIN/HR View */
+    --sidebar-width-admin: 70px;
+    --topbar-height: 56px;
+
+    /* EMPLOYEE View */
+    --sidebar-width-employee: 260px;
+}
+
+body, html {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+.app-container {
+    position: relative;
+    width: 100%;
+}
+
+/* --- STYLES FOR ADMIN / HR VIEW --- */
+.admin-view {
+    background-color: #f4f6f8; /* Default light background for admin pages */
+}
+
+.admin-view .main-content {
+    margin-left: var(--sidebar-width-admin);
+    padding: 72px 20px 24px;
+    min-width: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    height: 100vh;
+    overflow-y: auto;
+}
+
+
+/* --- STYLES FOR EMPLOYEE / INTERN VIEW --- */
+/* For the modern dashboard, the page itself controls the background and padding. */
+/* So we remove them from the main layout. */
+.employee-view .main-content {
+    margin-left: var(--sidebar-width-employee);
+    padding: 0; /* Remove padding to allow dashboard to fill the space */
+    width: calc(100% - var(--sidebar-width-employee));
+    min-height: 100vh;
+    min-width: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+
+/* ═══════════════════════════════════════════════════════════
+   MOBILE RESPONSIVE SHELL — Added for mobile support
+   Desktop (>= 900px) is completely unchanged.
+   All changes below are mobile-only via max-width queries.
+═══════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  /*
+    On mobile: sidebar slides off-screen by default.
+    It becomes an overlay that slides in from the left.
+    The main content takes 100% width — sidebar is NOT beside it.
+  */
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 1200;
+    width: 256px !important;
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+  }
+
+  /* When JS adds the class 'mobile-open' to the sidebar */
+  .sidebar.mobile-open {
+    transform: translateX(0);
+  }
+
+  /* Dark overlay behind open sidebar — invisible until activated */
+  .mobile-sidebar-overlay {
+    display: block !important;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.48);
+    z-index: 1199;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.28s ease, visibility 0.28s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .mobile-sidebar-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* Main content: zero margin-left, padding adjusted for topbar only */
+  .main-content {
+    margin-left: 0 !important;
+    padding: 72px 16px 88px 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .admin-view .main-content {
+    margin-left: 0 !important;
+    padding: 72px 16px 88px 16px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .employee-view .main-content {
+    margin-left: 0 !important;
+    padding: 72px 12px 88px 12px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content,
+  .admin-view .main-content,
+  .employee-view .main-content {
+    padding: 68px 12px 80px 12px !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .main-content,
+  .admin-view .main-content,
+  .employee-view .main-content {
+    padding: 64px 8px 72px 8px !important;
+  }
+}

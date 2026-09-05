@@ -1,0 +1,163 @@
+/* frontend/src/styles/LoginPage.css */
+
+/* --- Main Container --- */
+.login-page-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* --- Left Column: Form Section --- */
+.login-form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background-color: #ffffff;
+  /* On smaller screens, this section will take full width */
+  min-width: 400px; 
+}
+
+.login-form-wrapper {
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Logo and Branding --- */
+.login-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 48px; /* More space below the logo */
+}
+
+.login-logo-img {
+  height: 32px;
+  width: 32px;
+}
+
+.login-logo-text {
+  font-size: 1.5rem !important;
+  font-weight: 600 !important;
+  color: #1a202c; /* Dark text color */
+}
+
+/* --- Titles and Form Elements --- */
+.login-title {
+  font-size: 2.25rem !important;
+  font-weight: 700 !important;
+  color: #1a202c;
+  margin-bottom: 8px !important;
+}
+
+.login-subtitle {
+  font-size: 1rem !important;
+  color: #718096; /* Grayish text for subtitle */
+  margin-bottom: 32px !important;
+}
+
+.login-form-box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Space between form fields */
+}
+
+.login-button {
+  background-color: #e53935 !important; /* UPDATED: Red color for the button */
+  color: white !important;
+  padding: 14px !important;
+  font-weight: bold !important;
+  font-size: 0.95rem !important;
+  border-radius: 8px !important;
+  text-transform: none !important; /* "Sign in" instead of "SIGN IN" */
+  margin-top: 16px !important;
+  box-shadow: 0 4px 14px 0 rgba(0, 0, 0, 0.1) !important;
+}
+
+.login-button:hover {
+  background-color: #d32f2f !important; /* UPDATED: Darker red on hover */
+}
+
+/* --- Right Column: Image Section --- */
+.login-image-section {
+  flex: 1.2; /* Making the image section slightly larger */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F3F0FA; /* Light purple background */
+  padding: 40px;
+  overflow: hidden; /* Ensures image doesn't overflow */
+  position: relative; /* For absolute positioning of textured background */
+}
+
+/* --- Textured Background --- */
+.textured-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('/textured-background.svg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.4; /* More subtle overlay effect */
+  z-index: 1;
+  pointer-events: none; /* Ensure it doesn't interfere with interactions */
+}
+
+.login-illustration {
+  width: 100%;
+  max-width: 600px;
+  height: auto;
+  object-fit: contain;
+  position: relative; /* Ensure it's above the textured background */
+  z-index: 2; /* Above the textured background */
+
+  /* --- NEW: Border and Uplift Effect --- */
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.login-illustration:hover {
+  transform: translateY(-8px); /* Lifts the image up on hover */
+  box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15), 0 15px 15px -10px rgba(0, 0, 0, 0.08);
+}
+
+
+/* --- Responsive Design for Smaller Screens --- */
+@media (max-width: 900px) {
+  .login-image-section {
+    display: none; /* Hide the image section on smaller screens */
+  }
+
+  .login-form-section {
+    flex-basis: 100%; /* The form section takes the full width */
+    justify-content: center;
+  }
+
+  .login-form-wrapper {
+     align-items: center; /* Center content on mobile */
+     text-align: center;
+  }
+}
+
+/* --- Additional responsive adjustments for textured background --- */
+@media (max-width: 1200px) {
+  .textured-background {
+    opacity: 0.3; /* Reduce opacity on smaller screens for better performance */
+  }
+}
+
+@media (max-width: 768px) {
+  .textured-background {
+    opacity: 0.2; /* Further reduce opacity on mobile */
+  }
+}

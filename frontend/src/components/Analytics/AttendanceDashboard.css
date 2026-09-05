@@ -1,0 +1,82 @@
+/* Attendance Dashboard Styles */
+
+.attendance-dashboard {
+    width: 100%;
+    min-height: 100vh;
+    background: #f5f6fb;
+}
+
+/* Loading state */
+.loading-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    margin: 0 auto 1rem;
+    border: 4px solid #e5e7eb;
+    border-top-color: #667eea;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading-state p {
+    color: #666;
+    margin: 0;
+    font-size: 0.95rem;
+}
+
+/* Error state */
+.error-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px;
+}
+
+.error-icon {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+}
+
+.error-state h3 {
+    margin: 0 0 0.5rem 0;
+    color: #ef4444;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.error-state p {
+    color: #666;
+    margin: 0 0 1.5rem 0;
+    font-size: 0.95rem;
+}
+
+/* Responsive design */
+@media (max-width: 960px) {
+    .loading-state,
+    .error-state {
+        padding: 3rem 1.5rem;
+        margin-bottom: 16px;
+    }
+}
+
+@media (max-width: 600px) {
+    .loading-state,
+    .error-state {
+        padding: 3rem 1.5rem;
+        margin-bottom: 16px;
+    }
+}
